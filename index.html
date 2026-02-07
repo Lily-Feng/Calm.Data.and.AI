@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenAI Coding - Daily Coding Challenges</title>
+    <meta name="description"
+        content="Learn programming with daily coding challenges across multiple languages and frameworks">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">🐙</span>
+                <h1>GenAI Coding</h1>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-section">
+                    <h3>Languages</h3>
+                    <button class="nav-item" data-category="go"><span class="lang-icon go">Go</span> Go</button>
+                    <button class="nav-item" data-category="python"><span class="lang-icon python">Py</span>
+                        Python</button>
+                    <button class="nav-item" data-category="scala"><span class="lang-icon scala">Sc</span>
+                        Scala</button>
+                    <button class="nav-item" data-category="typescript"><span class="lang-icon typescript">TS</span>
+                        TypeScript</button>
+                    <button class="nav-item" data-category="csharp"><span class="lang-icon csharp">C#</span> C#</button>
+                    <button class="nav-item" data-category="cpp"><span class="lang-icon cpp">C++</span> C++</button>
+                    <button class="nav-item" data-category="java"><span class="lang-icon java">Jv</span> Java</button>
+                    <button class="nav-item" data-category="rust"><span class="lang-icon rust">Rs</span> Rust</button>
+                </div>
+
+                <div class="nav-section">
+                    <h3>Frameworks</h3>
+                    <button class="nav-item" data-category="react"><span class="lang-icon react">⚛️</span>
+                        React</button>
+                    <button class="nav-item" data-category="angular"><span class="lang-icon angular">🅰️</span>
+                        Angular</button>
+                    <button class="nav-item" data-category="springboot"><span class="lang-icon springboot">🍃</span>
+                        Spring Boot</button>
+                    <button class="nav-item" data-category="fastapi"><span class="lang-icon fastapi">⚡</span>
+                        FastAPI</button>
+                </div>
+
+                <div class="nav-section">
+                    <h3>Databases</h3>
+                    <button class="nav-item" data-category="duckdb"><span class="lang-icon duckdb">🦆</span>
+                        DuckDB</button>
+                    <button class="nav-item" data-category="postgresql"><span class="lang-icon postgresql">🐘</span>
+                        PostgreSQL</button>
+                </div>
+
+                <div class="nav-section">
+                    <h3>Big Data</h3>
+                    <button class="nav-item" data-category="spark"><span class="lang-icon spark">✨</span> Apache
+                        Spark</button>
+                    <button class="nav-item" data-category="iceberg"><span class="lang-icon iceberg">🧊</span>
+                        Iceberg</button>
+                    <button class="nav-item" data-category="delta"><span class="lang-icon delta">△</span> Delta
+                        Lake</button>
+                </div>
+
+                <div class="nav-section">
+                    <h3>ML / Cloud</h3>
+                    <button class="nav-item" data-category="pytorch"><span class="lang-icon pytorch">🔥</span>
+                        PyTorch</button>
+                    <button class="nav-item" data-category="tensorflow"><span class="lang-icon tensorflow">🧠</span>
+                        TensorFlow</button>
+                    <button class="nav-item" data-category="sklearn"><span class="lang-icon sklearn">📊</span>
+                        scikit-learn</button>
+                    <button class="nav-item" data-category="databricks"><span class="lang-icon databricks">🧱</span>
+                        Databricks</button>
+                </div>
+            </nav>
+
+            <button class="nav-item all-challenges" data-category="all">
+                <span>📚</span> All Challenges
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <h2 id="page-title">Today's Challenge</h2>
+                </div>
+            </header>
+
+            <!-- Daily Challenge Card -->
+            <section class="challenge-card" id="challenge-card">
+                <div class="challenge-header">
+                    <div class="challenge-meta">
+                        <span class="category-badge" id="challenge-category">Loading...</span>
+                        <span class="difficulty-badge" id="challenge-difficulty">-</span>
+                    </div>
+                    <h2 class="challenge-title" id="challenge-title">Loading challenge...</h2>
+                </div>
+
+                <div class="learning-objectives" id="learning-objectives">
+                    <h4>🎯 What You'll Learn</h4>
+                    <ul id="objectives-list"></ul>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab active" data-tab="problem">📋 Problem</button>
+                    <button class="tab" data-tab="solution">💡 Solution</button>
+                    <button class="tab" data-tab="explanation">📖 Explanation</button>
+                </div>
+
+                <div class="tab-content active" id="problem-tab">
+                    <div class="problem-content" id="problem-content">
+                        <p>Loading problem description...</p>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="solution-tab">
+                    <div class="code-header">
+                        <span class="filename" id="solution-filename">solution.py</span>
+                        <button class="copy-btn" onclick="copyCode()">📋 Copy</button>
+                    </div>
+                    <pre
+                        class="code-block"><code id="solution-code" class="language-python">// Loading solution...</code></pre>
+                </div>
+
+                <div class="tab-content" id="explanation-tab">
+                    <div class="explanation-content" id="explanation-content">
+                        <p>Loading explanation...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Challenge Grid (for browsing) -->
+            <section class="challenge-grid hidden" id="challenge-grid">
+                <div class="grid-header">
+                    <h2 id="grid-title">All Challenges</h2>
+                    <span class="challenge-count" id="challenge-count">0 challenges</span>
+                </div>
+                <div class="grid-container" id="grid-container">
+                    <!-- Challenge cards will be inserted here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-scala.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-jsx.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="js/challenges.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
