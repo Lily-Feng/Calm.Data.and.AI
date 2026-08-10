@@ -1,143 +1,60 @@
-# Code365 - Agent Guide
+# Patternbook — Agent Guide
 
-Instructions for AI agents to add new coding challenges to this platform.
+Patternbook is a released static learning site. Keep it simple enough to run from any static file server and deploy directly to GitHub Pages.
 
-## Architecture Overview
+## Product boundaries
 
-```
-challenges/
-├── languages/{lang}/
-│   ├── {lang}-001.js     ← Metadata (problem, explanation, objectives)
-│   └── solution.{ext}     ← Actual runnable code file
-├── frameworks/
-├── databases/
-├── bigdata/
-└── ml/
+The active focus areas are:
 
-js/
-├── challenges.js          ← CHALLENGE_INDEX (register challenges here)
-└── app.js                 ← Loads challenges, fetches solution files
-```
+1. Cloud systems, organized by topic with AWS/Azure/GCP translations
+2. Data platforms: Databricks, Snowflake, and Fabric
+3. Python interview patterns
+4. SQL reasoning patterns
+5. Go concurrency
 
-## How It Works
+Do not add frameworks, package managers, build systems, servers, authentication, or remote persistence unless the user explicitly asks. Progress is intentionally device-local.
 
-1. **Index** (`js/challenges.js`): Lists paths to all challenge `.js` files
-2. **On page load**: `loadAllChallenges()` fetches each `.js` file, parses metadata
-3. **Solution display**: `loadSolutionCode()` fetches the actual source file as text
-4. **Rendering**: Code inserted into `<code>` element, Prism.js highlights it
+## Knowledge architecture
 
-## Adding a New Challenge
+All active content is in `js/knowledge.js`.
 
-### Step 1: Create the solution file
+- `TRACKS` controls navigation and visual grouping.
+- `TOPICS` is the single learning-note collection.
+- A topic belongs to exactly one track.
+- Cloud notes should teach a vendor-neutral concept first and use `platformMap` to translate it to AWS, Azure, and GCP.
+- Data-platform notes should compare products by workload and trade-off, not repeat marketing feature lists.
+- Python, SQL, and Go notes should include a representative problem and a reusable reasoning pattern. Add a compact `code` block when code materially helps.
+
+Every topic must include:
+
+- a stable, unique `id`
+- `track`, `type`, `title`, `difficulty`, and estimated `minutes`
+- a one-sentence `summary`
+- a realistic `prompt`
+- three to five ordered `approach` steps
+- two or more `pitfalls`
+- a concise, speakable `answer`
+- useful search `tags`
+
+Prefer one deep, reusable note over several product-specific fragments.
+
+## UI architecture
+
+- `index.html` contains the semantic page shell.
+- `css/styles.css` owns the responsive visual system.
+- `js/app.js` renders topics and stores review status in `localStorage`.
+- There are no runtime dependencies or external assets.
+
+When changing the application, preserve keyboard access, mobile navigation, dialog close behavior, empty states, and the ability to open a topic from a `#topic=<id>` URL.
+
+## Validation
+
+Before finishing:
 
 ```bash
-# Create the actual runnable code
-vim challenges/languages/rust/my_solution.rs
+node --check js/knowledge.js
+node --check js/app.js
+python3 -m http.server 8080
 ```
 
-### Step 2: Create the metadata file
-
-Create `challenges/languages/rust/rust-002.js`:
-
-```javascript
-// Description comment at top
-// Solution file: my_solution.rs (in same folder)
-
-const challenge = {
-    id: "rust-002",                    // Unique: {category}-{number}
-    title: "Challenge Title",
-    category: "rust",                  // Must match sidebar categories
-    categoryLabel: "Rust",             // Display name
-    difficulty: "beginner",            // beginner | intermediate | advanced
-    dateAdded: "2024-02-12",           // YYYY-MM-DD
-    
-    learningObjectives: [
-        "Objective 1",
-        "Objective 2"
-    ],
-    
-    solutionFile: "my_solution.rs",    // File in same folder
-    language: "rust",                  // For Prism.js syntax highlighting
-    
-    problem: `
-        <h3>The Challenge</h3>
-        <p>Description...</p>
-        
-        <h3>Requirements</h3>
-        <ul>
-            <li>Requirement 1</li>
-        </ul>
-    `,
-    
-    explanation: `
-        <p><strong>Key Concepts:</strong></p>
-        <ul>
-            <li>Concept explanation</li>
-        </ul>
-    `
-};
-
-if (typeof window !== 'undefined') {
-    window.__CHALLENGE__ = challenge;
-}
-```
-
-### Step 3: Register in index
-
-Edit `js/challenges.js`, add to `CHALLENGE_INDEX`:
-
-```javascript
-const CHALLENGE_INDEX = [
-    // ... existing entries ...
-    { path: "challenges/languages/rust/rust-002.js" },  // ADD THIS
-];
-```
-
-## Category Reference
-
-| Category | `category` value | `language` (syntax) |
-|----------|------------------|---------------------|
-| Go | `go` | `go` |
-| Python | `python` | `python` |
-| Rust | `rust` | `rust` |
-| TypeScript | `typescript` | `typescript` |
-| Scala | `scala` | `scala` |
-| C# | `csharp` | `csharp` |
-| C++ | `cpp` | `cpp` |
-| Java | `java` | `java` |
-| React | `react` | `typescript` |
-| Angular | `angular` | `typescript` |
-| Spring Boot | `springboot` | `java` |
-| FastAPI | `fastapi` | `python` |
-| DuckDB | `duckdb` | `sql` |
-| PostgreSQL | `postgresql` | `sql` |
-| Spark | `spark` | `python` |
-| Iceberg | `iceberg` | `python` |
-| Delta Lake | `delta` | `python` |
-| PyTorch | `pytorch` | `python` |
-| TensorFlow | `tensorflow` | `python` |
-| Databricks | `databricks` | `python` |
-
-## Guidelines for Good Challenges
-
-1. **Pick problems that showcase the technology's strengths**
-   - Rust: ownership, memory safety
-   - Go: concurrency, goroutines
-   - Spark: large-scale data processing
-   - DuckDB: analytical queries, window functions
-
-2. **Include "How to Run" in problem section**
-   ```html
-   <h3>How to Run</h3>
-   <pre><code>rustc solution.rs && ./solution</code></pre>
-   ```
-
-3. **Make explanation educational**
-   - Explain WHY, not just WHAT
-   - Compare to other languages when relevant
-   - Highlight key concepts
-
-4. **Solution file should be fully runnable**
-   - Include all imports
-   - Include a `main()` function
-   - Add helpful comments
+Confirm that the page and local assets return HTTP 200. If behavior changed, exercise search, track filters, status changes, topic links, and mobile navigation.

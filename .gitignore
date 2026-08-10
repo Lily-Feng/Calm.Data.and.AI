@@ -1,16 +1,8 @@
-# Dependencies
-node_modules/
 .DS_Store
 
-# IDE
+# Editor files
 .idea/
 .vscode/
 *.swp
 *.swo
-
-# Build outputs
-dist/
-build/
-
-# OS files
 Thumbs.db

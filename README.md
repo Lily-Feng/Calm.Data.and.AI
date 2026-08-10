@@ -1,132 +1,73 @@
-# 🚀 Code365 - Daily Coding Challenges
+# Patternbook
 
-Learn something new every day through bite-sized coding challenges with real, runnable code.
+Patternbook is a practical interview-learning system for five focused areas:
 
-## 🏃 Quick Start
+- Cloud systems — architecture topics compared across AWS, Azure, and GCP
+- Data platforms — practical decisions across Databricks, Snowflake, and Fabric
+- Python — recurring LeetCode patterns
+- SQL — reusable analytical query patterns
+- Go — safe, high-concurrency patterns
+
+The site is deliberately static. It has no framework, package install, build step, database, or account system. Topic status and weekly review activity are stored in the browser.
+
+## Run locally
+
+From the repository root:
 
 ```bash
-# Start a local server (required for loading files)
 python3 -m http.server 8080
-# Open http://localhost:8080
 ```
 
-## 📝 Adding a New Challenge
+Open `http://localhost:8080`.
 
-### Step 1: Create the solution file
+## Publish with GitHub Pages
 
-```bash
-# Example: Add a Scala challenge
-echo 'object MyApp extends App { println("Hello!") }' > challenges/languages/scala/collections.scala
-```
+Push to `main`. The workflow in `.github/workflows/deploy-pages.yml` publishes the repository as a GitHub Pages site.
 
-### Step 2: Create the challenge metadata file
+The first time, open the repository on GitHub and select **Settings → Pages → Source → GitHub Actions**. After that, every push to `main` deploys automatically.
 
-Create `challenges/languages/scala/scala-001.js`:
+## Add or edit knowledge
 
-```javascript
-// Scala Challenge: Functional Collections
-// Solution file: collections.scala (in same folder)
+All active learning content lives in `js/knowledge.js`:
 
-const challenge = {
-    id: "scala-001",
-    title: "Functional Collections in Scala",
-    category: "scala",
-    categoryLabel: "Scala",
-    difficulty: "beginner",  // beginner | intermediate | advanced
-    dateAdded: "2024-02-12",
-    
-    learningObjectives: [
-        "map, filter, reduce",
-        "Immutable collections",
-        "Pattern matching"
-    ],
-    
-    solutionFile: "collections.scala",  // File in same folder
-    language: "scala",                   // For syntax highlighting
-    
-    problem: `
-        <h3>The Challenge</h3>
-        <p>Your problem description here...</p>
-        
-        <h3>Requirements</h3>
-        <ul>
-            <li>Requirement 1</li>
-            <li>Requirement 2</li>
-        </ul>
-    `,
-    
-    explanation: `
-        <p><strong>Key Concepts:</strong></p>
-        <ul>
-            <li>Concept 1</li>
-            <li>Concept 2</li>
-        </ul>
-    `
-};
+- `TRACKS` defines the five navigation areas.
+- `TOPICS` holds every practical learning note.
+- Each topic contains one interview prompt, a reasoning sequence, pitfalls, a concise answer, and optional platform translations or code.
 
-if (typeof window !== 'undefined') {
-    window.__CHALLENGE__ = challenge;
+Use this shape:
+
+```js
+{
+    id: "unique-topic-id",
+    track: "python",
+    type: "LeetCode pattern",
+    title: "Readable topic title",
+    difficulty: "Intermediate",
+    minutes: 15,
+    summary: "One-sentence practical value.",
+    prompt: "A representative interview question.",
+    approach: ["Step one", "Step two", "Step three"],
+    pitfalls: ["Common mistake", "Important edge case"],
+    answer: "A concise answer you could say aloud.",
+    tags: ["searchable", "keywords"],
+    code: {
+        language: "python",
+        value: "optional runnable pattern"
+    }
 }
 ```
 
-### Step 3: Register in the index
+Good notes teach a transferable pattern, begin with a realistic problem, make trade-offs explicit, and stay short enough to review in 10–20 minutes.
 
-Edit `js/challenges.js` and add to `CHALLENGE_INDEX`:
+## Project structure
 
-```javascript
-const CHALLENGE_INDEX = [
-    // ... existing challenges ...
-    { path: "challenges/languages/scala/scala-001.js" },  // Add this!
-];
+```text
+.
+├── index.html                  # Accessible application shell
+├── css/styles.css              # Responsive visual system
+├── js/knowledge.js             # Tracks and learning notes
+├── js/app.js                   # Search, review state, and interactions
+├── public/og.png               # Social sharing preview
+└── .github/workflows/
+    └── deploy-pages.yml        # GitHub Pages deployment
 ```
-
-### Step 4: Commit & Push
-
-```bash
-git add .
-git commit -m "Add Scala collections challenge"
-git push
-```
-
-## 📂 Project Structure
-
-```
-GenAI-learning/
-├── index.html
-├── js/
-│   ├── challenges.js       # Index of all challenges
-│   └── app.js              # Application logic
-├── challenges/
-│   ├── languages/
-│   │   ├── go/
-│   │   │   ├── go-001.js           # Challenge metadata
-│   │   │   └── concurrent_scraper.go  # Solution file
-│   │   ├── python/
-│   │   │   ├── py-001.js
-│   │   │   └── async_http_client.py
-│   │   └── ...
-│   ├── frameworks/
-│   ├── databases/
-│   ├── bigdata/
-│   └── ml/
-└── README.md
-```
-
-## 🎨 Categories
-
-| Category | Key | Syntax |
-|----------|-----|--------|
-| Go | `go` | `go` |
-| Python | `python` | `python` |
-| Scala | `scala` | `scala` |
-| TypeScript | `typescript` | `typescript` |
-| React | `react` | `typescript` |
-| DuckDB | `duckdb` | `sql` |
-| Spark | `spark` | `python` |
-| Iceberg | `iceberg` | `python` |
-| Delta Lake | `delta` | `python` |
-| PyTorch | `pytorch` | `python` |
-
-## 📅 Daily Rotation
-
-Uses `dayOfYear % totalChallenges` to pick today's challenge - everyone sees the same challenge each day!
