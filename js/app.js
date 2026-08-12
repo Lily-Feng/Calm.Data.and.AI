@@ -1,75 +1,44 @@
 /**
- * Patternbook application shell.
- * No dependencies, build step, account, or backend are required.
+ * Patternbook knowledge atlas.
+ * Static, dependency-free, and intentionally free of progress tracking.
  */
 
 const { tracks, topics } = window.PATTERNBOOK;
-const STORAGE_KEY = "patternbook-progress-v1";
-const STATUS_ORDER = ["new", "learning", "review", "mastered"];
-const STATUS_LABELS = {
-    new: "Not started",
-    learning: "Learning",
-    review: "Review",
-    mastered: "Mastered"
-};
+const atlas = window.PATTERNBOOK_ATLAS;
 
 const elements = {
     body: document.body,
-    homeView: document.getElementById("home-view"),
-    libraryView: document.getElementById("library-view"),
-    trackNavigation: document.getElementById("track-navigation"),
-    trackGrid: document.getElementById("track-grid"),
-    statGrid: document.getElementById("stat-grid"),
-    topicList: document.getElementById("topic-list"),
-    emptyState: document.getElementById("empty-state"),
+    overviewView: document.getElementById("overview-view"),
+    domainView: document.getElementById("domain-view"),
+    guidesView: document.getElementById("guides-view"),
+    domainNavigation: document.getElementById("domain-navigation"),
+    overviewMap: document.getElementById("overview-map"),
+    domainGrid: document.getElementById("domain-grid"),
+    featuredGuides: document.getElementById("featured-guides"),
     search: document.getElementById("global-search"),
+    domainHeader: document.getElementById("domain-header"),
+    principleStrip: document.getElementById("principle-strip"),
+    domainGraph: document.getElementById("domain-graph"),
+    conceptInspector: document.getElementById("concept-inspector"),
+    clusterIndex: document.getElementById("cluster-index"),
+    domainGuides: document.getElementById("domain-guides"),
+    domainFilters: document.getElementById("domain-filters"),
+    guideLibrary: document.getElementById("guide-library"),
     libraryEyebrow: document.getElementById("library-eyebrow"),
-    libraryTitle: document.getElementById("library-title"),
+    guideLibraryTitle: document.getElementById("guide-library-title"),
     libraryDescription: document.getElementById("library-description"),
     libraryCount: document.getElementById("library-count"),
-    progressSummary: document.getElementById("progress-summary"),
-    reviewCount: document.getElementById("review-count"),
-    weeklyCount: document.getElementById("weekly-count"),
-    weeklyProgress: document.getElementById("weekly-progress"),
-    practiceCard: document.getElementById("practice-card"),
+    emptyState: document.getElementById("empty-state"),
     topicDialog: document.getElementById("topic-dialog"),
     dialogContent: document.getElementById("dialog-content"),
     toast: document.getElementById("toast")
 };
 
-let progress = loadProgress();
-let activeTrack = "all";
-let activeStatus = "all";
-let practiceIndex = 0;
+let activeView = "overview";
+let activeDomain = tracks[0].id;
+let activeFilter = "all";
+let activeGraphNode = "root";
 let toastTimer;
-
-function loadProgress() {
-    try {
-        const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
-        return {
-            statuses: stored?.statuses || {},
-            sessions: Array.isArray(stored?.sessions) ? stored.sessions : []
-        };
-    } catch (error) {
-        return { statuses: {}, sessions: [] };
-    }
-}
-
-function saveProgress() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
-}
-
-function getTrack(trackId) {
-    return tracks.find((track) => track.id === trackId);
-}
-
-function getTopic(topicId) {
-    return topics.find((topic) => topic.id === topicId);
-}
-
-function getStatus(topicId) {
-    return progress.statuses[topicId] || "new";
-}
 
 function escapeHtml(value = "") {
     return String(value)
@@ -80,189 +49,421 @@ function escapeHtml(value = "") {
         .replaceAll("'", "&#039;");
 }
 
-function startOfWeek() {
-    const now = new Date();
-    const day = (now.getDay() + 6) % 7;
-    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - day);
-    return start.getTime();
+function getTrack(trackId) {
+    return tracks.find((track) => track.id === trackId);
 }
 
-function weeklySessions() {
-    const boundary = startOfWeek();
-    return progress.sessions.filter((session) => new Date(session.at).getTime() >= boundary);
+function getDomain(trackId) {
+    return atlas.domains[trackId];
 }
 
-function recordSession(topicId) {
-    const today = new Date().toISOString().slice(0, 10);
-    const key = `${today}:${topicId}`;
-    if (!progress.sessions.some((session) => session.key === key)) {
-        progress.sessions.push({ key, topicId, at: new Date().toISOString() });
-        progress.sessions = progress.sessions.slice(-120);
-        saveProgress();
-        renderProgress();
+function getGuide(guideId) {
+    return topics.find((topic) => topic.id === guideId);
+}
+
+function getDomainGuides(trackId) {
+    return topics.filter((topic) => topic.track === trackId);
+}
+
+function flattenDomain(trackId) {
+    const domain = getDomain(trackId);
+    const flat = [];
+    domain.clusters.forEach((cluster) => {
+        flat.push({ ...cluster, kind: "cluster", clusterId: cluster.id });
+        cluster.nodes.forEach((node) => flat.push({ ...node, kind: node.guide ? "guide" : "concept", clusterId: cluster.id, clusterLabel: cluster.label }));
+    });
+    return flat;
+}
+
+function findGraphNode(trackId, nodeId) {
+    if (nodeId === "root") return { id: "root", kind: "root", label: getTrack(trackId).name, summary: getDomain(trackId).thesis };
+    return flattenDomain(trackId).find((node) => node.id === nodeId);
+}
+
+function findGuideLocation(guideId) {
+    for (const track of tracks) {
+        for (const cluster of getDomain(track.id).clusters) {
+            const node = cluster.nodes.find((candidate) => candidate.guide === guideId);
+            if (node) return { track, cluster, node };
+        }
     }
+    return null;
 }
 
 function renderNavigation() {
-    elements.trackNavigation.innerHTML = tracks.map((track) => `
-        <button class="nav-item" type="button" data-track="${escapeHtml(track.id)}">
+    elements.domainNavigation.innerHTML = tracks.map((track) => `
+        <button class="nav-item" type="button" data-domain="${escapeHtml(track.id)}">
             <span class="nav-symbol">${escapeHtml(track.mark)}</span>
             <span>${escapeHtml(track.shortName)}</span>
         </button>
     `).join("");
 }
 
-function renderTrackGrid() {
-    elements.trackGrid.innerHTML = tracks.map((track) => {
-        const trackTopics = topics.filter((topic) => topic.track === track.id);
-        const mastered = trackTopics.filter((topic) => getStatus(topic.id) === "mastered").length;
+function renderOverviewMap() {
+    const positions = [
+        { x: 50, y: 12 },
+        { x: 84, y: 38 },
+        { x: 71, y: 80 },
+        { x: 29, y: 80 },
+        { x: 16, y: 38 }
+    ];
+    const center = { x: 50, y: 50 };
+    const crossLinks = [[0, 1], [0, 4], [1, 3], [2, 3], [2, 4]];
+    const line = (from, to, className = "") => `<line x1="${from.x}" y1="${from.y}" x2="${to.x}" y2="${to.y}" class="${className}" />`;
+
+    elements.overviewMap.innerHTML = `
+        <div class="overview-map__canvas">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                ${positions.map((position) => line(center, position)).join("")}
+                ${crossLinks.map(([a, b]) => line(positions[a], positions[b], "bridge-line")).join("")}
+            </svg>
+            <div class="overview-root" style="--x: 50%; --y: 50%">
+                <span>Root domain</span>
+                <strong>${escapeHtml(atlas.root.title)}</strong>
+            </div>
+            ${tracks.map((track, index) => {
+                const domain = getDomain(track.id);
+                const conceptCount = domain.clusters.reduce((total, cluster) => total + cluster.nodes.length, 0);
+                return `
+                    <button class="overview-node" type="button" data-domain="${escapeHtml(track.id)}" style="--x: ${positions[index].x}%; --y: ${positions[index].y}%; --node-color: ${track.color}">
+                        <span>${escapeHtml(track.mark)}</span>
+                        <strong>${escapeHtml(track.shortName)}</strong>
+                        <small>${domain.clusters.length} clusters · ${conceptCount} concepts</small>
+                    </button>
+                `;
+            }).join("")}
+            <div class="bridge-label bridge-label--one">platforms</div>
+            <div class="bridge-label bridge-label--two">problem solving</div>
+            <div class="bridge-label bridge-label--three">distributed systems</div>
+        </div>
+    `;
+}
+
+function renderDomainGrid() {
+    elements.domainGrid.innerHTML = tracks.map((track) => {
+        const domain = getDomain(track.id);
+        const conceptCount = domain.clusters.reduce((total, cluster) => total + cluster.nodes.length, 0);
         return `
-            <button class="track-card" type="button" data-track="${escapeHtml(track.id)}" style="--track-color: ${track.color}">
-                <span class="track-card__top">
-                    <span class="track-mark">${escapeHtml(track.mark)}</span>
-                    <span class="track-arrow">↗</span>
-                </span>
+            <button class="domain-card" type="button" data-domain="${escapeHtml(track.id)}" style="--domain-color: ${track.color}">
+                <span class="domain-card__top"><i>${escapeHtml(track.mark)}</i><b>↗</b></span>
                 <h3>${escapeHtml(track.name)}</h3>
-                <p>${escapeHtml(track.description)}</p>
-                <span class="track-card__meta">${trackTopics.length} notes · ${mastered} mastered</span>
+                <p>${escapeHtml(domain.thesis)}</p>
+                <span class="domain-card__meta">${domain.clusters.length} clusters · ${conceptCount} connected concepts</span>
             </button>
         `;
     }).join("");
 }
 
-function renderProgress() {
-    const counts = STATUS_ORDER.reduce((result, status) => {
-        result[status] = topics.filter((topic) => getStatus(topic.id) === status).length;
-        return result;
-    }, {});
-    const completedMinutes = topics
-        .filter((topic) => getStatus(topic.id) === "mastered")
-        .reduce((total, topic) => total + topic.minutes, 0);
-    const completion = Math.round((counts.mastered / topics.length) * 100);
-    const sessions = weeklySessions().length;
-
-    elements.statGrid.innerHTML = `
-        <div class="stat-card"><span>Mastered</span><strong>${counts.mastered}<small> / ${topics.length}</small></strong></div>
-        <div class="stat-card"><span>In progress</span><strong>${counts.learning}</strong></div>
-        <div class="stat-card"><span>Review queue</span><strong>${counts.review}</strong></div>
-        <div class="stat-card"><span>Focused minutes</span><strong>${completedMinutes}</strong></div>
-    `;
-    elements.progressSummary.textContent = completion
-        ? `${completion}% mastered. Keep the review loop moving.`
-        : "Start with one pattern today.";
-    elements.reviewCount.textContent = counts.review;
-    elements.weeklyCount.textContent = `${Math.min(sessions, 5)} / 5`;
-    elements.weeklyProgress.style.width = `${Math.min((sessions / 5) * 100, 100)}%`;
-
-    renderTrackGrid();
-}
-
-function renderPractice() {
-    const topic = topics[practiceIndex % topics.length];
+function renderGuideCard(topic) {
     const track = getTrack(topic.track);
-    elements.practiceCard.style.setProperty("--topic-color", track.color);
-    elements.practiceCard.innerHTML = `
-        <div class="practice-prompt">
-            <span class="practice-label">${escapeHtml(track.shortName)} · ${escapeHtml(topic.difficulty)}</span>
-            <h3>${escapeHtml(topic.prompt)}</h3>
-            <p>Try to structure your answer before opening the playbook.</p>
-        </div>
-        <div class="practice-plan">
-            <h4>A strong approach</h4>
-            <ol>${topic.approach.slice(0, 3).map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol>
-            <button class="secondary-button" type="button" data-open-topic="${escapeHtml(topic.id)}">Open full playbook →</button>
-        </div>
+    const location = findGuideLocation(topic.id);
+    return `
+        <button class="guide-card" type="button" data-guide="${escapeHtml(topic.id)}" style="--guide-color: ${track.color}">
+            <span class="guide-card__meta">
+                <i>${escapeHtml(track.mark)}</i>
+                <span>${escapeHtml(location?.cluster.label || topic.type)}</span>
+            </span>
+            <h3>${escapeHtml(topic.title)}</h3>
+            <p>${escapeHtml(topic.summary)}</p>
+            <span class="guide-card__footer"><span>${escapeHtml(topic.type)}</span><b>Read guide →</b></span>
+        </button>
     `;
 }
 
-function setView(view, trackId = "all") {
-    const showHome = view === "home";
-    elements.homeView.classList.toggle("hidden", !showHome);
-    elements.libraryView.classList.toggle("hidden", showHome);
+function renderFeaturedGuides() {
+    const featured = tracks.flatMap((track) => getDomainGuides(track.id).slice(0, 1));
+    elements.featuredGuides.innerHTML = featured.map(renderGuideCard).join("");
+}
 
-    if (!showHome) {
-        activeTrack = trackId;
-        renderLibrary();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-    } else {
-        activeTrack = "all";
+function setView(view, options = {}) {
+    activeView = view;
+    elements.overviewView.classList.toggle("hidden", view !== "overview");
+    elements.domainView.classList.toggle("hidden", view !== "domain");
+    elements.guidesView.classList.toggle("hidden", view !== "guides");
+
+    if (view === "domain") {
+        activeDomain = options.domain || activeDomain;
+        activeGraphNode = options.concept || "root";
         elements.search.value = "";
-        renderProgress();
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        renderDomain();
+    } else if (view === "guides") {
+        if (options.filter) activeFilter = options.filter;
+        renderGuideLibrary();
+    } else {
+        elements.search.value = "";
     }
 
     document.querySelectorAll(".nav-item").forEach((item) => {
-        const isHome = showHome && item.dataset.view === "home";
-        const isTrack = !showHome && item.dataset.track === trackId;
-        item.classList.toggle("active", isHome || isTrack);
+        const activeOverview = view === "overview" && item.dataset.view === "overview";
+        const activeGuides = view === "guides" && item.dataset.view === "guides";
+        const activeDomainItem = view === "domain" && item.dataset.domain === activeDomain;
+        item.classList.toggle("active", activeOverview || activeGuides || activeDomainItem);
     });
+
     closeSidebar();
+    if (!options.noScroll) window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function filteredTopics() {
-    const query = elements.search.value.trim().toLowerCase();
-    return topics.filter((topic) => {
-        const track = getTrack(topic.track);
-        const matchesTrack = activeTrack === "all" || topic.track === activeTrack;
-        const matchesStatus = activeStatus === "all" || getStatus(topic.id) === activeStatus;
-        const searchText = [
-            topic.title,
-            topic.summary,
-            topic.prompt,
-            topic.type,
-            track.name,
-            ...(topic.tags || []),
-            ...(topic.platformMap || [])
-        ].join(" ").toLowerCase();
-        return matchesTrack && matchesStatus && (!query || searchText.includes(query));
+function renderDomain() {
+    const track = getTrack(activeDomain);
+    const domain = getDomain(activeDomain);
+    const conceptCount = domain.clusters.reduce((total, cluster) => total + cluster.nodes.length, 0);
+
+    elements.domainHeader.innerHTML = `
+        <div>
+            <p class="eyebrow">Domain map · ${escapeHtml(track.mark)}</p>
+            <h1 id="domain-title">${escapeHtml(track.name)}</h1>
+            <p>${escapeHtml(domain.thesis)}</p>
+        </div>
+        <div class="domain-summary" style="--domain-color: ${track.color}">
+            <strong>${domain.clusters.length}</strong><span>concept clusters</span>
+            <strong>${conceptCount}</strong><span>key concepts</span>
+            <strong>${getDomainGuides(activeDomain).length}</strong><span>detailed guides</span>
+        </div>
+    `;
+    elements.principleStrip.innerHTML = domain.principles.map((principle, index) => `<span><i>0${index + 1}</i>${escapeHtml(principle)}</span>`).join("");
+    renderGraph();
+    renderClusterIndex();
+    elements.domainGuides.innerHTML = getDomainGuides(activeDomain).map(renderGuideCard).join("");
+}
+
+function graphGeometry() {
+    const domain = getDomain(activeDomain);
+    const center = { x: 470, y: 325 };
+    const clusters = [];
+    const concepts = [];
+    const links = [];
+
+    domain.clusters.forEach((cluster, clusterIndex) => {
+        const angle = -Math.PI / 2 + (clusterIndex / domain.clusters.length) * Math.PI * 2;
+        const clusterNode = {
+            id: cluster.id,
+            kind: "cluster",
+            x: center.x + Math.cos(angle) * 165,
+            y: center.y + Math.sin(angle) * 165,
+            data: cluster
+        };
+        clusters.push(clusterNode);
+        links.push({ source: "root", target: cluster.id, kind: "branch" });
+
+        cluster.nodes.forEach((concept, conceptIndex) => {
+            const spread = (conceptIndex - (cluster.nodes.length - 1) / 2) * 0.18;
+            const conceptAngle = angle + spread;
+            const conceptNode = {
+                id: concept.id,
+                kind: concept.guide ? "guide" : "concept",
+                x: center.x + Math.cos(conceptAngle) * 285,
+                y: center.y + Math.sin(conceptAngle) * 285,
+                data: concept,
+                clusterId: cluster.id
+            };
+            concepts.push(conceptNode);
+            links.push({ source: cluster.id, target: concept.id, kind: "detail" });
+        });
     });
+
+    return {
+        nodes: [{ id: "root", kind: "root", x: center.x, y: center.y, data: { label: getTrack(activeDomain).name } }, ...clusters, ...concepts],
+        links
+    };
 }
 
-function renderLibrary() {
-    const track = activeTrack === "all" ? null : getTrack(activeTrack);
-    const results = filteredTopics();
-    const query = elements.search.value.trim();
+function shortLabel(label, limit = 22) {
+    return label.length > limit ? `${label.slice(0, limit - 1)}…` : label;
+}
 
-    elements.libraryEyebrow.textContent = query ? "Search results" : track ? "Focus area" : "Knowledge library";
-    elements.libraryTitle.textContent = query ? `“${query}”` : track ? track.name : "All topics";
-    elements.libraryDescription.textContent = track
-        ? `${track.description} ${track.topics}.`
-        : "Practical patterns and representative interview problems across all five tracks.";
-    elements.libraryCount.textContent = `${results.length} topic${results.length === 1 ? "" : "s"}`;
+function renderGraph() {
+    const track = getTrack(activeDomain);
+    const graph = graphGeometry();
+    const selected = graph.nodes.find((node) => node.id === activeGraphNode) || graph.nodes[0];
+    const connected = new Set([selected.id]);
+    graph.links.forEach((link) => {
+        if (link.source === selected.id) connected.add(link.target);
+        if (link.target === selected.id) connected.add(link.source);
+    });
+    if (selected.kind === "root") graph.nodes.filter((node) => node.kind === "cluster").forEach((node) => connected.add(node.id));
 
-    elements.topicList.innerHTML = results.map((topic) => {
-        const topicTrack = getTrack(topic.track);
-        const status = getStatus(topic.id);
+    const lineMarkup = graph.links.map((link) => {
+        const source = graph.nodes.find((node) => node.id === link.source);
+        const target = graph.nodes.find((node) => node.id === link.target);
+        const isActive = connected.has(source.id) && connected.has(target.id);
+        return `<line x1="${source.x}" y1="${source.y}" x2="${target.x}" y2="${target.y}" class="graph-link graph-link--${link.kind} ${isActive ? "is-active" : "is-muted"}" />`;
+    }).join("");
+
+    const nodeMarkup = graph.nodes.map((node) => {
+        const isSelected = node.id === selected.id;
+        const isMuted = selected.kind !== "root" && !connected.has(node.id);
+        const label = node.kind === "root" ? node.data.label : node.data.label;
+        const labelY = node.kind === "root" ? 5 : node.kind === "cluster" ? 48 : 32;
+        const body = node.kind === "root"
+            ? `<circle r="56" class="graph-node__body" /><circle r="64" class="graph-node__orbit" />`
+            : node.kind === "cluster"
+                ? `<circle r="28" class="graph-node__body" />`
+                : node.kind === "guide"
+                    ? `<rect x="-12" y="-12" width="24" height="24" rx="5" class="graph-node__body" />`
+                    : `<circle r="11" class="graph-node__body" />`;
         return `
-            <button class="topic-card" type="button" data-open-topic="${escapeHtml(topic.id)}" style="--topic-color: ${topicTrack.color}">
-                <span class="topic-card__top">
-                    <span class="topic-type">${escapeHtml(topicTrack.shortName)} · ${escapeHtml(topic.type)}</span>
-                    <span class="topic-status" data-status="${status}">${STATUS_LABELS[status]}</span>
-                </span>
-                <h2>${escapeHtml(topic.title)}</h2>
-                <p>${escapeHtml(topic.summary)}</p>
-                <span class="topic-card__footer">
-                    <span>${escapeHtml(topic.difficulty)} · ${topic.minutes} min</span>
-                    <span>→</span>
-                </span>
-            </button>
+            <g class="graph-node graph-node--${node.kind} ${isSelected ? "is-selected" : ""} ${isMuted ? "is-muted" : ""}"
+               transform="translate(${node.x} ${node.y})" data-graph-node="${escapeHtml(node.id)}" role="button" tabindex="0" aria-label="Explore ${escapeHtml(label)}">
+                ${body}
+                <text text-anchor="middle" y="${labelY}" class="graph-node__label">${escapeHtml(shortLabel(label, node.kind === "root" ? 24 : 21))}</text>
+            </g>
         `;
     }).join("");
 
-    elements.topicList.classList.toggle("hidden", results.length === 0);
-    elements.emptyState.classList.toggle("hidden", results.length !== 0);
+    elements.domainGraph.style.setProperty("--graph-color", track.color);
+    elements.domainGraph.innerHTML = `<g class="graph-links">${lineMarkup}</g><g class="graph-nodes">${nodeMarkup}</g>`;
+    elements.domainGraph.setAttribute("aria-label", `${track.name} knowledge graph`);
+
+    elements.domainGraph.querySelectorAll("[data-graph-node]").forEach((node) => {
+        const select = () => selectGraphNode(node.dataset.graphNode);
+        node.addEventListener("click", select);
+        node.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                select();
+            }
+        });
+    });
+
+    renderConceptInspector(selected.id);
+}
+
+function selectGraphNode(nodeId) {
+    activeGraphNode = nodeId;
+    renderGraph();
+    const hash = new URLSearchParams({ domain: activeDomain, concept: activeGraphNode });
+    history.replaceState(null, "", `#${hash.toString()}`);
+}
+
+function renderConceptInspector(nodeId) {
+    const track = getTrack(activeDomain);
+    const domain = getDomain(activeDomain);
+    const node = findGraphNode(activeDomain, nodeId) || findGraphNode(activeDomain, "root");
+
+    if (node.kind === "root") {
+        elements.conceptInspector.innerHTML = `
+            <span class="inspector-type">Domain</span>
+            <h3>${escapeHtml(track.name)}</h3>
+            <p>${escapeHtml(domain.thesis)}</p>
+            <div class="inspector-connections"><span>Direct branches</span>${domain.clusters.map((cluster) => `<button type="button" data-concept="${escapeHtml(cluster.id)}">${escapeHtml(cluster.label)}</button>`).join("")}</div>
+        `;
+        return;
+    }
+
+    if (node.kind === "cluster") {
+        const cluster = domain.clusters.find((candidate) => candidate.id === node.id);
+        elements.conceptInspector.innerHTML = `
+            <span class="inspector-type">Concept cluster</span>
+            <h3>${escapeHtml(cluster.label)}</h3>
+            <p>${escapeHtml(cluster.summary)}</p>
+            <div class="inspector-connections"><span>Connected concepts</span>${cluster.nodes.map((concept) => `<button type="button" data-concept="${escapeHtml(concept.id)}">${escapeHtml(concept.label)}</button>`).join("")}</div>
+        `;
+        return;
+    }
+
+    elements.conceptInspector.innerHTML = `
+        <span class="inspector-type">${node.guide ? "Concept + detailed guide" : "Key concept"}</span>
+        <h3>${escapeHtml(node.label)}</h3>
+        <p>${escapeHtml(node.summary)}</p>
+        <div class="concept-path"><span>${escapeHtml(track.shortName)}</span><i>→</i><span>${escapeHtml(node.clusterLabel)}</span><i>→</i><strong>${escapeHtml(node.label)}</strong></div>
+        ${node.guide ? `<button class="primary-button inspector-guide" type="button" data-guide="${escapeHtml(node.guide)}">Open detailed guide <span>→</span></button>` : `<p class="inspector-note">This node is part of the approved graph structure; a dedicated guide can be added without changing its place in the atlas.</p>`}
+    `;
+}
+
+function renderClusterIndex() {
+    const domain = getDomain(activeDomain);
+    elements.clusterIndex.innerHTML = domain.clusters.map((cluster, index) => `
+        <article class="cluster-card">
+            <button type="button" data-concept="${escapeHtml(cluster.id)}">
+                <span>0${index + 1}</span>
+                <h3>${escapeHtml(cluster.label)}</h3>
+                <p>${escapeHtml(cluster.summary)}</p>
+            </button>
+            <ul>${cluster.nodes.map((node) => `<li><button type="button" data-concept="${escapeHtml(node.id)}"><i class="${node.guide ? "has-guide" : ""}"></i>${escapeHtml(node.label)}${node.guide ? "<span>guide</span>" : ""}</button></li>`).join("")}</ul>
+        </article>
+    `).join("");
+}
+
+function renderDomainFilters() {
+    elements.domainFilters.innerHTML = `
+        <button class="domain-filter ${activeFilter === "all" ? "active" : ""}" type="button" data-filter="all">All domains</button>
+        ${tracks.map((track) => `<button class="domain-filter ${activeFilter === track.id ? "active" : ""}" type="button" data-filter="${escapeHtml(track.id)}">${escapeHtml(track.shortName)}</button>`).join("")}
+    `;
+}
+
+function searchKnowledge(query) {
+    const term = query.trim().toLowerCase();
+    const guideResults = topics.filter((topic) => {
+        if (activeFilter !== "all" && topic.track !== activeFilter) return false;
+        const location = findGuideLocation(topic.id);
+        return !term || [topic.title, topic.summary, topic.prompt, topic.type, ...(topic.tags || []), ...(topic.platformMap || []), location?.cluster.label].join(" ").toLowerCase().includes(term);
+    });
+    const conceptResults = [];
+    if (term) {
+        tracks.forEach((track) => {
+            if (activeFilter !== "all" && track.id !== activeFilter) return;
+            flattenDomain(track.id)
+                .filter((node) => node.kind !== "cluster" && [node.label, node.summary, node.clusterLabel, track.name].join(" ").toLowerCase().includes(term))
+                .forEach((node) => conceptResults.push({ ...node, track }));
+        });
+    }
+    return { guideResults, conceptResults };
+}
+
+function renderConceptResult(result) {
+    return `
+        <button class="guide-card concept-result" type="button" data-domain="${escapeHtml(result.track.id)}" data-concept="${escapeHtml(result.id)}" style="--guide-color: ${result.track.color}">
+            <span class="guide-card__meta"><i>${escapeHtml(result.track.mark)}</i><span>Concept · ${escapeHtml(result.clusterLabel)}</span></span>
+            <h3>${escapeHtml(result.label)}</h3>
+            <p>${escapeHtml(result.summary)}</p>
+            <span class="guide-card__footer"><span>Knowledge graph node</span><b>View in map →</b></span>
+        </button>
+    `;
+}
+
+function renderGuideLibrary() {
+    const query = elements.search.value.trim();
+    const { guideResults, conceptResults } = searchKnowledge(query);
+    const total = guideResults.length + conceptResults.length;
+    const track = activeFilter === "all" ? null : getTrack(activeFilter);
+
+    elements.libraryEyebrow.textContent = query ? "Search across the atlas" : "Detailed knowledge base";
+    elements.guideLibraryTitle.textContent = query ? `“${query}”` : track ? `${track.shortName} guides` : "All guides";
+    elements.libraryDescription.textContent = query
+        ? "Results include both graph concepts and detailed applied guides."
+        : track
+            ? getDomain(track.id).thesis
+            : "Applied explanations that connect concepts to representative problems and implementation patterns.";
+    elements.libraryCount.textContent = `${total} result${total === 1 ? "" : "s"}`;
+    renderDomainFilters();
+    elements.guideLibrary.innerHTML = `${conceptResults.map(renderConceptResult).join("")}${guideResults.map(renderGuideCard).join("")}`;
+    elements.guideLibrary.classList.toggle("hidden", total === 0);
+    elements.emptyState.classList.toggle("hidden", total !== 0);
 }
 
 function renderList(items) {
     return `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
 }
 
-function openTopic(topicId, options = {}) {
-    const topic = getTopic(topicId);
+function relatedGuides(topic) {
+    return topics
+        .filter((candidate) => candidate.id !== topic.id)
+        .map((candidate) => {
+            const sharedTags = (candidate.tags || []).filter((tag) => (topic.tags || []).includes(tag)).length;
+            return { candidate, score: sharedTags * 2 + (candidate.track === topic.track ? 1 : 0) };
+        })
+        .filter(({ score }) => score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3)
+        .map(({ candidate }) => candidate);
+}
+
+function openGuide(guideId, options = {}) {
+    const topic = getGuide(guideId);
     if (!topic) return;
     const track = getTrack(topic.track);
-    const status = getStatus(topic.id);
-    const nextStatus = STATUS_ORDER[(STATUS_ORDER.indexOf(status) + 1) % STATUS_ORDER.length];
+    const location = findGuideLocation(topic.id);
     const platformBlock = topic.platformMap ? `
         <div class="content-block answer-block">
             <span>Platform translation</span>
@@ -273,82 +474,61 @@ function openTopic(topicId, options = {}) {
     const codeBlock = topic.code ? `
         <div class="code-panel">
             <div class="code-panel__header">
-                <span>${escapeHtml(topic.code.language)} pattern</span>
+                <span>${escapeHtml(topic.code.language)} reference</span>
                 <button class="copy-button" type="button" data-copy-code="${escapeHtml(topic.id)}">Copy code</button>
             </div>
             <pre><code>${escapeHtml(topic.code.value)}</code></pre>
         </div>
     ` : "";
+    const related = relatedGuides(topic);
 
     elements.dialogContent.innerHTML = `
         <div class="dialog-hero" style="--topic-color: ${track.color}">
-            <p class="eyebrow">${escapeHtml(track.name)} · ${escapeHtml(topic.type)}</p>
+            <p class="eyebrow">${escapeHtml(track.name)} · ${escapeHtml(location?.cluster.label || topic.type)}</p>
             <h1>${escapeHtml(topic.title)}</h1>
             <p>${escapeHtml(topic.summary)}</p>
-            <div class="dialog-meta">
-                <span>${escapeHtml(topic.difficulty)}</span>
-                <span>${topic.minutes} minutes</span>
-                <span>${escapeHtml(STATUS_LABELS[status])}</span>
-            </div>
+            <div class="dialog-meta">${(topic.tags || []).slice(0, 5).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>
         </div>
         <div class="dialog-body">
+            ${location ? `<button class="graph-location" type="button" data-domain="${escapeHtml(track.id)}" data-concept="${escapeHtml(location.node.id)}"><span>Graph location</span><strong>${escapeHtml(track.shortName)} → ${escapeHtml(location.cluster.label)} → ${escapeHtml(location.node.label)}</strong><i>View in map ↗</i></button>` : ""}
             <div class="prompt-box">
-                <span>Interview prompt</span>
+                <span>Representative problem</span>
                 <p>${escapeHtml(topic.prompt)}</p>
             </div>
             <div class="dialog-grid">
                 <div class="content-block">
-                    <span>Reasoning sequence</span>
-                    <h2>Approach</h2>
+                    <span>Reasoning model</span>
+                    <h2>How to approach it</h2>
                     <ol>${topic.approach.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol>
                 </div>
                 <div class="content-block">
                     <span>Failure modes</span>
-                    <h2>Watch for</h2>
+                    <h2>What breaks the model</h2>
                     ${renderList(topic.pitfalls)}
                 </div>
             </div>
             <div class="content-block answer-block">
-                <span>60-second answer</span>
-                <h2>Say it clearly</h2>
+                <span>Core synthesis</span>
+                <h2>What to remember</h2>
                 <p>${escapeHtml(topic.answer)}</p>
             </div>
             ${platformBlock}
             ${codeBlock}
-            <div class="dialog-actions">
-                <p>Current status: <strong>${escapeHtml(STATUS_LABELS[status])}</strong></p>
-                <button class="status-button" type="button" data-advance-status="${escapeHtml(topic.id)}">
-                    ${nextStatus === "new" ? "Start status over" : `Mark as ${STATUS_LABELS[nextStatus].toLowerCase()}`} →
-                </button>
-            </div>
+            ${related.length ? `<div class="related-guides"><span>Connected guides</span><div>${related.map((guide) => `<button type="button" data-guide="${escapeHtml(guide.id)}">${escapeHtml(guide.title)} <i>→</i></button>`).join("")}</div></div>` : ""}
         </div>
     `;
 
     if (!elements.topicDialog.open) elements.topicDialog.showModal();
-    recordSession(topic.id);
-    if (!options.fromHash) history.replaceState(null, "", `#topic=${encodeURIComponent(topic.id)}`);
+    if (!options.fromHash) history.replaceState(null, "", `#guide=${encodeURIComponent(topic.id)}`);
 }
 
-function closeTopic() {
+function closeGuide() {
     if (elements.topicDialog.open) elements.topicDialog.close();
-    if (location.hash.startsWith("#topic=")) {
-        history.replaceState(null, "", `${location.pathname}${location.search}`);
-    }
+    if (location.hash.startsWith("#guide=")) history.replaceState(null, "", `${location.pathname}${location.search}`);
 }
 
-function advanceStatus(topicId) {
-    const current = getStatus(topicId);
-    const next = STATUS_ORDER[(STATUS_ORDER.indexOf(current) + 1) % STATUS_ORDER.length];
-    progress.statuses[topicId] = next;
-    saveProgress();
-    renderProgress();
-    renderLibrary();
-    openTopic(topicId);
-    showToast(`Moved to ${STATUS_LABELS[next].toLowerCase()}.`);
-}
-
-async function copyCode(topicId) {
-    const topic = getTopic(topicId);
+async function copyCode(guideId) {
+    const topic = getGuide(guideId);
     if (!topic?.code) return;
     try {
         await navigator.clipboard.writeText(topic.code.value);
@@ -376,30 +556,31 @@ function closeSidebar() {
 function setupEvents() {
     document.addEventListener("click", (event) => {
         const viewButton = event.target.closest("[data-view]");
-        const trackButton = event.target.closest("[data-track]");
-        const topicButton = event.target.closest("[data-open-topic]");
-        const statusButton = event.target.closest("[data-advance-status]");
+        const domainButton = event.target.closest("[data-domain]");
+        const conceptButton = event.target.closest("[data-concept]");
+        const guideButton = event.target.closest("[data-guide]");
+        const filterButton = event.target.closest("[data-filter]");
         const copyButton = event.target.closest("[data-copy-code]");
 
-        if (viewButton) setView(viewButton.dataset.view === "library" ? "library" : "home");
-        if (trackButton) setView("library", trackButton.dataset.track);
-        if (topicButton) openTopic(topicButton.dataset.openTopic);
-        if (statusButton) advanceStatus(statusButton.dataset.advanceStatus);
+        if (viewButton) setView(viewButton.dataset.view === "guides" ? "guides" : "overview");
+        if (domainButton) {
+            if (elements.topicDialog.open) closeGuide();
+            setView("domain", { domain: domainButton.dataset.domain, concept: conceptButton?.dataset.concept || "root" });
+        } else if (conceptButton && activeView === "domain") {
+            selectGraphNode(conceptButton.dataset.concept);
+            document.querySelector(".graph-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        if (guideButton) openGuide(guideButton.dataset.guide);
+        if (filterButton) {
+            activeFilter = filterButton.dataset.filter;
+            renderGuideLibrary();
+        }
         if (copyButton) copyCode(copyButton.dataset.copyCode);
     });
 
-    document.querySelectorAll(".filter-chip").forEach((button) => {
-        button.addEventListener("click", () => {
-            activeStatus = button.dataset.status;
-            document.querySelectorAll(".filter-chip").forEach((chip) => chip.classList.toggle("active", chip === button));
-            renderLibrary();
-        });
-    });
-
     elements.search.addEventListener("input", () => {
-        if (!elements.search.value && elements.libraryView.classList.contains("hidden")) return;
-        if (elements.libraryView.classList.contains("hidden")) setView("library");
-        else renderLibrary();
+        if (activeView !== "guides") setView("guides", { noScroll: true });
+        else renderGuideLibrary();
     });
 
     document.addEventListener("keydown", (event) => {
@@ -409,55 +590,36 @@ function setupEvents() {
         }
     });
 
-    document.getElementById("start-session").addEventListener("click", () => {
-        const next = topics.find((topic) => getStatus(topic.id) === "review")
-            || topics.find((topic) => getStatus(topic.id) === "learning")
-            || topics.find((topic) => getStatus(topic.id) === "new")
-            || topics[0];
-        openTopic(next.id);
-    });
-
-    document.getElementById("review-button").addEventListener("click", () => {
-        activeStatus = "review";
-        document.querySelectorAll(".filter-chip").forEach((chip) => chip.classList.toggle("active", chip.dataset.status === "review"));
-        setView("library");
-    });
-
-    document.getElementById("next-practice").addEventListener("click", () => {
-        practiceIndex = (practiceIndex + 1) % topics.length;
-        renderPractice();
-    });
-
-    document.getElementById("reset-progress").addEventListener("click", () => {
-        if (!window.confirm("Reset every topic status and weekly session on this device?")) return;
-        progress = { statuses: {}, sessions: [] };
-        saveProgress();
-        renderProgress();
-        renderLibrary();
-        showToast("Progress reset.");
-    });
-
     document.getElementById("menu-button").addEventListener("click", openSidebar);
     document.getElementById("sidebar-close").addEventListener("click", closeSidebar);
     document.getElementById("sidebar-scrim").addEventListener("click", closeSidebar);
-    document.getElementById("dialog-close").addEventListener("click", closeTopic);
+    document.getElementById("dialog-close").addEventListener("click", closeGuide);
     elements.topicDialog.addEventListener("click", (event) => {
-        if (event.target === elements.topicDialog) closeTopic();
+        if (event.target === elements.topicDialog) closeGuide();
     });
     elements.topicDialog.addEventListener("cancel", (event) => {
         event.preventDefault();
-        closeTopic();
+        closeGuide();
     });
+}
+
+function initFromHash() {
+    const params = new URLSearchParams(location.hash.slice(1));
+    const guideId = params.get("guide");
+    const domainId = params.get("domain");
+    const conceptId = params.get("concept");
+    if (guideId && getGuide(guideId)) openGuide(guideId, { fromHash: true });
+    else if (domainId && getDomain(domainId)) setView("domain", { domain: domainId, concept: conceptId || "root", noScroll: true });
 }
 
 function init() {
     renderNavigation();
-    renderProgress();
-    renderPractice();
+    renderOverviewMap();
+    renderDomainGrid();
+    renderFeaturedGuides();
+    renderGuideLibrary();
     setupEvents();
-
-    const topicId = new URLSearchParams(location.hash.slice(1)).get("topic");
-    if (topicId && getTopic(topicId)) openTopic(topicId, { fromHash: true });
+    initFromHash();
 }
 
 init();

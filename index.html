@@ -4,22 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#f4f2ec">
-    <meta name="description" content="A practical interview learning system for cloud, data platforms, Python, SQL, and Go.">
+    <meta name="description" content="A connected engineering knowledge atlas for cloud, data platforms, Python, SQL, and Go.">
     <link rel="canonical" href="https://lily-feng.github.io/Efficient_Learning/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Patternbook">
-    <meta property="og:title" content="Patternbook — Practical Interview Learning">
-    <meta property="og:description" content="Learn the pattern. Solve the problem. Practical field notes for Cloud, Data Platform, Python, SQL, and Go interviews.">
+    <meta property="og:title" content="Patternbook — Engineering Knowledge Atlas">
+    <meta property="og:description" content="See the system before the details. Connected mental models for Cloud, Data Platform, Python, SQL, and Go.">
     <meta property="og:url" content="https://lily-feng.github.io/Efficient_Learning/">
     <meta property="og:image" content="https://lily-feng.github.io/Efficient_Learning/public/og.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="Patternbook field guide with tabs for Cloud, Data Platform, Python, SQL, and Go">
+    <meta property="og:image:alt" content="Patternbook engineering field guide with tabs for Cloud, Data Platform, Python, SQL, and Go">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Patternbook — Practical Interview Learning">
-    <meta name="twitter:description" content="Learn the pattern. Solve the problem.">
+    <meta name="twitter:title" content="Patternbook — Engineering Knowledge Atlas">
+    <meta name="twitter:description" content="See the system before the details.">
     <meta name="twitter:image" content="https://lily-feng.github.io/Efficient_Learning/public/og.png">
-    <title>Patternbook — Practical Interview Learning</title>
+    <title>Patternbook — Engineering Knowledge Atlas</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -28,37 +28,40 @@
     <div class="app-shell">
         <aside class="sidebar" id="sidebar">
             <div class="brand-row">
-                <button class="brand" type="button" data-view="home" aria-label="Go to overview">
+                <button class="brand" type="button" data-view="overview" aria-label="Go to atlas overview">
                     <span class="brand-mark" aria-hidden="true">P/</span>
                     <span>
                         <strong>Patternbook</strong>
-                        <small>Interview field notes</small>
+                        <small>Engineering knowledge atlas</small>
                     </span>
                 </button>
                 <button class="icon-button sidebar-close" id="sidebar-close" type="button" aria-label="Close navigation">×</button>
             </div>
 
-            <nav class="primary-nav" aria-label="Learning areas">
-                <button class="nav-item active" type="button" data-view="home">
-                    <span class="nav-symbol">⌂</span>
-                    <span>Overview</span>
+            <nav class="primary-nav" aria-label="Knowledge domains">
+                <button class="nav-item active" type="button" data-view="overview">
+                    <span class="nav-symbol">◎</span>
+                    <span>Atlas overview</span>
                 </button>
-                <p class="nav-label">Focus areas</p>
-                <div id="track-navigation"></div>
+                <p class="nav-label">Domain maps</p>
+                <div id="domain-navigation"></div>
+                <button class="nav-item" type="button" data-view="guides">
+                    <span class="nav-symbol">≡</span>
+                    <span>All detailed guides</span>
+                </button>
             </nav>
 
             <div class="sidebar-footer">
-                <div class="weekly-card">
-                    <div class="weekly-card__top">
-                        <span>This week</span>
-                        <strong id="weekly-count">0 / 5</strong>
-                    </div>
-                    <div class="progress-track" aria-hidden="true">
-                        <span id="weekly-progress"></span>
-                    </div>
-                    <p>Complete five focused review sessions.</p>
+                <div class="legend-card">
+                    <p>Graph key</p>
+                    <span><i class="legend-dot legend-dot--root"></i> Domain</span>
+                    <span><i class="legend-dot legend-dot--cluster"></i> Concept cluster</span>
+                    <span><i class="legend-dot legend-dot--concept"></i> Key concept</span>
+                    <span><i class="legend-dot legend-dot--guide"></i> Detailed guide</span>
                 </div>
-                <button class="text-button" type="button" id="reset-progress">Reset progress</button>
+                <a class="garden-link" href="https://lily-feng.github.io/knowledge" target="_blank" rel="noreferrer">
+                    Lily’s knowledge garden <span>↗</span>
+                </a>
             </div>
         </aside>
 
@@ -67,101 +70,153 @@
                 <button class="icon-button menu-button" id="menu-button" type="button" aria-label="Open navigation">☰</button>
                 <div class="search-wrap">
                     <span aria-hidden="true">⌕</span>
-                    <label class="sr-only" for="global-search">Search the patternbook</label>
-                    <input id="global-search" type="search" placeholder="Search patterns, tools, or interview prompts…" autocomplete="off">
+                    <label class="sr-only" for="global-search">Search the knowledge atlas</label>
+                    <input id="global-search" type="search" placeholder="Search concepts, trade-offs, or problems…" autocomplete="off">
                     <kbd>/</kbd>
                 </div>
-                <button class="review-button" id="review-button" type="button">
-                    Review queue
-                    <span id="review-count">0</span>
-                </button>
+                <a class="topbar-link" href="https://github.com/Lily-Feng/Efficient_Learning" target="_blank" rel="noreferrer">View source <span>↗</span></a>
             </header>
 
             <main id="main-content">
-                <section class="view" id="home-view" aria-labelledby="home-title">
+                <section class="view" id="overview-view" aria-labelledby="overview-title">
                     <div class="hero">
                         <div class="hero-copy">
-                            <p class="eyebrow">Your practical learning system</p>
-                            <h1 id="home-title">Learn the pattern.<br><em>Solve the problem.</em></h1>
-                            <p class="hero-intro">A focused field guide for the questions that recur in technical interviews—and the decisions that matter on the job.</p>
+                            <p class="eyebrow">A connected engineering reference</p>
+                            <h1 id="overview-title">See the system<br><em>before the details.</em></h1>
+                            <p class="hero-intro">Patternbook maps the mental models, decisions, and recurring problems behind five engineering domains. Start from a relationship, then open the guide when you need depth.</p>
                             <div class="hero-actions">
-                                <button class="primary-button" id="start-session" type="button">Start a 15-min session <span>→</span></button>
-                                <button class="secondary-button" type="button" data-view="library">Browse all topics</button>
+                                <button class="primary-button" type="button" data-domain="cloud">Explore a domain <span>→</span></button>
+                                <button class="secondary-button" type="button" data-view="guides">Browse detailed guides</button>
                             </div>
                         </div>
-                        <div class="hero-note" aria-label="Learning method">
-                            <span class="note-pin" aria-hidden="true"></span>
-                            <p class="note-number">01</p>
-                            <h2>Recall before reveal</h2>
-                            <p>Read the prompt. Speak your approach. Then compare it with the playbook.</p>
-                            <span class="scribble">prompt → pattern → practice</span>
-                        </div>
+                        <aside class="orientation-card" aria-label="How Patternbook fits the wider knowledge garden">
+                            <p class="orientation-number">MAP / 02</p>
+                            <h2>One layer of a larger garden</h2>
+                            <div class="orientation-flow">
+                                <span>Lily’s knowledge garden</span>
+                                <i>↓</i>
+                                <strong>Engineering knowledge</strong>
+                                <i>↓</i>
+                                <span>Concept maps + detailed guides</span>
+                            </div>
+                            <a href="https://lily-feng.github.io/knowledge" target="_blank" rel="noreferrer">Open the high-level map ↗</a>
+                        </aside>
                     </div>
 
-                    <section class="section-block" aria-labelledby="progress-title">
+                    <section class="section-block" aria-labelledby="system-map-title">
                         <div class="section-heading">
                             <div>
-                                <p class="eyebrow">At a glance</p>
-                                <h2 id="progress-title">Your learning map</h2>
+                                <p class="eyebrow">High-level structure</p>
+                                <h2 id="system-map-title">The engineering atlas</h2>
                             </div>
-                            <p id="progress-summary">Start with one pattern today.</p>
+                            <p>Five domains connected by shared concerns: reliability, data, performance, and operational clarity.</p>
                         </div>
-                        <div class="stat-grid" id="stat-grid"></div>
+                        <div class="overview-map" id="overview-map"></div>
                     </section>
 
-                    <section class="section-block" aria-labelledby="tracks-title">
+                    <section class="section-block" aria-labelledby="domains-title">
                         <div class="section-heading">
                             <div>
-                                <p class="eyebrow">Five focused tracks</p>
-                                <h2 id="tracks-title">Choose your terrain</h2>
+                                <p class="eyebrow">Domain maps</p>
+                                <h2 id="domains-title">Enter through the question you have</h2>
                             </div>
-                            <p>Organized by problems—not vendor menus.</p>
+                            <p>Each map exposes the foundational concepts, their relationships, and the guides that explain them.</p>
                         </div>
-                        <div class="track-grid" id="track-grid"></div>
+                        <div class="domain-grid" id="domain-grid"></div>
                     </section>
 
-                    <section class="section-block practice-section" aria-labelledby="practice-title">
+                    <section class="section-block" aria-labelledby="method-title">
                         <div class="section-heading">
                             <div>
-                                <p class="eyebrow">Interview practice</p>
-                                <h2 id="practice-title">Common problem, clear approach</h2>
+                                <p class="eyebrow">Reading model</p>
+                                <h2 id="method-title">Three layers of useful knowledge</h2>
                             </div>
-                            <button class="text-link" type="button" id="next-practice">Show another <span>↻</span></button>
                         </div>
-                        <article class="practice-card" id="practice-card"></article>
+                        <div class="method-grid">
+                            <article><span>01</span><h3>Mental model</h3><p>What are the essential concepts and boundaries? Learn the shape of the system first.</p></article>
+                            <article><span>02</span><h3>Decision model</h3><p>Which trade-offs change the answer? Connect requirements to choices instead of memorizing products.</p></article>
+                            <article><span>03</span><h3>Applied pattern</h3><p>How does the idea appear in an interview or real system? Use a representative problem to make it concrete.</p></article>
+                        </div>
+                    </section>
+
+                    <section class="section-block" aria-labelledby="guides-title">
+                        <div class="section-heading">
+                            <div>
+                                <p class="eyebrow">Detailed guides</p>
+                                <h2 id="guides-title">Representative problems</h2>
+                            </div>
+                            <button class="text-link" type="button" data-view="guides">View every guide <span>→</span></button>
+                        </div>
+                        <div class="guide-grid" id="featured-guides"></div>
                     </section>
                 </section>
 
-                <section class="view hidden" id="library-view" aria-labelledby="library-title">
+                <section class="view hidden" id="domain-view" aria-labelledby="domain-title">
+                    <div class="domain-header" id="domain-header"></div>
+                    <div class="principle-strip" id="principle-strip"></div>
+
+                    <section class="section-block graph-section" aria-labelledby="graph-title">
+                        <div class="section-heading">
+                            <div>
+                                <p class="eyebrow">Interactive concept map</p>
+                                <h2 id="graph-title">How the ideas connect</h2>
+                            </div>
+                            <p>Select a cluster or concept to inspect it. Concepts with a square center open into a detailed guide.</p>
+                        </div>
+                        <div class="graph-layout">
+                            <div class="graph-panel">
+                                <svg id="domain-graph" viewBox="0 0 940 650" role="img" aria-label="Interactive domain knowledge graph"></svg>
+                            </div>
+                            <aside class="concept-inspector" id="concept-inspector" aria-live="polite"></aside>
+                        </div>
+                    </section>
+
+                    <section class="section-block" aria-labelledby="cluster-title">
+                        <div class="section-heading">
+                            <div>
+                                <p class="eyebrow">Structured index</p>
+                                <h2 id="cluster-title">Concepts by cluster</h2>
+                            </div>
+                        </div>
+                        <div class="cluster-index" id="cluster-index"></div>
+                    </section>
+
+                    <section class="section-block" aria-labelledby="domain-guides-title">
+                        <div class="section-heading">
+                            <div>
+                                <p class="eyebrow">Applied depth</p>
+                                <h2 id="domain-guides-title">Detailed guides in this domain</h2>
+                            </div>
+                        </div>
+                        <div class="guide-grid" id="domain-guides"></div>
+                    </section>
+                </section>
+
+                <section class="view hidden" id="guides-view" aria-labelledby="guide-library-title">
                     <div class="library-header">
                         <div>
-                            <p class="eyebrow" id="library-eyebrow">Knowledge library</p>
-                            <h1 id="library-title">All topics</h1>
-                            <p id="library-description">Practical patterns and representative interview problems.</p>
+                            <p class="eyebrow" id="library-eyebrow">Detailed knowledge base</p>
+                            <h1 id="guide-library-title">All guides</h1>
+                            <p id="library-description">Applied explanations that connect concepts to representative problems and implementation patterns.</p>
                         </div>
-                        <div class="library-count" id="library-count">0 topics</div>
+                        <div class="library-count" id="library-count">0 guides</div>
                     </div>
-
-                    <div class="filter-bar" role="group" aria-label="Filter topics by status">
-                        <button class="filter-chip active" type="button" data-status="all">All</button>
-                        <button class="filter-chip" type="button" data-status="new">Not started</button>
-                        <button class="filter-chip" type="button" data-status="learning">Learning</button>
-                        <button class="filter-chip" type="button" data-status="review">Review</button>
-                        <button class="filter-chip" type="button" data-status="mastered">Mastered</button>
-                    </div>
-
-                    <div class="topic-list" id="topic-list"></div>
+                    <div class="domain-filters" id="domain-filters" role="group" aria-label="Filter guides by domain"></div>
+                    <div class="guide-grid guide-grid--library" id="guide-library"></div>
                     <div class="empty-state hidden" id="empty-state">
                         <span>⌕</span>
-                        <h2>No matching notes</h2>
-                        <p>Try a different search or status filter.</p>
+                        <h2>No matching knowledge</h2>
+                        <p>Try a broader concept, product, or problem.</p>
                     </div>
                 </section>
             </main>
 
             <footer>
-                <p>Built for deliberate practice. Progress stays on this device.</p>
-                <p>Static by design · Ready for GitHub Pages</p>
+                <div>
+                    <strong>Patternbook</strong>
+                    <p>A detailed engineering layer within Lily Feng’s connected knowledge garden.</p>
+                </div>
+                <a href="https://lily-feng.github.io/knowledge" target="_blank" rel="noreferrer">Return to the high-level graph ↗</a>
             </footer>
         </div>
     </div>
@@ -170,7 +225,7 @@
 
     <dialog class="topic-dialog" id="topic-dialog">
         <div class="dialog-shell">
-            <button class="dialog-close" id="dialog-close" type="button" aria-label="Close topic">×</button>
+            <button class="dialog-close" id="dialog-close" type="button" aria-label="Close guide">×</button>
             <div id="dialog-content"></div>
         </div>
     </dialog>
@@ -178,6 +233,7 @@
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     <script src="js/knowledge.js"></script>
+    <script src="js/atlas.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

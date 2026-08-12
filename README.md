@@ -1,18 +1,16 @@
 # Patternbook
 
-Patternbook is a practical interview-learning system for five focused areas:
+Patternbook is a connected engineering knowledge atlas for:
 
-- Cloud systems — architecture topics compared across AWS, Azure, and GCP
-- Data platforms — practical decisions across Databricks, Snowflake, and Fabric
-- Python — recurring LeetCode patterns
-- SQL — reusable analytical query patterns
-- Go — safe, high-concurrency patterns
+- Cloud systems — vendor-neutral architecture with AWS, Azure, and GCP translations
+- Data platforms — workload-based reasoning across Databricks, Snowflake, and Fabric
+- Python — recurring algorithm and problem-solving patterns
+- SQL — relational reasoning and analytical query patterns
+- Go — safe, bounded concurrency
 
-The site is deliberately static. It has no framework, package install, build step, database, or account system. Topic status and weekly review activity are stored in the browser.
+It is a detailed layer beneath [Lily Feng's high-level knowledge garden](https://lily-feng.github.io/knowledge). The site is deliberately static: no framework, package install, build step, database, account, or progress tracking.
 
 ## Run locally
-
-From the repository root:
 
 ```bash
 python3 -m http.server 8080
@@ -22,52 +20,53 @@ Open `http://localhost:8080`.
 
 ## Publish with GitHub Pages
 
-Push to `main`. The workflow in `.github/workflows/deploy-pages.yml` publishes the repository as a GitHub Pages site.
+Push to `main`. `.github/workflows/deploy-pages.yml` publishes the static site automatically.
 
-The first time, open the repository on GitHub and select **Settings → Pages → Source → GitHub Actions**. After that, every push to `main` deploys automatically.
+## Knowledge architecture
 
-## Add or edit knowledge
+- `js/atlas.js` defines the graph taxonomy: domains, clusters, concepts, and guide connections.
+- `js/knowledge.js` contains the detailed applied guides.
+- `KNOWLEDGE_GRAPH_PLAN.md` documents the proposed integration with the main knowledge garden and the expansion plan for each domain.
 
-All active learning content lives in `js/knowledge.js`:
+The graph structure and guide content are intentionally separate. A concept can have a useful place and summary before a long guide is written, and a guide can deepen without changing its graph location.
 
-- `TRACKS` defines the five navigation areas.
-- `TOPICS` holds every practical learning note.
-- Each topic contains one interview prompt, a reasoning sequence, pitfalls, a concise answer, and optional platform translations or code.
+## Add a graph concept
 
-Use this shape:
+Add the concept to the appropriate cluster in `js/atlas.js`:
 
 ```js
 {
-    id: "unique-topic-id",
-    track: "python",
-    type: "LeetCode pattern",
-    title: "Readable topic title",
-    difficulty: "Intermediate",
-    minutes: 15,
-    summary: "One-sentence practical value.",
-    prompt: "A representative interview question.",
-    approach: ["Step one", "Step two", "Step three"],
-    pitfalls: ["Common mistake", "Important edge case"],
-    answer: "A concise answer you could say aloud.",
-    tags: ["searchable", "keywords"],
-    code: {
-        language: "python",
-        value: "optional runnable pattern"
-    }
+    id: "stable-concept-id",
+    label: "Readable concept name",
+    summary: "The mental model or decision this concept explains.",
+    guide: "optional-guide-id"
 }
 ```
 
-Good notes teach a transferable pattern, begin with a realistic problem, make trade-offs explicit, and stay short enough to review in 10–20 minutes.
+Use `guide` only when a corresponding detailed entry exists in `js/knowledge.js`.
+
+## Add a detailed guide
+
+A guide should contain:
+
+- a representative problem
+- a reusable reasoning sequence
+- common failure modes
+- a concise synthesis
+- optional product translations or code
+
+After adding the guide, link it from its concept node in `js/atlas.js`.
 
 ## Project structure
 
 ```text
 .
-├── index.html                  # Accessible application shell
-├── css/styles.css              # Responsive visual system
-├── js/knowledge.js             # Tracks and learning notes
-├── js/app.js                   # Search, review state, and interactions
-├── public/og.png               # Social sharing preview
-└── .github/workflows/
-    └── deploy-pages.yml        # GitHub Pages deployment
+├── index.html
+├── css/styles.css
+├── js/atlas.js
+├── js/knowledge.js
+├── js/app.js
+├── KNOWLEDGE_GRAPH_PLAN.md
+├── public/og.png
+└── .github/workflows/deploy-pages.yml
 ```
