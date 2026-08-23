@@ -1,0 +1,35 @@
+<article class="guide-content">
+    <div class="prompt-box">
+        <span>Representative problem</span>
+        <p>Orders are processed asynchronously. Consumers sometimes crash after charging a card but before acknowledging the message. Prevent double charges without losing orders.</p>
+    </div>
+    <div class="dialog-grid">
+        <div class="content-block">
+            <span>Reasoning model</span>
+            <h2>How to approach it</h2>
+            <ol><li>Assume at-least-once delivery and make the business operation idempotent.</li>
+            <li>Store an idempotency key with the durable transaction before acknowledging the message.</li>
+            <li>Use bounded retries with jitter, then isolate poison messages in a dead-letter queue.</li>
+            <li>Expose queue age, retry count, dead-letter volume, and processing latency.</li></ol>
+        </div>
+        <div class="content-block">
+            <span>Failure modes</span>
+            <h2>What breaks the model</h2>
+            <ul><li>Promising exactly-once behavior end to end.</li>
+            <li>Retrying immediately and amplifying an outage.</li>
+            <li>Using an in-memory deduplication cache as the source of truth.</li></ul>
+        </div>
+    </div>
+    <div class="content-block answer-block">
+        <span>Core synthesis</span>
+        <h2>What to remember</h2>
+        <p>The broker can redeliver, so the consumer must make the charge operation idempotent. I use an order or payment attempt ID as the idempotency key and persist the result atomically with the local state transition. A duplicate returns the stored result. Retries are bounded and delayed; poison messages move to a dead-letter queue with enough context to replay safely.</p>
+    </div>
+    <div class="content-block answer-block">
+        <span>Platform translation</span>
+        <h2>Same pattern, different names</h2>
+        <ul><li>AWS: SQS/SNS or EventBridge + DLQ</li>
+            <li>Azure: Service Bus queues/topics + dead-letter subqueue</li>
+            <li>GCP: Pub/Sub + dead-letter topic</li></ul>
+    </div>
+</article>

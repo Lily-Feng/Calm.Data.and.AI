@@ -1,0 +1,35 @@
+<article class="guide-content">
+    <div class="prompt-box">
+        <span>Representative problem</span>
+        <p>A customer-facing API must survive a zonal failure and recover from a regional failure with minimal data loss. Walk through your design.</p>
+    </div>
+    <div class="dialog-grid">
+        <div class="content-block">
+            <span>Reasoning model</span>
+            <h2>How to approach it</h2>
+            <ol><li>Start with explicit SLOs: target availability, RTO, RPO, and consistency needs.</li>
+            <li>Spread stateless compute across zones behind a health-aware load balancer.</li>
+            <li>Choose regional replication for data, then explain failover and split-brain controls.</li>
+            <li>Add cross-region traffic routing, tested backups, and a rehearsed recovery runbook.</li></ol>
+        </div>
+        <div class="content-block">
+            <span>Failure modes</span>
+            <h2>What breaks the model</h2>
+            <ul><li>Calling multi-zone the same as multi-region.</li>
+            <li>Claiming zero RPO without synchronous cross-region writes and their latency cost.</li>
+            <li>Designing failover that has never been exercised.</li></ul>
+        </div>
+    </div>
+    <div class="content-block answer-block">
+        <span>Core synthesis</span>
+        <h2>What to remember</h2>
+        <p>I would make the normal path resilient to a zonal outage first, because it is the cheaper and more frequent failure domain. A separate regional recovery path is driven by the required RTO and RPO. Stateless services can be warm or active-active, while the data strategy depends on consistency. DNS or global routing is only the switch; replicated state, idempotent writes, and rehearsed recovery make the design credible.</p>
+    </div>
+    <div class="content-block answer-block">
+        <span>Platform translation</span>
+        <h2>Same pattern, different names</h2>
+        <ul><li>AWS: ALB + Multi-AZ compute + Aurora Global Database / DynamoDB global tables</li>
+            <li>Azure: Front Door + zone-redundant compute + Cosmos DB multi-region / SQL failover groups</li>
+            <li>GCP: Global external load balancer + regional MIG/GKE + Spanner / cross-region database replica</li></ul>
+    </div>
+</article>

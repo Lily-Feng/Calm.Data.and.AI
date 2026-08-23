@@ -1,0 +1,35 @@
+<article class="guide-content">
+    <div class="prompt-box">
+        <span>Representative problem</span>
+        <p>A company needs BI, streaming, data science, and governed self-service analytics. How would you evaluate Databricks, Snowflake, and Fabric?</p>
+    </div>
+    <div class="dialog-grid">
+        <div class="content-block">
+            <span>Reasoning model</span>
+            <h2>How to approach it</h2>
+            <ol><li>Separate workload needs: SQL BI, engineering, streaming, ML/AI, sharing, and operational serving.</li>
+            <li>Map team skills, cloud strategy, ecosystem commitments, governance, and openness requirements.</li>
+            <li>Prototype representative workloads and measure latency, concurrency, developer effort, and cost.</li>
+            <li>Choose an operating model and migration path, not only a feature checklist.</li></ol>
+        </div>
+        <div class="content-block">
+            <span>Failure modes</span>
+            <h2>What breaks the model</h2>
+            <ul><li>Declaring one platform universally best.</li>
+            <li>Comparing list prices without workload behavior and idle time.</li>
+            <li>Ignoring identity, lineage, CI/CD, and day-two operations.</li></ul>
+        </div>
+    </div>
+    <div class="content-block answer-block">
+        <span>Core synthesis</span>
+        <h2>What to remember</h2>
+        <p>I would not start with product names. I first weight the actual workloads and constraints, then run a small bake-off using the same datasets and success measures. Databricks often fits engineering, open lakehouse, streaming, and ML-heavy teams; Snowflake is strong for managed SQL analytics, sharing, and low-ops elasticity; Fabric can be compelling for Microsoft-centered organizations seeking an integrated Power BI experience. The final choice includes governance and operating cost, not only query speed.</p>
+    </div>
+    <div class="content-block answer-block">
+        <span>Platform translation</span>
+        <h2>Same pattern, different names</h2>
+        <ul><li>Databricks: lakehouse, Spark, Delta, streaming and ML/AI workflows</li>
+            <li>Snowflake: managed data cloud, elastic SQL, sharing and separation of storage/compute</li>
+            <li>Fabric: SaaS analytics suite, OneLake, Power BI and Microsoft ecosystem integration</li></ul>
+    </div>
+</article>

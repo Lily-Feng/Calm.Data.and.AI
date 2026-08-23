@@ -1,0 +1,47 @@
+<article class="guide-content">
+    <div class="prompt-box">
+        <span>Representative problem</span>
+        <p>Group user events into sessions. A new session begins after more than 30 minutes of inactivity.</p>
+    </div>
+    <div class="dialog-grid">
+        <div class="content-block">
+            <span>Reasoning model</span>
+            <h2>How to approach it</h2>
+            <ol><li>Use LAG to read the prior event time within each user.</li>
+            <li>Flag the first event or any gap greater than 30 minutes as a new session.</li>
+            <li>Cumulatively sum the flag to create a session number.</li>
+            <li>Aggregate by user and session number to produce start, end, and event count.</li></ol>
+        </div>
+        <div class="content-block">
+            <span>Failure modes</span>
+            <h2>What breaks the model</h2>
+            <ul><li>Using greater-than-or-equal when the requirement says more than 30 minutes.</li>
+            <li>Mixing timestamp time zones.</li>
+            <li>Trying to nest window functions in one expression on engines that disallow it.</li></ul>
+        </div>
+    </div>
+    <div class="content-block answer-block">
+        <span>Core synthesis</span>
+        <h2>What to remember</h2>
+        <p>Sessionization is a gaps-and-islands problem. I first identify gaps using LAG, then convert each boundary into 1. A running sum of those flags within a user produces the island ID. Keeping these as separate CTEs makes the ordering and window stages clear and portable.</p>
+    </div>
+    <div class="code-panel">
+        <div class="code-panel__header">
+            <span>sql reference</span>
+            <button class="copy-button" type="button" data-copy-code>Copy code</button>
+        </div>
+        <pre><code>WITH gaps AS (
+  SELECT events.*,
+    LAG(event_at) OVER (PARTITION BY user_id ORDER BY event_at) AS prev_at
+  FROM events
+), boundaries AS (
+  SELECT gaps.*,
+    CASE WHEN prev_at IS NULL
+      OR event_at &gt; prev_at + INTERVAL &#039;30 minutes&#039; THEN 1 ELSE 0 END AS starts_new
+  FROM gaps
+)
+SELECT boundaries.*,
+  SUM(starts_new) OVER (PARTITION BY user_id ORDER BY event_at) AS session_id
+FROM boundaries;</code></pre>
+    </div>
+</article>

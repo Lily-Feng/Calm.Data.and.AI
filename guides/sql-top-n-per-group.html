@@ -1,0 +1,46 @@
+<article class="guide-content">
+    <div class="prompt-box">
+        <span>Representative problem</span>
+        <p>Return the three highest-paid employees in each department, including deterministic tie handling.</p>
+    </div>
+    <div class="dialog-grid">
+        <div class="content-block">
+            <span>Reasoning model</span>
+            <h2>How to approach it</h2>
+            <ol><li>Define the group with PARTITION BY department.</li>
+            <li>Define rank order with salary descending and an explicit tie-breaker.</li>
+            <li>Choose ROW_NUMBER, RANK, or DENSE_RANK based on the tie requirement.</li>
+            <li>Filter the rank in an outer query or QUALIFY where supported.</li></ol>
+        </div>
+        <div class="content-block">
+            <span>Failure modes</span>
+            <h2>What breaks the model</h2>
+            <ul><li>Using LIMIT, which applies to the whole result.</li>
+            <li>Leaving ties nondeterministic.</li>
+            <li>Filtering before ranking and changing the population.</li></ul>
+        </div>
+    </div>
+    <div class="content-block answer-block">
+        <span>Core synthesis</span>
+        <h2>What to remember</h2>
+        <p>This is a window-function problem because I need row detail and a calculation within each department. ROW_NUMBER gives exactly three rows when I add a stable tie-breaker. If the business wants all people tied for third, I use RANK or DENSE_RANK and explain the difference in skipped rank numbers.</p>
+    </div>
+    <div class="code-panel">
+        <div class="code-panel__header">
+            <span>sql reference</span>
+            <button class="copy-button" type="button" data-copy-code>Copy code</button>
+        </div>
+        <pre><code>WITH ranked AS (
+  SELECT
+    employee_id, department_id, salary,
+    ROW_NUMBER() OVER (
+      PARTITION BY department_id
+      ORDER BY salary DESC, employee_id
+    ) AS position
+  FROM employees
+)
+SELECT *
+FROM ranked
+WHERE position &lt;= 3;</code></pre>
+    </div>
+</article>

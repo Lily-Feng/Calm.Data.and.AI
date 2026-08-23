@@ -39,6 +39,38 @@ let activeDomain = tracks[0].id;
 let activeFilter = "all";
 let activeGraphNode = "root";
 let toastTimer;
+let openGuideToken = 0;
+
+const guideBodyCache = new Map();
+const guideText = new Map();
+
+function stripHtml(html) {
+    const container = document.createElement("div");
+    container.innerHTML = html;
+    return container.textContent || "";
+}
+
+function fetchGuideBody(topic) {
+    if (guideBodyCache.has(topic.id)) return Promise.resolve(guideBodyCache.get(topic.id));
+    return fetch(topic.bodyUrl)
+        .then((response) => {
+            if (!response.ok) throw new Error(`${response.status} fetching ${topic.bodyUrl}`);
+            return response.text();
+        })
+        .then((html) => {
+            guideBodyCache.set(topic.id, html);
+            return html;
+        });
+}
+
+async function preloadGuideBodies() {
+    const settled = await Promise.allSettled(topics.map((topic) => fetchGuideBody(topic)));
+    settled.forEach((result, index) => {
+        const topic = topics[index];
+        guideText.set(topic.id, result.status === "fulfilled" ? stripHtml(result.value) : "");
+    });
+    if (elements.search.value.trim() && activeView === "guides") renderGuideLibrary();
+}
 
 function escapeHtml(value = "") {
     return String(value)
@@ -171,7 +203,10 @@ function renderGuideCard(topic) {
 }
 
 function renderFeaturedGuides() {
-    const featured = tracks.flatMap((track) => getDomainGuides(track.id).slice(0, 1));
+    // One row, no dangling gap: the guide-grid is 3 columns, so cap at 3
+    // rather than one-per-track (5), which left an unfinished-looking
+    // partial second row. "View every guide" covers the rest.
+    const featured = tracks.slice(0, 3).flatMap((track) => getDomainGuides(track.id).slice(0, 1));
     elements.featuredGuides.innerHTML = featured.map(renderGuideCard).join("");
 }
 
@@ -229,7 +264,7 @@ function renderDomain() {
 
 function graphGeometry() {
     const domain = getDomain(activeDomain);
-    const center = { x: 470, y: 325 };
+    const center = { x: 480, y: 350 };
     const clusters = [];
     const concepts = [];
     const links = [];
@@ -239,21 +274,21 @@ function graphGeometry() {
         const clusterNode = {
             id: cluster.id,
             kind: "cluster",
-            x: center.x + Math.cos(angle) * 165,
-            y: center.y + Math.sin(angle) * 165,
+            x: center.x + Math.cos(angle) * 175,
+            y: center.y + Math.sin(angle) * 175,
             data: cluster
         };
         clusters.push(clusterNode);
         links.push({ source: "root", target: cluster.id, kind: "branch" });
 
         cluster.nodes.forEach((concept, conceptIndex) => {
-            const spread = (conceptIndex - (cluster.nodes.length - 1) / 2) * 0.18;
+            const spread = (conceptIndex - (cluster.nodes.length - 1) / 2) * 0.24;
             const conceptAngle = angle + spread;
             const conceptNode = {
                 id: concept.id,
                 kind: concept.guide ? "guide" : "concept",
-                x: center.x + Math.cos(conceptAngle) * 285,
-                y: center.y + Math.sin(conceptAngle) * 285,
+                x: center.x + Math.cos(conceptAngle) * 310,
+                y: center.y + Math.sin(conceptAngle) * 310,
                 data: concept,
                 clusterId: cluster.id
             };
@@ -264,12 +299,32 @@ function graphGeometry() {
 
     return {
         nodes: [{ id: "root", kind: "root", x: center.x, y: center.y, data: { label: getTrack(activeDomain).name } }, ...clusters, ...concepts],
-        links
+        links,
+        center
     };
 }
 
 function shortLabel(label, limit = 22) {
     return label.length > limit ? `${label.slice(0, limit - 1)}…` : label;
+}
+
+// Concept/cluster labels are plain horizontal <text>, so a node sitting near
+// the vertical axis of the circle (top or bottom of the layout) has almost no
+// horizontal separation from its neighbors no matter how far apart they are
+// angularly — that's what caused label collisions. Flowing the label away
+// from the node (left/right beside it off-axis, above/below on-axis) instead
+// of centering it fixes that without a full radial-label rewrite.
+function labelPlacement(node, center, bodyRadius) {
+    if (node.kind === "root") return { anchor: "middle", x: 0, y: 5 };
+    const dx = node.x - center.x;
+    const onAxis = Math.abs(dx) < bodyRadius + 34;
+    if (onAxis) {
+        const dy = node.y - center.y;
+        const y = dy >= 0 ? bodyRadius + 21 : -(bodyRadius + 13);
+        return { anchor: "middle", x: 0, y };
+    }
+    const anchor = dx > 0 ? "start" : "end";
+    return { anchor, x: dx > 0 ? bodyRadius + 9 : -(bodyRadius + 9), y: 4 };
 }
 
 function renderGraph() {
@@ -293,8 +348,10 @@ function renderGraph() {
     const nodeMarkup = graph.nodes.map((node) => {
         const isSelected = node.id === selected.id;
         const isMuted = selected.kind !== "root" && !connected.has(node.id);
-        const label = node.kind === "root" ? node.data.label : node.data.label;
-        const labelY = node.kind === "root" ? 5 : node.kind === "cluster" ? 48 : 32;
+        const label = node.data.label;
+        const bodyRadius = node.kind === "root" ? 56 : node.kind === "cluster" ? 28 : 12;
+        const charLimit = node.kind === "root" ? 24 : node.kind === "cluster" ? 19 : 16;
+        const placement = labelPlacement(node, graph.center, bodyRadius);
         const body = node.kind === "root"
             ? `<circle r="56" class="graph-node__body" /><circle r="64" class="graph-node__orbit" />`
             : node.kind === "cluster"
@@ -305,8 +362,9 @@ function renderGraph() {
         return `
             <g class="graph-node graph-node--${node.kind} ${isSelected ? "is-selected" : ""} ${isMuted ? "is-muted" : ""}"
                transform="translate(${node.x} ${node.y})" data-graph-node="${escapeHtml(node.id)}" role="button" tabindex="0" aria-label="Explore ${escapeHtml(label)}">
+                <circle r="${bodyRadius + 15}" class="graph-node__hit-area" />
                 ${body}
-                <text text-anchor="middle" y="${labelY}" class="graph-node__label">${escapeHtml(shortLabel(label, node.kind === "root" ? 24 : 21))}</text>
+                <text text-anchor="${placement.anchor}" x="${placement.x}" y="${placement.y}" class="graph-node__label">${escapeHtml(shortLabel(label, charLimit))}</text>
             </g>
         `;
     }).join("");
@@ -396,8 +454,10 @@ function searchKnowledge(query) {
     const term = query.trim().toLowerCase();
     const guideResults = topics.filter((topic) => {
         if (activeFilter !== "all" && topic.track !== activeFilter) return false;
+        if (!term) return true;
         const location = findGuideLocation(topic.id);
-        return !term || [topic.title, topic.summary, topic.prompt, topic.type, ...(topic.tags || []), ...(topic.platformMap || []), location?.cluster.label].join(" ").toLowerCase().includes(term);
+        const haystack = [topic.title, topic.summary, topic.type, ...(topic.tags || []), location?.cluster.label, guideText.get(topic.id) || ""].join(" ").toLowerCase();
+        return haystack.includes(term);
     });
     const conceptResults = [];
     if (term) {
@@ -442,10 +502,6 @@ function renderGuideLibrary() {
     elements.emptyState.classList.toggle("hidden", total !== 0);
 }
 
-function renderList(items) {
-    return `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
-}
-
 function relatedGuides(topic) {
     return topics
         .filter((candidate) => candidate.id !== topic.id)
@@ -459,27 +515,12 @@ function relatedGuides(topic) {
         .map(({ candidate }) => candidate);
 }
 
-function openGuide(guideId, options = {}) {
+async function openGuide(guideId, options = {}) {
     const topic = getGuide(guideId);
     if (!topic) return;
+    const token = ++openGuideToken;
     const track = getTrack(topic.track);
     const location = findGuideLocation(topic.id);
-    const platformBlock = topic.platformMap ? `
-        <div class="content-block answer-block">
-            <span>Platform translation</span>
-            <h2>Same pattern, different names</h2>
-            ${renderList(topic.platformMap)}
-        </div>
-    ` : "";
-    const codeBlock = topic.code ? `
-        <div class="code-panel">
-            <div class="code-panel__header">
-                <span>${escapeHtml(topic.code.language)} reference</span>
-                <button class="copy-button" type="button" data-copy-code="${escapeHtml(topic.id)}">Copy code</button>
-            </div>
-            <pre><code>${escapeHtml(topic.code.value)}</code></pre>
-        </div>
-    ` : "";
     const related = relatedGuides(topic);
 
     elements.dialogContent.innerHTML = `
@@ -491,35 +532,27 @@ function openGuide(guideId, options = {}) {
         </div>
         <div class="dialog-body">
             ${location ? `<button class="graph-location" type="button" data-domain="${escapeHtml(track.id)}" data-concept="${escapeHtml(location.node.id)}"><span>Graph location</span><strong>${escapeHtml(track.shortName)} → ${escapeHtml(location.cluster.label)} → ${escapeHtml(location.node.label)}</strong><i>View in map ↗</i></button>` : ""}
-            <div class="prompt-box">
-                <span>Representative problem</span>
-                <p>${escapeHtml(topic.prompt)}</p>
+            <div class="guide-content-slot" data-state="loading">
+                <p class="guide-loading">Loading guide…</p>
             </div>
-            <div class="dialog-grid">
-                <div class="content-block">
-                    <span>Reasoning model</span>
-                    <h2>How to approach it</h2>
-                    <ol>${topic.approach.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol>
-                </div>
-                <div class="content-block">
-                    <span>Failure modes</span>
-                    <h2>What breaks the model</h2>
-                    ${renderList(topic.pitfalls)}
-                </div>
-            </div>
-            <div class="content-block answer-block">
-                <span>Core synthesis</span>
-                <h2>What to remember</h2>
-                <p>${escapeHtml(topic.answer)}</p>
-            </div>
-            ${platformBlock}
-            ${codeBlock}
             ${related.length ? `<div class="related-guides"><span>Connected guides</span><div>${related.map((guide) => `<button type="button" data-guide="${escapeHtml(guide.id)}">${escapeHtml(guide.title)} <i>→</i></button>`).join("")}</div></div>` : ""}
         </div>
     `;
 
     if (!elements.topicDialog.open) elements.topicDialog.showModal();
     if (!options.fromHash) history.replaceState(null, "", `#guide=${encodeURIComponent(topic.id)}`);
+
+    const slot = elements.dialogContent.querySelector(".guide-content-slot");
+    try {
+        const html = await fetchGuideBody(topic);
+        if (token !== openGuideToken) return;
+        slot.dataset.state = "ready";
+        slot.innerHTML = html;
+    } catch (error) {
+        if (token !== openGuideToken) return;
+        slot.dataset.state = "error";
+        slot.innerHTML = `<p class="guide-error">This guide could not be loaded right now. Try again shortly.</p>`;
+    }
 }
 
 function closeGuide() {
@@ -527,11 +560,11 @@ function closeGuide() {
     if (location.hash.startsWith("#guide=")) history.replaceState(null, "", `${location.pathname}${location.search}`);
 }
 
-async function copyCode(guideId) {
-    const topic = getGuide(guideId);
-    if (!topic?.code) return;
+async function copyCode(button) {
+    const codeElement = button.closest(".code-panel")?.querySelector("pre code");
+    if (!codeElement) return;
     try {
-        await navigator.clipboard.writeText(topic.code.value);
+        await navigator.clipboard.writeText(codeElement.textContent);
         showToast("Code copied.");
     } catch (error) {
         showToast("Copy was blocked by the browser.");
@@ -575,7 +608,7 @@ function setupEvents() {
             activeFilter = filterButton.dataset.filter;
             renderGuideLibrary();
         }
-        if (copyButton) copyCode(copyButton.dataset.copyCode);
+        if (copyButton) copyCode(copyButton);
     });
 
     elements.search.addEventListener("input", () => {
@@ -620,6 +653,7 @@ function init() {
     renderGuideLibrary();
     setupEvents();
     initFromHash();
+    preloadGuideBodies();
 }
 
 init();

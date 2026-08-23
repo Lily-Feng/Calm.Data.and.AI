@@ -1,0 +1,35 @@
+<article class="guide-content">
+    <div class="prompt-box">
+        <span>Representative problem</span>
+        <p>A daily full refresh no longer finishes in its window. Redesign it for incremental processing while preserving correctness.</p>
+    </div>
+    <div class="dialog-grid">
+        <div class="content-block">
+            <span>Reasoning model</span>
+            <h2>How to approach it</h2>
+            <ol><li>Identify a trustworthy change signal: log sequence, commit version, update timestamp, or source CDC.</li>
+            <li>Persist the processing boundary and make each write idempotent with MERGE or append plus deduplication.</li>
+            <li>Define late-arrival and deletion behavior explicitly.</li>
+            <li>Add reconciliation: source counts, freshness, duplicates, and periodic backfill tests.</li></ol>
+        </div>
+        <div class="content-block">
+            <span>Failure modes</span>
+            <h2>What breaks the model</h2>
+            <ul><li>Using timestamps without overlap or clock-skew protection.</li>
+            <li>Advancing the checkpoint before the target commit succeeds.</li>
+            <li>Ignoring deletes and schema evolution.</li></ul>
+        </div>
+    </div>
+    <div class="content-block answer-block">
+        <span>Core synthesis</span>
+        <h2>What to remember</h2>
+        <p>I choose a monotonic source boundary when possible, store it only after a successful target commit, and make replay safe. Each batch reads an overlap or version range, deduplicates by business key and sequence, and merges into the target. Late events have a defined watermark or correction path. Reconciliation metrics prove that the faster pipeline is still complete.</p>
+    </div>
+    <div class="content-block answer-block">
+        <span>Platform translation</span>
+        <h2>Same pattern, different names</h2>
+        <ul><li>Databricks: Auto Loader / streaming tables + checkpoints + Delta MERGE</li>
+            <li>Snowflake: streams + tasks / dynamic tables + MERGE</li>
+            <li>Fabric: pipelines / Dataflow Gen2 + incremental refresh + Delta tables in OneLake</li></ul>
+    </div>
+</article>

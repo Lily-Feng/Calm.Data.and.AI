@@ -1,0 +1,35 @@
+<article class="guide-content">
+    <div class="prompt-box">
+        <span>Representative problem</span>
+        <p>A dashboard query went from 8 seconds to 90 seconds after data volume doubled. What do you inspect, in what order?</p>
+    </div>
+    <div class="dialog-grid">
+        <div class="content-block">
+            <span>Reasoning model</span>
+            <h2>How to approach it</h2>
+            <ol><li>Confirm the regression and compare query plans, inputs, cache state, and concurrency.</li>
+            <li>Locate the dominant operator: scan, join/shuffle, sort, spill, or queueing.</li>
+            <li>Reduce data early, fix statistics and pruning, then address join strategy or skew.</li>
+            <li>Scale compute last, after proving the workload is compute-bound.</li></ol>
+        </div>
+        <div class="content-block">
+            <span>Failure modes</span>
+            <h2>What breaks the model</h2>
+            <ul><li>Increasing warehouse or cluster size before reading the profile.</li>
+            <li>Optimizing an isolated query while production is queue-bound.</li>
+            <li>Adding partitions with low selectivity or excessive small files.</li></ul>
+        </div>
+    </div>
+    <div class="content-block answer-block">
+        <span>Core synthesis</span>
+        <h2>What to remember</h2>
+        <p>I first separate execution time from queue time and compare the old and new plans. Then I find where bytes and time accumulate: scanning too much, a join producing shuffle, a skewed key, or memory spill. I reduce data before joins, restore pruning and statistics, and fix layout or join logic. Scaling is a valid final lever, but only when the profile shows useful parallel work.</p>
+    </div>
+    <div class="content-block answer-block">
+        <span>Platform translation</span>
+        <h2>Same pattern, different names</h2>
+        <ul><li>Databricks: Spark UI/query profile, Photon, liquid clustering, statistics</li>
+            <li>Snowflake: Query Profile, pruning, clustering, warehouse/concurrency controls</li>
+            <li>Fabric: Query Insights, V-Order, partitioning and capacity metrics</li></ul>
+    </div>
+</article>

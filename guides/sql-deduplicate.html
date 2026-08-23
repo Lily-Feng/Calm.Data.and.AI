@@ -1,0 +1,44 @@
+<article class="guide-content">
+    <div class="prompt-box">
+        <span>Representative problem</span>
+        <p>An ingestion table contains multiple customer records per customer_id. Keep the latest valid version and explain how you handle exact ties.</p>
+    </div>
+    <div class="dialog-grid">
+        <div class="content-block">
+            <span>Reasoning model</span>
+            <h2>How to approach it</h2>
+            <ol><li>Name the business key and the event/version column separately.</li>
+            <li>Rank within each business key by event time, ingestion time, then a stable sequence.</li>
+            <li>Keep row number one; quarantine ambiguous exact ties if correctness matters.</li>
+            <li>Make the downstream write idempotent.</li></ol>
+        </div>
+        <div class="content-block">
+            <span>Failure modes</span>
+            <h2>What breaks the model</h2>
+            <ul><li>Using MAX(timestamp) then joining back and reintroducing duplicates.</li>
+            <li>Treating ingestion time as event time without saying so.</li>
+            <li>Using SELECT DISTINCT, which does not express which row wins.</li></ul>
+        </div>
+    </div>
+    <div class="content-block answer-block">
+        <span>Core synthesis</span>
+        <h2>What to remember</h2>
+        <p>I use ROW_NUMBER because deduplication requires one winner. The ORDER BY must fully express recency and be deterministic; event version is stronger than arrival time when available. I also inspect exact ties instead of silently picking a row if they indicate a source-quality issue.</p>
+    </div>
+    <div class="code-panel">
+        <div class="code-panel__header">
+            <span>sql reference</span>
+            <button class="copy-button" type="button" data-copy-code>Copy code</button>
+        </div>
+        <pre><code>SELECT * EXCEPT (record_rank)
+FROM (
+  SELECT source.*,
+    ROW_NUMBER() OVER (
+      PARTITION BY customer_id
+      ORDER BY event_version DESC, ingested_at DESC
+    ) AS record_rank
+  FROM customer_updates AS source
+)
+WHERE record_rank = 1;</code></pre>
+    </div>
+</article>

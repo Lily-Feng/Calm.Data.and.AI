@@ -1,0 +1,46 @@
+<article class="guide-content">
+    <div class="prompt-box">
+        <span>Representative problem</span>
+        <p>Given a grid of land and water, count the number of islands. Then explain how the solution changes if asked for the shortest path.</p>
+    </div>
+    <div class="dialog-grid">
+        <div class="content-block">
+            <span>Reasoning model</span>
+            <h2>How to approach it</h2>
+            <ol><li>Model cells as nodes and valid neighbor moves as edges.</li>
+            <li>For each unvisited land cell, start a traversal and increment the component count.</li>
+            <li>Mark visited when enqueuing or entering—not after processing—to avoid duplicates.</li>
+            <li>Use BFS for shortest unweighted hops; DFS is sufficient for connectivity.</li></ol>
+        </div>
+        <div class="content-block">
+            <span>Failure modes</span>
+            <h2>What breaks the model</h2>
+            <ul><li>Forgetting bounds or water checks.</li>
+            <li>Marking visited too late and adding the same node many times.</li>
+            <li>Using recursive DFS where input depth can overflow the stack.</li></ul>
+        </div>
+    </div>
+    <div class="content-block answer-block">
+        <span>Core synthesis</span>
+        <h2>What to remember</h2>
+        <p>Counting islands is connected-components detection, so either BFS or DFS works in O(rows × columns). I scan the grid; every unseen land cell begins one traversal and therefore one island. For shortest path in an unweighted grid I switch to BFS, because it visits nodes in distance layers and the first arrival is shortest.</p>
+    </div>
+    <div class="code-panel">
+        <div class="code-panel__header">
+            <span>python reference</span>
+            <button class="copy-button" type="button" data-copy-code>Copy code</button>
+        </div>
+        <pre><code>from collections import deque
+
+def visit(grid, start, seen):
+    q = deque([start])
+    seen.add(start)
+    while q:
+        r, c = q.popleft()
+        for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nxt = (r + dr, c + dc)
+            if is_land(grid, nxt) and nxt not in seen:
+                seen.add(nxt)
+                q.append(nxt)</code></pre>
+    </div>
+</article>

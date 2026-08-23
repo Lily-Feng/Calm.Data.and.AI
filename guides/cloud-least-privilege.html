@@ -1,0 +1,35 @@
+<article class="guide-content">
+    <div class="prompt-box">
+        <span>Representative problem</span>
+        <p>A data pipeline currently uses an administrator credential. How would you replace it without breaking production?</p>
+    </div>
+    <div class="dialog-grid">
+        <div class="content-block">
+            <span>Reasoning model</span>
+            <h2>How to approach it</h2>
+            <ol><li>Inventory the principal, actual API calls, resources, environments, and trust boundary.</li>
+            <li>Use a workload identity and short-lived credentials instead of a stored user secret.</li>
+            <li>Create read/write roles scoped by resource and condition; test in audit or shadow mode.</li>
+            <li>Roll out gradually, monitor denied actions, then remove the administrator path.</li></ol>
+        </div>
+        <div class="content-block">
+            <span>Failure modes</span>
+            <h2>What breaks the model</h2>
+            <ul><li>Treating a managed identity as automatically least-privileged.</li>
+            <li>Scoping actions but leaving resources as a wildcard.</li>
+            <li>Removing access before observing real workload behavior.</li></ul>
+        </div>
+    </div>
+    <div class="content-block answer-block">
+        <span>Core synthesis</span>
+        <h2>What to remember</h2>
+        <p>Least privilege is a feedback loop, not a one-time policy document. I begin from observed calls, issue short-lived workload identity credentials, constrain both action and resource, and use conditions where possible. I validate the new policy alongside the old path, monitor denies, and only then revoke the administrator credential. Ownership and periodic access review keep it from expanding again.</p>
+    </div>
+    <div class="content-block answer-block">
+        <span>Platform translation</span>
+        <h2>Same pattern, different names</h2>
+        <ul><li>AWS: IAM role + STS + resource policies + Access Analyzer</li>
+            <li>Azure: managed identity + Azure RBAC + PIM / access reviews</li>
+            <li>GCP: service account or workload identity + IAM Conditions + Policy Analyzer</li></ul>
+    </div>
+</article>

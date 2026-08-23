@@ -1,0 +1,52 @@
+<article class="guide-content">
+    <div class="prompt-box">
+        <span>Representative problem</span>
+        <p>Process 100,000 jobs concurrently without opening 100,000 database connections. Design a Go worker pool.</p>
+    </div>
+    <div class="dialog-grid">
+        <div class="content-block">
+            <span>Reasoning model</span>
+            <h2>How to approach it</h2>
+            <ol><li>Choose the worker limit from the downstream resource, not CPU count alone.</li>
+            <li>One producer owns and closes the jobs channel; workers only receive.</li>
+            <li>Use a WaitGroup to know when workers finish, then close results from a coordinator.</li>
+            <li>Propagate context cancellation and return structured errors.</li></ol>
+        </div>
+        <div class="content-block">
+            <span>Failure modes</span>
+            <h2>What breaks the model</h2>
+            <ul><li>Letting receivers close a shared channel.</li>
+            <li>Waiting for workers before draining an unbuffered results channel.</li>
+            <li>Spawning one goroutine per item and calling it a worker pool.</li></ul>
+        </div>
+    </div>
+    <div class="content-block answer-block">
+        <span>Core synthesis</span>
+        <h2>What to remember</h2>
+        <p>The pool bounds pressure on the database. A producer sends jobs and is the only owner that closes the jobs channel. N workers range over jobs and respect context cancellation. A separate coordinator waits for the workers and closes results, allowing the caller to range until completion without guessing counts. The worker number is tuned against connection limits and observed latency.</p>
+    </div>
+    <div class="code-panel">
+        <div class="code-panel__header">
+            <span>go reference</span>
+            <button class="copy-button" type="button" data-copy-code>Copy code</button>
+        </div>
+        <pre><code>func run(ctx context.Context, jobs &lt;-chan Job, workers int) &lt;-chan Result {
+    results := make(chan Result)
+    var wg sync.WaitGroup
+    wg.Add(workers)
+    for i := 0; i &lt; workers; i++ {
+        go func() {
+            defer wg.Done()
+            for job := range jobs {
+                select {
+                case results &lt;- process(job):
+                case &lt;-ctx.Done(): return
+                }
+            }
+        }()
+    }
+    go func() { wg.Wait(); close(results) }()
+    return results
+}</code></pre>
+    </div>
+</article>

@@ -1,0 +1,28 @@
+<article class="guide-content">
+    <div class="prompt-box">
+        <span>Representative problem</span>
+        <p>Memory and goroutine counts grow after traffic spikes but never return to baseline. How do you investigate and fix the leak?</p>
+    </div>
+    <div class="dialog-grid">
+        <div class="content-block">
+            <span>Reasoning model</span>
+            <h2>How to approach it</h2>
+            <ol><li>Confirm the trend with runtime metrics and capture goroutine profiles under load.</li>
+            <li>Group repeated stack traces to find blocked channel sends, receives, locks, or I/O.</li>
+            <li>Trace the lifecycle: who starts the goroutine, what stops it, and who owns each channel.</li>
+            <li>Add cancellation, timeouts, bounded buffers, and a test that asserts goroutines settle.</li></ol>
+        </div>
+        <div class="content-block">
+            <span>Failure modes</span>
+            <h2>What breaks the model</h2>
+            <ul><li>Increasing channel buffer size as the only fix.</li>
+            <li>Closing a channel from multiple writers.</li>
+            <li>Launching a goroutine without defining its exit condition.</li></ul>
+        </div>
+    </div>
+    <div class="content-block answer-block">
+        <span>Core synthesis</span>
+        <h2>What to remember</h2>
+        <p>I use goroutine profiles to identify where the accumulating goroutines are blocked, then reason about ownership and termination. Every goroutine needs a bounded lifetime: completed work, closed input, or observed cancellation. A send must not wait forever when its consumer exits. After the fix, I load-test and assert that goroutine count returns near baseline rather than only checking functional output.</p>
+    </div>
+</article>

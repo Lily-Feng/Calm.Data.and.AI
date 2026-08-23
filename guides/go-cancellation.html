@@ -1,0 +1,46 @@
+<article class="guide-content">
+    <div class="prompt-box">
+        <span>Representative problem</span>
+        <p>An HTTP request fans out to three services. If the client disconnects or one required call fails, stop the remaining work.</p>
+    </div>
+    <div class="dialog-grid">
+        <div class="content-block">
+            <span>Reasoning model</span>
+            <h2>How to approach it</h2>
+            <ol><li>Accept context as the first parameter and do not store it in a struct.</li>
+            <li>Derive a timeout at the request boundary and always defer cancel.</li>
+            <li>Pass the context into outbound requests and select on ctx.Done in loops or sends.</li>
+            <li>Use errgroup when sibling errors should cancel the shared group.</li></ol>
+        </div>
+        <div class="content-block">
+            <span>Failure modes</span>
+            <h2>What breaks the model</h2>
+            <ul><li>Creating context.Background inside a request path and severing cancellation.</li>
+            <li>Using context values for optional function parameters.</li>
+            <li>Returning without stopping tickers, closing bodies, or unblocking goroutines.</li></ul>
+        </div>
+    </div>
+    <div class="content-block answer-block">
+        <span>Core synthesis</span>
+        <h2>What to remember</h2>
+        <p>Context represents request-scoped cancellation and deadline, so I pass it through every blocking boundary. At the handler I derive a timeout and defer cancel. For related fan-out calls, errgroup gives a derived context that cancels siblings on the first error. Each goroutine must actually observe the context; otherwise cancellation exists only on paper.</p>
+    </div>
+    <div class="code-panel">
+        <div class="code-panel__header">
+            <span>go reference</span>
+            <button class="copy-button" type="button" data-copy-code>Copy code</button>
+        </div>
+        <pre><code>group, ctx := errgroup.WithContext(request.Context())
+for _, endpoint := range endpoints {
+    endpoint := endpoint
+    group.Go(func() error {
+        req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
+        if err != nil { return err }
+        response, err := client.Do(req)
+        if response != nil { defer response.Body.Close() }
+        return err
+    })
+}
+return group.Wait()</code></pre>
+    </div>
+</article>

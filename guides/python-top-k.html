@@ -1,0 +1,44 @@
+<article class="guide-content">
+    <div class="prompt-box">
+        <span>Representative problem</span>
+        <p>Return the k most frequent values in a large stream. Explain the trade-off between a heap and bucket sort.</p>
+    </div>
+    <div class="dialog-grid">
+        <div class="content-block">
+            <span>Reasoning model</span>
+            <h2>How to approach it</h2>
+            <ol><li>Count frequencies when the input is finite; for a stream, update counts incrementally.</li>
+            <li>Maintain a min-heap of at most k frequency/value pairs.</li>
+            <li>Replace the smallest candidate when a better one appears.</li>
+            <li>State when bucket sort is preferable: bounded integer frequencies and O(n) extra space.</li></ol>
+        </div>
+        <div class="content-block">
+            <span>Failure modes</span>
+            <h2>What breaks the model</h2>
+            <ul><li>Using a max-heap of all n values and losing the space advantage.</li>
+            <li>Ignoring stable or tie-breaking requirements.</li>
+            <li>Calling the approach streaming when exact changing counts require updates or recomputation.</li></ul>
+        </div>
+    </div>
+    <div class="content-block answer-block">
+        <span>Core synthesis</span>
+        <h2>What to remember</h2>
+        <p>A size-k min-heap keeps the current threshold at the root. After counting m unique values, each candidate costs at most O(log k), so total work is O(n + m log k) and heap space is O(k). Bucket sort can be O(n), but allocates buckets by frequency and is less flexible when the score is not a small integer.</p>
+    </div>
+    <div class="code-panel">
+        <div class="code-panel__header">
+            <span>python reference</span>
+            <button class="copy-button" type="button" data-copy-code>Copy code</button>
+        </div>
+        <pre><code>from collections import Counter
+import heapq
+
+def top_k(nums, k):
+    heap = []
+    for value, count in Counter(nums).items():
+        heapq.heappush(heap, (count, value))
+        if len(heap) &gt; k:
+            heapq.heappop(heap)
+    return [value for _, value in heap]</code></pre>
+    </div>
+</article>

@@ -1,0 +1,45 @@
+<article class="guide-content">
+    <div class="prompt-box">
+        <span>Representative problem</span>
+        <p>Given a string, return the length of the longest substring without repeating characters.</p>
+    </div>
+    <div class="dialog-grid">
+        <div class="content-block">
+            <span>Reasoning model</span>
+            <h2>How to approach it</h2>
+            <ol><li>The answer is a contiguous substring, which signals a window.</li>
+            <li>Expand right; track the latest index of each character.</li>
+            <li>When a duplicate appears inside the window, jump left past its previous index.</li>
+            <li>Update the best length after restoring the invariant.</li></ol>
+        </div>
+        <div class="content-block">
+            <span>Failure modes</span>
+            <h2>What breaks the model</h2>
+            <ul><li>Moving left backward when the duplicate is already outside the window.</li>
+            <li>Rebuilding a set for each substring and falling back to O(n²).</li>
+            <li>Updating the answer before the window is valid.</li></ul>
+        </div>
+    </div>
+    <div class="content-block answer-block">
+        <span>Core synthesis</span>
+        <h2>What to remember</h2>
+        <p>The invariant is that the window contains unique characters. Each character enters once as right advances. A last-seen map lets left jump directly to max(left, previous + 1), so left never moves backward. That makes the solution O(n) time and O(k) space for the character set.</p>
+    </div>
+    <div class="code-panel">
+        <div class="code-panel__header">
+            <span>python reference</span>
+            <button class="copy-button" type="button" data-copy-code>Copy code</button>
+        </div>
+        <pre><code>def longest_unique(s: str) -&gt; int:
+    left = best = 0
+    last_seen = {}
+
+    for right, char in enumerate(s):
+        if char in last_seen:
+            left = max(left, last_seen[char] + 1)
+        last_seen[char] = right
+        best = max(best, right - left + 1)
+
+    return best</code></pre>
+    </div>
+</article>
