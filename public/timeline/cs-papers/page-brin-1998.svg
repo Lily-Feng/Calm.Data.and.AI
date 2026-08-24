@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260" role="img" aria-label="The Anatomy of a Search Engine, 1998">
+    <rect width="520" height="260" fill="#f4f2ec"/>
+    <rect x="0" y="0" width="520" height="10" fill="#ffcbb2"/>
+    <g transform="translate(0, 12)"><g><rect x="64" y="146" width="40" height="26" rx="4" fill="#f4f2ec" stroke="#15271f" stroke-width="2.4"/><rect x="122" y="118" width="40" height="54" rx="4" fill="#f4f2ec" stroke="#15271f" stroke-width="2.4"/><rect x="180" y="80" width="40" height="92" rx="4" fill="#f4f2ec" stroke="#15271f" stroke-width="2.4"/><rect x="238" y="24" width="40" height="148" rx="4" fill="#ffcbb2" stroke="#15271f" stroke-width="2.4"/><rect x="296" y="98" width="40" height="74" rx="4" fill="#f4f2ec" stroke="#15271f" stroke-width="2.4"/><rect x="354" y="132" width="40" height="40" rx="4" fill="#f4f2ec" stroke="#15271f" stroke-width="2.4"/><rect x="412" y="150" width="40" height="22" rx="4" fill="#f4f2ec" stroke="#15271f" stroke-width="2.4"/></g>
+            <line x1="46" y1="174" x2="474" y2="174" stroke="#15271f" stroke-width="2.4"/></g>
+    <g transform="translate(34, 224)">
+        <text font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="30" font-weight="700" fill="#15271f" y="0">1998</text>
+        <text x="112" y="-11" font-family="Georgia, 'Times New Roman', serif" font-size="14" fill="#15271f" opacity=".82">The Anatomy of a Search Engine</text>
+    </g>
+</svg>

@@ -1,0 +1,93 @@
+{
+  "id": "deep-work-day",
+  "title": "One engineering day, by the clock",
+  "tagline": "The same component on a different scale: clock-only stamps, a linear axis, and the sticker pack. Distance here is real elapsed time, so the gaps are the point.",
+  "axis": { "scale": "linear", "precision": "time", "direction": "horizontal" },
+  "style": "sticker",
+  "lanes": [
+    { "id": "focus", "label": "Deep work", "accent": "#bfe8cf" },
+    { "id": "collab", "label": "With others", "accent": "#b8d9ff" },
+    { "id": "recover", "label": "Recovery", "accent": "#f9e293" }
+  ],
+  "events": [
+    {
+      "id": "wake",
+      "at": "06:40",
+      "lane": "recover",
+      "weight": 0.3,
+      "title": "Up, no screen",
+      "summary": "Twenty minutes before the first notification of the day.",
+      "media": { "type": "glyph", "glyph": "☀", "alt": "Sunrise", "motion": "pulse" }
+    },
+    {
+      "id": "block-one",
+      "at": "08:00",
+      "lane": "focus",
+      "weight": 0.9,
+      "title": "First deep block",
+      "summary": "The hardest problem of the day gets the freshest ninety minutes.",
+      "media": { "type": "glyph", "glyph": "◧", "alt": "Focus block" },
+      "keyPoints": [
+        "One problem, chosen the evening before.",
+        "No inbox, no chat, no browser tabs left over from yesterday.",
+        "Ends on a written note about the next step, not on a solved problem."
+      ],
+      "impact": "Everything else on this rail is arranged around protecting this block."
+    },
+    {
+      "id": "standup",
+      "at": "10:00",
+      "lane": "collab",
+      "weight": 0.4,
+      "title": "Standup",
+      "summary": "Fifteen minutes, blockers only.",
+      "media": { "type": "glyph", "glyph": "◍", "alt": "Team" }
+    },
+    {
+      "id": "review",
+      "at": "10:30",
+      "lane": "collab",
+      "weight": 0.55,
+      "title": "Review queue",
+      "summary": "Other people's work, while the context is still warm from the morning block.",
+      "media": { "type": "glyph", "glyph": "✓", "alt": "Review" }
+    },
+    {
+      "id": "lunch",
+      "at": "12:15",
+      "lane": "recover",
+      "weight": 0.25,
+      "title": "Lunch, outside",
+      "summary": "Away from the desk — the afternoon block depends on it.",
+      "media": { "type": "glyph", "glyph": "◕", "alt": "Break", "motion": "float" }
+    },
+    {
+      "id": "block-two",
+      "at": "13:30",
+      "lane": "focus",
+      "weight": 0.75,
+      "title": "Second block",
+      "summary": "Implementation, not design — the tired hours get the well-specified work.",
+      "media": { "type": "glyph", "glyph": "◨", "alt": "Focus block" }
+    },
+    {
+      "id": "pairing",
+      "at": "15:30",
+      "lane": "collab",
+      "weight": 0.5,
+      "title": "Pairing hour",
+      "summary": "The one slot where interruption is the point.",
+      "media": { "type": "glyph", "glyph": "⧉", "alt": "Pairing" }
+    },
+    {
+      "id": "shutdown",
+      "at": "17:15",
+      "lane": "recover",
+      "weight": 0.45,
+      "title": "Shutdown ritual",
+      "summary": "Tomorrow's first block is chosen and written down before the laptop closes.",
+      "media": { "type": "glyph", "glyph": "◌", "alt": "Shutdown" },
+      "impact": "Choosing tomorrow's problem today is what makes the 08:00 block start at 08:00."
+    }
+  ]
+}

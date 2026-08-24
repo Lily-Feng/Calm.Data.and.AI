@@ -1,0 +1,49 @@
+<article class="guide-content">
+    <h2>Reading it as an engineer</h2>
+    <p>
+        The paper is not about computers. Turing is answering David Hilbert's
+        <em>Entscheidungsproblem</em>: is there a mechanical procedure that decides
+        whether any given mathematical statement is provable? To answer no, he first
+        has to say precisely what "mechanical procedure" means — and that definition,
+        rather than the answer, is what the field kept.
+    </p>
+
+    <h3>The machine</h3>
+    <p>
+        A tape divided into squares, a head that reads and writes one square at a
+        time, and a finite table of rules keyed on the current symbol and the current
+        state. That is the entire model. It is deliberately impoverished: the argument
+        is stronger the weaker the machine, because anything this thing can compute is
+        beyond dispute computable.
+    </p>
+
+    <h3>The universal machine</h3>
+    <p>
+        The step that matters commercially arrives quietly. Because a machine's rule
+        table is itself a finite string of symbols, it can be written onto the tape of
+        another machine. One machine, given the description of any other, reproduces
+        its behaviour. Hardware stops being specific to a task. This is the stored
+        program, thirteen years before anyone built one.
+    </p>
+
+    <h3>The limit</h3>
+    <p>
+        Then the diagonal argument: assume a machine that can decide, for any machine
+        description and input, whether it eventually halts. Build a machine that
+        consults that decider about itself and then does the opposite. The
+        contradiction is immediate, and the decider cannot exist.
+    </p>
+    <p>
+        This is not an engineering inconvenience to be routed around with a faster
+        chip. It is why static analysers approximate, why type systems reject programs
+        that would have been fine, and why every "does this code terminate / leak /
+        deadlock" tool is either incomplete, unsound, or restricted to a sub-language.
+    </p>
+
+    <h3>What to carry away</h3>
+    <ul>
+        <li>Define the machine before arguing about what is possible on it.</li>
+        <li>A program is data — the single most reused idea in the industry.</li>
+        <li>Some limits are structural. Recognising one early saves the quarter you would spend attacking it.</li>
+    </ul>
+</article>

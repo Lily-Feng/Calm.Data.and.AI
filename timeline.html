@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f2ec">
+    <meta name="description" content="Illustrated, weighted timelines — ten papers that built computing, and one engineering day by the clock.">
+    <link rel="canonical" href="https://lily-feng.github.io/Efficient_Learning/timeline.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Patternbook">
+    <meta property="og:title" content="Patternbook — Timelines">
+    <meta property="og:description" content="Ten papers that built computing, on a weighted rail with sub-timelines for the ones that kept going.">
+    <meta property="og:url" content="https://lily-feng.github.io/Efficient_Learning/timeline.html">
+    <meta property="og:image" content="https://lily-feng.github.io/Efficient_Learning/public/og.png">
+    <title>Patternbook — Timelines</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/timeline.css">
+</head>
+<body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <div class="app-shell">
+        <aside class="sidebar" id="sidebar">
+            <div class="brand-row">
+                <a class="brand" href="index.html" aria-label="Go to atlas overview">
+                    <span class="brand-mark" aria-hidden="true">P/</span>
+                    <span>
+                        <strong>Patternbook</strong>
+                        <small>Engineering knowledge atlas</small>
+                    </span>
+                </a>
+                <button class="icon-button sidebar-close" id="sidebar-close" type="button" aria-label="Close navigation">×</button>
+            </div>
+
+            <nav class="primary-nav" aria-label="Sections">
+                <a class="nav-item" href="index.html">
+                    <span class="nav-symbol">◎</span>
+                    <span>Atlas overview</span>
+                </a>
+                <a class="nav-item active" href="timeline.html" aria-current="page">
+                    <span class="nav-symbol">⟜</span>
+                    <span>Timelines</span>
+                </a>
+                <p class="nav-label">On this page</p>
+                <a class="nav-item" href="#rail-cs-papers">
+                    <span class="nav-symbol">▤</span>
+                    <span>Ten papers</span>
+                </a>
+                <a class="nav-item" href="#rail-deep-work-day">
+                    <span class="nav-symbol">◷</span>
+                    <span>One day</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="legend-card">
+                    <p>Rail key</p>
+                    <span><i class="legend-dot legend-dot--root"></i> Landmark — reshaped the field</span>
+                    <span><i class="legend-dot legend-dot--cluster"></i> Major — changed practice</span>
+                    <span><i class="legend-dot legend-dot--concept"></i> Notable</span>
+                    <span><i class="legend-dot legend-dot--guide"></i> ⑂ has a sub-timeline</span>
+                </div>
+                <a class="garden-link" href="https://lily-feng.github.io/knowledge" target="_blank" rel="noreferrer">
+                    Lily’s knowledge garden <span>↗</span>
+                </a>
+            </div>
+        </aside>
+
+        <div class="page-shell">
+            <header class="topbar">
+                <button class="icon-button menu-button" id="menu-button" type="button" aria-label="Open navigation">☰</button>
+                <p class="topbar-title">Timelines</p>
+                <a class="topbar-link" href="index.html">Back to the atlas <span>→</span></a>
+            </header>
+
+            <main id="main-content">
+                <section class="view">
+                    <div class="hero hero--timeline">
+                        <div class="hero-copy">
+                            <p class="eyebrow">Illustrated history</p>
+                            <h1>Ideas, in the order<br><em>they arrived.</em></h1>
+                            <p class="hero-intro">
+                                One component, two scales. Each entry carries a weight that decides how prominent it is on the rail;
+                                click any of them for the detail, the links, and what it set in motion. The heaviest entries open a
+                                sub-timeline of their own descendants.
+                            </p>
+                        </div>
+                    </div>
+
+                    <section class="section-block" aria-labelledby="cs-papers-title">
+                        <div class="section-heading">
+                            <div>
+                                <p class="eyebrow">Ordinal scale · polaroid pack</p>
+                                <h2 id="cs-papers-title">Ten papers that built computing</h2>
+                            </div>
+                            <p>Three of them carry a ⑂ — open it to follow what happened next on its own rail.</p>
+                        </div>
+                        <div id="rail-cs-papers" class="tl-mount" data-state="loading">
+                            <p class="tl-fallback">Loading the rail…</p>
+                        </div>
+                    </section>
+
+                    <section class="section-block" aria-labelledby="deep-work-title">
+                        <div class="section-heading">
+                            <div>
+                                <p class="eyebrow">Linear scale · sticker pack</p>
+                                <h2 id="deep-work-title">One engineering day, by the clock</h2>
+                            </div>
+                            <p>The same widget on clock-only stamps, where the spacing is real elapsed time.</p>
+                        </div>
+                        <div id="rail-deep-work-day" class="tl-mount" data-state="loading">
+                            <p class="tl-fallback">Loading the rail…</p>
+                        </div>
+                    </section>
+
+                    <section class="section-block" aria-labelledby="authoring-title">
+                        <div class="section-heading">
+                            <div>
+                                <p class="eyebrow">Authoring</p>
+                                <h2 id="authoring-title">Adding a timeline</h2>
+                            </div>
+                        </div>
+                        <div class="method-grid">
+                            <article>
+                                <h3>1 · Write the data</h3>
+                                <p>One JSON file in <code>data/timelines/</code>. Stamps carry their own precision, so <code>1936</code>, <code>2026-08-24</code>, and <code>06:40</code> all sit on the same axis machinery.</p>
+                            </article>
+                            <article>
+                                <h3>2 · Weight the entries</h3>
+                                <p>A <code>weight</code> from 0 to 1 sets the tier, which sets the marker size, the card width, and whether the entry reads as a landmark.</p>
+                            </article>
+                            <article>
+                                <h3>3 · Call the component</h3>
+                                <p><code>createTimeline(mount, spec)</code> — see <code>js/timeline-page.js</code>. Nesting a <code>children</code> block on an entry gives it a sub-timeline, drawn by the same function.</p>
+                            </article>
+                        </div>
+                    </section>
+                </section>
+            </main>
+
+            <footer>
+                <div>
+                    <strong>Patternbook</strong>
+                    <p>A detailed engineering layer within Lily Feng’s connected knowledge garden.</p>
+                </div>
+                <a href="https://lily-feng.github.io/knowledge" target="_blank" rel="noreferrer">Return to the high-level graph ↗</a>
+            </footer>
+        </div>
+    </div>
+
+    <div class="sidebar-scrim" id="sidebar-scrim"></div>
+
+    <script type="module" src="js/timeline-page.js"></script>
+</body>
+</html>

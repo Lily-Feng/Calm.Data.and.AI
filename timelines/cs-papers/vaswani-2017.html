@@ -1,0 +1,38 @@
+<article class="guide-content">
+    <h2>The constraint the paper removed</h2>
+    <p>
+        Recurrent sequence models compute position <em>t</em> from position
+        <em>t−1</em>. That dependency is a hard serialisation: no matter how many
+        accelerators you own, a single sequence is processed one step at a time, and
+        information from the start of the sequence reaches the end only by passing
+        through every intermediate state.
+    </p>
+    <p>
+        Attention had already been bolted onto recurrent models as a shortcut. The
+        paper's claim is that once you have the shortcut, you can throw away the road.
+    </p>
+
+    <h3>Three consequences</h3>
+    <ul>
+        <li><strong>Constant path length.</strong> Any two positions are one attention step apart, so long-range dependencies do not degrade with distance.</li>
+        <li><strong>Parallel training.</strong> All positions are computed at once, which turns a sequence model into a matrix-multiplication workload — exactly what GPUs are for.</li>
+        <li><strong>Quadratic cost.</strong> Every position attends to every other, so compute grows with the square of sequence length. Most architecture work since has been about this line item.</li>
+    </ul>
+
+    <h3>Why it mattered more than it looked</h3>
+    <p>
+        Read in 2017, this is a machine-translation paper with a competitive BLEU
+        score. Its significance is architectural: it made model quality a function of
+        compute spent rather than of research cleverness. Once
+        <a href="https://arxiv.org/abs/2001.08361" target="_blank" rel="noreferrer">scaling laws</a>
+        made that relationship explicit, capability became a budgeting exercise, and
+        the field's constraint moved from ideas to data centres.
+    </p>
+
+    <h3>What to carry away</h3>
+    <ul>
+        <li>Removing a serial dependency can matter more than improving the metric it was serialising for.</li>
+        <li>An architecture that maps cleanly onto the hardware you can buy will outrun a better one that does not.</li>
+        <li>Read the cost table. The quadratic term is the whole subsequent research programme.</li>
+    </ul>
+</article>

@@ -32,6 +32,46 @@ Push to `main`. `.github/workflows/deploy-pages.yml` publishes the static site a
 
 The graph structure, guide metadata, and guide content are intentionally separate. A concept can have a useful place and summary before a long guide is written, and a guide's body can be rewritten without touching its graph location or metadata.
 
+## Timelines
+
+`timeline.html` renders illustrated, weighted timelines. The page owns no
+timeline markup — it loads authored JSON and calls the component:
+
+```js
+import { createTimeline } from "./js/timeline/index.js";
+
+const spec = await (await fetch("data/timelines/cs-papers.json")).json();
+const rail = createTimeline(document.querySelector("#rail"), spec, { onOpenGuide });
+```
+
+Timestamps carry their own precision, so `1936`, `1970-06`, `2026-08-24`,
+`2026-08-24T06:30`, and the clock-only `06:40` all sit on the same axis
+machinery — one component serves eight decades of papers and one working day.
+Three axis scales are available: `ordinal` (even spacing, real gaps named
+between the markers), `linear` (distance is elapsed time), and `log`.
+
+An entry's `weight` (0–1) sets its tier, which drives marker size, card width,
+and how prominent the entry reads. An entry carrying a `children` block gets a
+sub-timeline: the same function, called again inside a drawer under the parent
+rail, with its own scale and style pack.
+
+Three style packs ship — `polaroid`, `filmstrip`, and `sticker` — and resolve
+per entry (`event.style` → `lane.style` → `timeline.style`), so one rail can mix
+them. Add a pack in `js/timeline/styles/`, register it in that directory's
+`index.js`, and reference its id from a JSON file.
+
+### Add a timeline
+
+1. Write `data/timelines/<id>.json`. See `js/timeline/schema.js` for the full
+   field reference — lanes, weights, media, key points, impact, and resources.
+2. Mount it from `js/timeline-page.js` by adding a `{ mount, src }` entry.
+3. Optionally give an entry a `bodyUrl` pointing at a long-form fragment in
+   `timelines/<timeline>/<event>.html` — see `timelines/README.md`.
+
+Cover art is generated, not scanned: `node scripts/make-covers.mjs` writes the
+SVGs in `public/timeline/cs-papers/`. The papers themselves are copyrighted, so
+each entry links out to the real thing rather than reproducing it.
+
 ## Add a graph concept
 
 Add the concept to the appropriate cluster in `js/atlas.js`:
@@ -60,13 +100,21 @@ A guide typically covers a representative problem, a reusable reasoning sequence
 ```text
 .
 ├── index.html
+├── timeline.html
 ├── css/styles.css
+├── css/timeline.css
 ├── js/atlas.js
 ├── js/manifest.js
 ├── js/app.js
+├── js/timeline-page.js
+├── js/timeline/            # the timeline component
+├── data/timelines/<id>.json
 ├── guides/<id>.html
 ├── guides/README.md
+├── timelines/<timeline>/<event>.html
+├── timelines/README.md
 ├── scripts/migrate-guides.mjs
+├── scripts/make-covers.mjs
 ├── KNOWLEDGE_GRAPH_PLAN.md
 ├── public/og.png
 └── .github/workflows/deploy-pages.yml
