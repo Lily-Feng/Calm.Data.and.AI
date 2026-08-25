@@ -51,6 +51,9 @@ touches none of `js/app.js`.
   and reports back through callbacks; it must not fetch data, read the URL, or
   know about Calm Data and AI guides. Page concerns — loading JSON, deep links, the
   sidebar, jumping into the atlas — live in `js/timeline-page.js`.
+- `data/timelines/series.json` is the series index: it lists the timelines and
+  drives the sections, the sidebar navigation, and the scroll-spy. Adding a
+  timeline should never require editing `timeline.html`.
 - `data/timelines/<id>.json` is the authored layer. `js/timeline/schema.js`
   documents every field and is the only place that parses authored values.
 - `timelines/<timeline>/<event>.html` holds optional long-form bodies, under the

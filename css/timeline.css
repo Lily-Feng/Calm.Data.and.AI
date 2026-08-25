@@ -317,6 +317,9 @@
 /* ── Page chrome for timeline.html ──────────────────────────────────────── */
 
 a.nav-item { text-decoration: none; }
+/* The sidebar tracks which timeline is on screen, so a section needs somewhere
+   to arrive under the sticky topbar. */
+.section-block[id^="section-"] { scroll-margin-top: 88px; }
 .topbar-title { margin: 0; font: 500 17px Georgia, "Times New Roman", serif; letter-spacing: -.02em; }
 .hero--timeline { min-height: 0; grid-template-columns: 1fr; }
 .hero--timeline .hero-intro { max-width: 68ch; }

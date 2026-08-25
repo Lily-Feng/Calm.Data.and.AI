@@ -1,0 +1,16 @@
+{
+  "id": "taste-of-the-past",
+  "title": "Taste of the Past",
+  "tagline": "Illustrated, weighted timelines of the ideas the field was built on.",
+  "timelines": [
+    {
+      "id": "cs-papers",
+      "src": "data/timelines/cs-papers.json",
+      "label": "Ten papers",
+      "symbol": "▤",
+      "eyebrow": "Ordinal scale · polaroid pack",
+      "heading": "Ten papers that built computing",
+      "note": "Three of them carry a ⑂ — open it to follow what happened next on its own rail."
+    }
+  ]
+}

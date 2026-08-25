@@ -13,6 +13,7 @@
     <meta property="og:url" content="https://lily-feng.github.io/Efficient_Learning/timeline.html">
     <meta property="og:image" content="https://lily-feng.github.io/Efficient_Learning/public/og.png">
     <title>Taste of the Past</title>
+    <link rel="icon" href="public/logo.svg" type="image/svg+xml">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/timeline.css">
 </head>
@@ -35,31 +36,11 @@
             <nav class="primary-nav" aria-label="Sections">
                 <a class="nav-item" href="index.html">
                     <span class="nav-symbol">◎</span>
-                    <span>Atlas overview</span>
+                    <span>Overview</span>
                 </a>
-                <a class="nav-item active" href="timeline.html" aria-current="page">
-                    <span class="nav-symbol">⟜</span>
-                    <span>Taste of the Past</span>
-                </a>
-                <p class="nav-label">On this page</p>
-                <a class="nav-item" href="#rail-cs-papers">
-                    <span class="nav-symbol">▤</span>
-                    <span>Ten papers</span>
-                </a>
+                <p class="nav-label">Taste of the Past</p>
+                <div id="series-nav"></div>
             </nav>
-
-            <div class="sidebar-footer">
-                <div class="legend-card">
-                    <p>Rail key</p>
-                    <span><i class="legend-dot legend-dot--root"></i> Landmark — reshaped the field</span>
-                    <span><i class="legend-dot legend-dot--cluster"></i> Major — changed practice</span>
-                    <span><i class="legend-dot legend-dot--concept"></i> Notable</span>
-                    <span><i class="legend-dot legend-dot--guide"></i> ⑂ has a sub-timeline</span>
-                </div>
-                <a class="garden-link" href="https://lily-feng.github.io/knowledge" target="_blank" rel="noreferrer">
-                    Lily’s knowledge garden <span>↗</span>
-                </a>
-            </div>
         </aside>
 
         <div class="page-shell">
@@ -83,18 +64,7 @@
                         </div>
                     </div>
 
-                    <section class="section-block" aria-labelledby="cs-papers-title">
-                        <div class="section-heading">
-                            <div>
-                                <p class="eyebrow">Ordinal scale · polaroid pack</p>
-                                <h2 id="cs-papers-title">Ten papers that built computing</h2>
-                            </div>
-                            <p>Three of them carry a ⑂ — open it to follow what happened next on its own rail.</p>
-                        </div>
-                        <div id="rail-cs-papers" class="tl-mount" data-state="loading">
-                            <p class="tl-fallback">Loading the rail…</p>
-                        </div>
-                    </section>
+                    <div id="series-sections"></div>
 
                     <section class="section-block" aria-labelledby="authoring-title">
                         <div class="section-heading">
@@ -126,7 +96,6 @@
                     <strong>Calm Data and AI</strong>
                     <p>Learning made easy with notes and AI.</p>
                 </div>
-                <a href="https://lily-feng.github.io/knowledge" target="_blank" rel="noreferrer">Return to the high-level graph ↗</a>
             </footer>
         </div>
     </div>

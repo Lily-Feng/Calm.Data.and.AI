@@ -66,7 +66,9 @@ them. Add a pack in `js/timeline/styles/`, register it in that directory's
 
 1. Write `data/timelines/<id>.json`. See `js/timeline/schema.js` for the full
    field reference — lanes, weights, media, key points, impact, and resources.
-2. Mount it from `js/timeline-page.js` by adding a `{ mount, src }` entry.
+2. Add one entry to `timelines` in `data/timelines/series.json`. The page builds
+   the section, the sidebar link, and the scroll-spy from it; no HTML or JS
+   changes are needed.
 3. Optionally give an entry a `bodyUrl` pointing at a long-form fragment in
    `timelines/<timeline>/<event>.html` — see `timelines/README.md`.
 
