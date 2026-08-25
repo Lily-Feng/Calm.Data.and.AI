@@ -1,0 +1,234 @@
+{
+  "id": "infrastructure",
+  "title": "The machine room",
+  "tagline": "How the computer went from a room you walked into, to a rack you owned, to an API you called — each step making the previous one's skills obsolete and its problems permanent.",
+  "axis": { "scale": "ordinal", "precision": "year", "direction": "horizontal" },
+  "style": "polaroid",
+  "lanes": [
+    { "id": "mainframe", "label": "Mainframe era", "accent": "#ffcbb2" },
+    { "id": "unix", "label": "UNIX & the server", "accent": "#d9cdfd" },
+    { "id": "virtual", "label": "Virtualisation", "accent": "#b8d9ff" },
+    { "id": "cloud", "label": "Cloud", "accent": "#bfe8cf" },
+    { "id": "ops", "label": "How we run it", "accent": "#f9e293" }
+  ],
+  "events": [
+    {
+      "id": "system360-1964",
+      "at": "1964",
+      "lane": "mainframe",
+      "weight": 0.87,
+      "title": "IBM System/360",
+      "byline": "Gene Amdahl, Fred Brooks & team, IBM",
+      "summary": "One instruction set across a whole family of machines, so a customer could buy a bigger computer without rewriting their software.",
+      "media": { "type": "image", "src": "public/timeline/infrastructure/system360-1964.svg", "alt": "Family-of-models motif for System/360" },
+      "keyPoints": [
+        "Architecture is separated from implementation — the first time that split is made a product.",
+        "Backward compatibility becomes a commercial promise rather than an accident.",
+        "The 8-bit byte and general-purpose registers are standardised here.",
+        "The software effort produced The Mythical Man-Month, which is its own legacy."
+      ],
+      "impact": "Established the stable instruction set as the platform, and made compatibility something vendors compete on. x86 and ARM are still selling the same promise.",
+      "resources": [
+        { "type": "paper", "label": "Architecture of the IBM System/360", "href": "https://doi.org/10.1147/rd.82.0087", "note": "Amdahl, Blaauw & Brooks, 1964" },
+        { "type": "reference", "label": "The Mythical Man-Month", "href": "https://archive.org/details/mythicalmanmonth0000broo", "note": "What managing it taught Brooks" }
+      ]
+    },
+    {
+      "id": "cp67-1968",
+      "at": "1968",
+      "lane": "virtual",
+      "weight": 0.72,
+      "title": "CP-67 and the virtual machine",
+      "byline": "IBM Cambridge Scientific Center",
+      "summary": "Gives every user their own complete illusory computer, forty years before anyone calls it a cloud.",
+      "media": { "type": "image", "src": "public/timeline/infrastructure/cp67-1968.svg", "alt": "Time-slicing motif for CP-67", "motion": "pulse" },
+      "keyPoints": [
+        "The hypervisor multiplexes one physical machine into many virtual ones.",
+        "Each guest believes it has the hardware to itself, including its own operating system.",
+        "Time-sharing turns an expensive machine into a shared utility.",
+        "Its descendant, VM/370, is still running today as z/VM."
+      ],
+      "impact": "Every idea the cloud is sold on — isolation, multi-tenancy, paying for a slice — was working here first. What changed later was the price and the API, not the concept.",
+      "resources": [{ "type": "paper", "label": "Formal Requirements for Virtualizable Third Generation Architectures", "href": "https://doi.org/10.1145/361011.361073", "note": "Popek & Goldberg, 1974" }]
+    },
+    {
+      "id": "unix-1969",
+      "at": "1969",
+      "lane": "unix",
+      "weight": 0.95,
+      "title": "UNIX",
+      "byline": "Ken Thompson & Dennis Ritchie, Bell Labs",
+      "summary": "Built on a spare machine after a big project was cancelled, and organised around one idea: nearly everything can be a file.",
+      "media": { "type": "image", "src": "public/timeline/infrastructure/unix-1969.svg", "alt": "Filesystem hierarchy motif for UNIX", "motion": "float" },
+      "keyPoints": [
+        "Small programs that do one thing, composed with pipes.",
+        "A hierarchical filesystem, with devices and later processes exposed through it.",
+        "Rewritten in C in 1973, which made it portable across machines.",
+        "Its interfaces outlived its code: POSIX, Linux, and macOS are all downstream."
+      ],
+      "impact": "Set the shape of the server. The shell, the process model, the file abstraction, and the composition philosophy are the working environment most infrastructure engineers still live in.",
+      "resources": [
+        { "type": "paper", "label": "The UNIX Time-Sharing System", "href": "https://doi.org/10.1145/362686.362692", "note": "CACM 17(7), 1974" },
+        { "type": "guide", "label": "Cancellation and shutdown", "guide": "go-cancellation", "note": "Signals and process lifecycle, still" }
+      ]
+    },
+    {
+      "id": "ethernet-1973",
+      "at": "1973",
+      "lane": "mainframe",
+      "weight": 0.8,
+      "title": "Ethernet",
+      "byline": "Robert Metcalfe & David Boggs, Xerox PARC",
+      "summary": "Lets machines share one wire by talking whenever they like and coping sensibly when two of them talk at once.",
+      "media": { "type": "image", "src": "public/timeline/infrastructure/ethernet-1973.svg", "alt": "Shared-medium packets motif for Ethernet", "motion": "drift" },
+      "keyPoints": [
+        "Carrier sense with collision detection: notice the clash, back off randomly, retry.",
+        "Randomised exponential backoff — the same pattern every retry policy uses today.",
+        "Designed for a shared medium; switching later removed the collisions but kept the frame.",
+        "Won over token ring by being cheaper and good enough."
+      ],
+      "impact": "The local network became commodity, which is what made the rack, the cluster, and eventually the data centre economically possible.",
+      "resources": [
+        { "type": "paper", "label": "Ethernet: Distributed Packet Switching for Local Computer Networks", "href": "https://doi.org/10.1145/360248.360253", "note": "CACM 19(7), 1976" },
+        { "type": "guide", "label": "Reliable messaging patterns", "guide": "cloud-reliable-messaging", "note": "Backoff and retry, generalised" }
+      ]
+    },
+    {
+      "id": "linux-1991",
+      "at": "1991-08",
+      "precision": "month",
+      "lane": "unix",
+      "weight": 0.92,
+      "title": "Linux",
+      "byline": "Linus Torvalds",
+      "summary": "Announced as a hobby project that would not be big and professional, and now runs essentially every server, phone, and cloud instance.",
+      "media": { "type": "image", "src": "public/timeline/infrastructure/linux-1991.svg", "alt": "Open source braces motif for Linux" },
+      "keyPoints": [
+        "A UNIX-like kernel on commodity x86, licensed so that anyone could ship it.",
+        "The GPL made contribution the rational strategy for competing vendors.",
+        "Distributed development at a scale that produced Git as a side effect.",
+        "The cost of the operating system went to zero, which changed everyone's unit economics."
+      ],
+      "impact": "Removed the OS licence from the cost of a server. Every cloud, every container, and every CI runner is standing on it.",
+      "resources": [
+        { "type": "reference", "label": "The original announcement", "href": "https://groups.google.com/g/comp.os.minix/c/dlNtH7RRrGA", "note": "comp.os.minix, August 1991" },
+        { "type": "reference", "label": "The Cathedral and the Bazaar", "href": "http://www.catb.org/~esr/writings/cathedral-bazaar/", "note": "Raymond on why it worked" }
+      ]
+    },
+    {
+      "id": "vmware-2001",
+      "at": "2001",
+      "lane": "virtual",
+      "weight": 0.78,
+      "title": "VMware ESX",
+      "byline": "VMware",
+      "summary": "Makes virtualisation work on x86 — a chip never designed to be virtualised — and turns a rack of idle servers into one busy one.",
+      "media": { "type": "image", "src": "public/timeline/infrastructure/vmware-2001.svg", "alt": "Stacked virtual machines motif" },
+      "keyPoints": [
+        "Binary translation worked around x86 instructions that could not be trapped.",
+        "Consolidation ratios turned hardware utilisation into a budget line.",
+        "Live migration made a running workload independent of the machine underneath it.",
+        "Intel VT-x and AMD-V later put the support in silicon."
+      ],
+      "impact": "Decoupled the workload from the box. That decoupling is the precondition for renting compute by the hour, which is the entire cloud business model.",
+      "resources": [{ "type": "paper", "label": "Memory Resource Management in VMware ESX Server", "href": "https://dl.acm.org/doi/10.1145/844128.844146", "note": "Waldspurger, OSDI 2002" }]
+    },
+    {
+      "id": "aws-2006",
+      "at": "2006-03",
+      "precision": "month",
+      "lane": "cloud",
+      "weight": 0.96,
+      "title": "S3 and EC2",
+      "byline": "Amazon Web Services",
+      "summary": "Storage in March, servers in August, both behind an API and a credit card — infrastructure stops being a purchase and becomes a call.",
+      "media": { "type": "image", "src": "public/timeline/infrastructure/aws-2006.svg", "alt": "Cloud services motif for AWS", "motion": "float" },
+      "keyPoints": [
+        "Capacity becomes elastic: provision in minutes, release when done.",
+        "Capital expenditure turns into operating expenditure, which changes who can start a company.",
+        "Durability and availability promises are stated as numbers in a contract.",
+        "Everything above it — autoscaling, managed services, serverless — assumes this API exists."
+      ],
+      "impact": "Reset the default. A team's first infrastructure decision stopped being \"which servers do we buy\" and became \"which service do we call\", and the industry's cost structure followed.",
+      "resources": [
+        { "type": "guide", "label": "High availability patterns", "guide": "cloud-high-availability" },
+        { "type": "guide", "label": "Least privilege in cloud systems", "guide": "cloud-least-privilege" }
+      ],
+      "children": {
+        "id": "cloud-descendants",
+        "axis": { "scale": "linear", "precision": "year", "direction": "horizontal" },
+        "style": "filmstrip",
+        "events": [
+          { "id": "inf-heroku-2007", "at": "2007", "lane": "cloud", "weight": 0.62, "title": "Heroku", "byline": "Heroku", "summary": "git push to deploy — the platform-as-a-service argument, made early and made well.", "media": { "type": "glyph", "glyph": "⇧", "alt": "Push" } },
+          { "id": "inf-chaos-2010", "at": "2010", "lane": "ops", "weight": 0.7, "title": "Chaos engineering", "byline": "Netflix", "summary": "Break production on purpose, on a schedule, so that failure stops being a surprise.", "media": { "type": "glyph", "glyph": "☠", "alt": "Chaos monkey" } },
+          { "id": "inf-terraform-2014", "at": "2014", "lane": "ops", "weight": 0.72, "title": "Terraform", "byline": "HashiCorp", "summary": "Infrastructure declared in files and reconciled against reality — Codd's move, applied to servers.", "media": { "type": "glyph", "glyph": "▦", "alt": "Declared state" } },
+          { "id": "inf-sre-2016", "at": "2016", "lane": "ops", "weight": 0.68, "title": "The SRE book", "byline": "Google", "summary": "Error budgets give reliability a number, so it can be traded against velocity in the open.", "media": { "type": "glyph", "glyph": "◑", "alt": "Error budget" }, "resources": [{ "type": "reference", "label": "Site Reliability Engineering", "href": "https://sre.google/sre-book/table-of-contents/" }] },
+          { "id": "inf-managed-k8s-2018", "at": "2018", "lane": "cloud", "weight": 0.6, "title": "Managed Kubernetes everywhere", "byline": "Every cloud", "summary": "The control plane becomes somebody else's problem, and the orchestrator becomes the substrate.", "media": { "type": "glyph", "glyph": "⎈", "alt": "Helm" } }
+        ]
+      }
+    },
+    {
+      "id": "docker-2013",
+      "at": "2013-03",
+      "precision": "month",
+      "lane": "cloud",
+      "weight": 0.88,
+      "title": "Docker",
+      "byline": "Solomon Hykes, dotCloud",
+      "summary": "Wraps kernel features that had existed for years in a format people would actually use, and settles the \"works on my machine\" argument.",
+      "media": { "type": "image", "src": "public/timeline/infrastructure/docker-2013.svg", "alt": "Layered image motif for Docker", "motion": "pulse" },
+      "keyPoints": [
+        "Namespaces and cgroups were already in Linux; the image format and the registry were the invention.",
+        "Layered, content-addressed images make builds cacheable and shippable.",
+        "The unit of deployment becomes the filesystem plus the process, not the machine.",
+        "Dependency hell moves from the server into the Dockerfile, where it is at least versioned."
+      ],
+      "impact": "Made the build artefact identical from a laptop to production. That single guarantee is what made continuous delivery and microservices operationally realistic.",
+      "resources": [{ "type": "reference", "label": "Open Container Initiative image spec", "href": "https://github.com/opencontainers/image-spec", "note": "The format, standardised" }]
+    },
+    {
+      "id": "kubernetes-2014",
+      "at": "2014-06",
+      "precision": "month",
+      "lane": "ops",
+      "weight": 0.86,
+      "title": "Kubernetes",
+      "byline": "Google, from a decade of Borg",
+      "summary": "You declare what should be running; a control loop spends the rest of its life making reality match.",
+      "media": { "type": "image", "src": "public/timeline/infrastructure/kubernetes-2014.svg", "alt": "Helm wheel motif for Kubernetes" },
+      "keyPoints": [
+        "Declarative desired state plus continuous reconciliation, rather than imperative deploys.",
+        "Scheduling, health checking, and rollout become platform concerns instead of scripts.",
+        "The extension model — custom resources and controllers — is why it ate the ecosystem.",
+        "Its complexity is real, and is mostly the complexity it absorbed from everyone's scripts."
+      ],
+      "impact": "Became the portable substrate every cloud now offers. The reconciliation loop it popularised is the default pattern for managing anything, including infrastructure with no containers in it.",
+      "resources": [
+        { "type": "paper", "label": "Large-scale cluster management at Google with Borg", "href": "https://doi.org/10.1145/2741948.2741964", "note": "EuroSys 2015" },
+        { "type": "guide", "label": "High availability patterns", "guide": "cloud-high-availability" }
+      ]
+    },
+    {
+      "id": "lambda-2014",
+      "at": "2014-11",
+      "precision": "month",
+      "lane": "cloud",
+      "weight": 0.76,
+      "title": "AWS Lambda",
+      "byline": "Amazon Web Services",
+      "summary": "Bills by the millisecond of execution, which finally makes the server disappear from the part of the system that matters most: the invoice.",
+      "media": { "type": "image", "src": "public/timeline/infrastructure/lambda-2014.svg", "alt": "Event pipeline motif for Lambda" },
+      "keyPoints": [
+        "No idle cost — the unit of billing is an invocation, not an hour of capacity.",
+        "The runtime is ephemeral, which forces state out of the compute and into a service.",
+        "Cold starts are the tax, and most of the tuning advice is about them.",
+        "Event-driven composition becomes the default architecture for glue work."
+      ],
+      "impact": "Completed the fifty-year retreat from the machine: from owning the room, to owning the box, to renting the box, to renting a fraction of a second of one.",
+      "resources": [
+        { "type": "guide", "label": "Reliable messaging patterns", "guide": "cloud-reliable-messaging" },
+        { "type": "paper", "label": "Firecracker: Lightweight Virtualization", "href": "https://www.usenix.org/conference/nsdi20/presentation/agache", "note": "NSDI 2020 — what runs underneath" }
+      ]
+    }
+  ]
+}

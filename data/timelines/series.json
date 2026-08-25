@@ -8,9 +8,45 @@
       "src": "data/timelines/cs-papers.json",
       "label": "Ten papers",
       "symbol": "▤",
-      "eyebrow": "Ordinal scale · polaroid pack",
+      "eyebrow": "Foundations",
       "heading": "Ten papers that built computing",
       "note": "Three of them carry a ⑂ — open it to follow what happened next on its own rail."
+    },
+    {
+      "id": "languages",
+      "src": "data/timelines/languages.json",
+      "label": "Languages",
+      "symbol": "{}",
+      "eyebrow": "Programming languages",
+      "heading": "Tongues of the machine",
+      "note": "Every language is an argument about what a programmer should have to think about."
+    },
+    {
+      "id": "data-storage",
+      "src": "data/timelines/data-storage.json",
+      "label": "Storage",
+      "symbol": "◫",
+      "eyebrow": "Data & storage",
+      "heading": "Where the data sleeps",
+      "note": "Watch the same pendulum swing four times: give up structure for scale, then spend a decade putting it back."
+    },
+    {
+      "id": "machine-learning",
+      "src": "data/timelines/machine-learning.json",
+      "label": "Learning",
+      "symbol": "◉",
+      "eyebrow": "Machine learning",
+      "heading": "Teaching machines to guess",
+      "note": "Including the two long stretches when the field agreed this would never work."
+    },
+    {
+      "id": "infrastructure",
+      "src": "data/timelines/infrastructure.json",
+      "label": "Machine room",
+      "symbol": "▥",
+      "eyebrow": "Systems & infrastructure",
+      "heading": "The machine room",
+      "note": "From a room you walked into, to a rack you owned, to an API you called."
     }
   ]
 }

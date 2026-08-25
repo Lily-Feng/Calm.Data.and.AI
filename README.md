@@ -73,8 +73,25 @@ them. Add a pack in `js/timeline/styles/`, register it in that directory's
    `timelines/<timeline>/<event>.html` — see `timelines/README.md`.
 
 Cover art is generated, not scanned: `node scripts/make-covers.mjs` writes the
-SVGs in `public/timeline/cs-papers/`. The papers themselves are copyrighted, so
-each entry links out to the real thing rather than reproducing it.
+SVGs under `public/timeline/<timeline-id>/`. Published papers are copyrighted,
+so each entry links out to the real thing rather than reproducing it. A motif
+may not repeat within one timeline; the generator enforces that.
+
+Run `node scripts/check-timelines.mjs` before shipping a change to the data. It
+checks the things a JSON parse will not — entry ids must be unique across the
+*whole series*, because the page deep-links them all at once — plus missing
+cover art, missing body fragments, undeclared lanes, and a sub-timeline that
+starts before its parent.
+
+### The series so far
+
+| Timeline | Covers |
+| --- | --- |
+| Ten papers that built computing | Turing to the Transformer, with sub-timelines on Codd, Berners-Lee, and Vaswani |
+| Tongues of the machine | Programming languages, Fortran to Rust |
+| Where the data sleeps | Storage and databases, RAMAC to open table formats |
+| Teaching machines to guess | Machine learning, McCulloch–Pitts to AlphaFold |
+| The machine room | Systems and infrastructure, System/360 to Lambda |
 
 ## Add a graph concept
 

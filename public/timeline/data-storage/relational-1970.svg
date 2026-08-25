@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260" role="img" aria-label="The Relational Model, 1970">
+    <rect width="520" height="260" fill="#f4f2ec"/>
+    <rect x="0" y="0" width="520" height="10" fill="#bfe8cf"/>
+    <g transform="translate(0, 12)"><rect x="58" y="44" width="76" height="24" rx="3"
+                        fill="#bfe8cf" stroke="#15271f" stroke-width="1.8" opacity="1"/><rect x="140" y="44" width="76" height="24" rx="3"
+                        fill="none" stroke="#15271f" stroke-width="1.8" opacity="1"/><rect x="222" y="44" width="76" height="24" rx="3"
+                        fill="none" stroke="#15271f" stroke-width="1.8" opacity="1"/><rect x="304" y="44" width="76" height="24" rx="3"
+                        fill="#bfe8cf" stroke="#15271f" stroke-width="1.8" opacity="1"/><rect x="386" y="44" width="76" height="24" rx="3"
+                        fill="none" stroke="#15271f" stroke-width="1.8" opacity="1"/><rect x="58" y="74" width="76" height="24" rx="3"
+                        fill="none" stroke="#15271f" stroke-width="1.8" opacity="0.72"/><rect x="140" y="74" width="76" height="24" rx="3"
+                        fill="none" stroke="#15271f" stroke-width="1.8" opacity="0.72"/><rect x="222" y="74" width="76" height="24" rx="3"
+                        fill="#bfe8cf" stroke="#15271f" stroke-width="1.8" opacity="0.72"/><rect x="304" y="74" width="76" height="24" rx="3"
+                        fill="none" stroke="#15271f" stroke-width="1.8" opacity="0.72"/><rect x="386" y="74" width="76" height="24" rx="3"
+                        fill="none" stroke="#15271f" stroke-width="1.8" opacity="0.72"/><rect x="58" y="104" width="76" height="24" rx="3"
+                        fill="none" stroke="#15271f" stroke-width="1.8" opacity="0.72"/><rect x="140" y="104" width="76" height="24" rx="3"
+                        fill="#bfe8cf" stroke="#15271f" stroke-width="1.8" opacity="0.72"/><rect x="222" y="104" width="76" height="24" rx="3"
+                        fill="none" stroke="#15271f" stroke-width="1.8" opacity="0.72"/><rect x="304" y="104" width="76" height="24" rx="3"
+                        fill="none" stroke="#15271f" stroke-width="1.8" opacity="0.72"/><rect x="386" y="104" width="76" height="24" rx="3"
+                        fill="#bfe8cf" stroke="#15271f" stroke-width="1.8" opacity="0.72"/><rect x="58" y="134" width="76" height="24" rx="3"
+                        fill="#bfe8cf" stroke="#15271f" stroke-width="1.8" opacity="0.72"/><rect x="140" y="134" width="76" height="24" rx="3"
+                        fill="none" stroke="#15271f" stroke-width="1.8" opacity="0.72"/><rect x="222" y="134" width="76" height="24" rx="3"
+                        fill="none" stroke="#15271f" stroke-width="1.8" opacity="0.72"/><rect x="304" y="134" width="76" height="24" rx="3"
+                        fill="#bfe8cf" stroke="#15271f" stroke-width="1.8" opacity="0.72"/><rect x="386" y="134" width="76" height="24" rx="3"
+                        fill="none" stroke="#15271f" stroke-width="1.8" opacity="0.72"/></g>
+    <g transform="translate(34, 224)">
+        <text font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="30" font-weight="700" fill="#15271f" y="0">1970</text>
+        <text x="112" y="-11" font-family="Georgia, 'Times New Roman', serif" font-size="14" fill="#15271f" opacity=".82">The Relational Model</text>
+    </g>
+</svg>

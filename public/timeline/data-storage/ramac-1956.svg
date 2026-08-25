@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260" role="img" aria-label="IBM 350 RAMAC, 1956">
+    <rect width="520" height="260" fill="#f4f2ec"/>
+    <rect x="0" y="0" width="520" height="10" fill="#ffcbb2"/>
+    <g transform="translate(0, 12)"><circle cx="260" cy="104" r="72" fill="none" stroke="#15271f" stroke-width="3" opacity="1"/><circle cx="260" cy="104" r="56" fill="none" stroke="#15271f" stroke-width="1.6" opacity="0.6"/><circle cx="260" cy="104" r="40" fill="none" stroke="#15271f" stroke-width="1.6" opacity="0.6"/><circle cx="260" cy="104" r="24" fill="#ffcbb2" stroke="#15271f" stroke-width="1.6" opacity="0.6"/><circle cx="260" cy="104" r="6" fill="#15271f"/>
+            <path d="M430 30 L 320 92" stroke="#15271f" stroke-width="7" stroke-linecap="round"/>
+            <circle cx="430" cy="30" r="9" fill="#15271f"/></g>
+    <g transform="translate(34, 224)">
+        <text font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="30" font-weight="700" fill="#15271f" y="0">1956</text>
+        <text x="112" y="-11" font-family="Georgia, 'Times New Roman', serif" font-size="14" fill="#15271f" opacity=".82">IBM 350 RAMAC</text>
+    </g>
+</svg>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260" role="img" aria-label="ImageNet, 2009">
+    <rect width="520" height="260" fill="#f4f2ec"/>
+    <rect x="0" y="0" width="520" height="10" fill="#bfe8cf"/>
+    <g transform="translate(0, 12)"><rect x="58" y="132" width="38" height="40" rx="4"
+                fill="#f4f2ec" stroke="#15271f" stroke-width="2.2"/><rect x="110" y="81" width="38" height="91" rx="4"
+                fill="#bfe8cf" stroke="#15271f" stroke-width="2.2"/><rect x="162" y="81" width="38" height="91" rx="4"
+                fill="#f4f2ec" stroke="#15271f" stroke-width="2.2"/><rect x="214" y="68" width="38" height="104" rx="4"
+                fill="#f4f2ec" stroke="#15271f" stroke-width="2.2"/><rect x="266" y="52" width="38" height="120" rx="4"
+                fill="#bfe8cf" stroke="#15271f" stroke-width="2.2"/><rect x="318" y="121" width="38" height="51" rx="4"
+                fill="#f4f2ec" stroke="#15271f" stroke-width="2.2"/><rect x="370" y="118" width="38" height="54" rx="4"
+                fill="#f4f2ec" stroke="#15271f" stroke-width="2.2"/><rect x="422" y="103" width="38" height="69" rx="4"
+                fill="#bfe8cf" stroke="#15271f" stroke-width="2.2"/></g>
+    <g transform="translate(34, 224)">
+        <text font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="30" font-weight="700" fill="#15271f" y="0">2009</text>
+        <text x="112" y="-11" font-family="Georgia, 'Times New Roman', serif" font-size="14" fill="#15271f" opacity=".82">ImageNet</text>
+    </g>
+</svg>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260" role="img" aria-label="Kubernetes, 2014">
+    <rect width="520" height="260" fill="#f4f2ec"/>
+    <rect x="0" y="0" width="520" height="10" fill="#b8d9ff"/>
+    <g transform="translate(0, 12)"><circle cx="260" cy="104" r="64" fill="#b8d9ff" stroke="#15271f" stroke-width="3"/>
+            <circle cx="260" cy="104" r="26" fill="#f4f2ec" stroke="#15271f" stroke-width="3"/>
+            <g stroke="#15271f" stroke-width="5" stroke-linecap="round"><line x1="286" y1="104" x2="348" y2="104"/><line x1="273" y1="126.5166604983954" x2="304" y2="180.21023553303058"/><line x1="247" y1="126.51666049839541" x2="216.00000000000003" y2="180.2102355330306"/><line x1="234" y1="104" x2="172" y2="104.00000000000001"/><line x1="247" y1="81.4833395016046" x2="215.99999999999994" y2="27.789764466969416"/><line x1="273" y1="81.4833395016046" x2="304" y2="27.7897644669694"/></g></g>
+    <g transform="translate(34, 224)">
+        <text font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="30" font-weight="700" fill="#15271f" y="0">2014</text>
+        <text x="112" y="-11" font-family="Georgia, 'Times New Roman', serif" font-size="14" fill="#15271f" opacity=".82">Kubernetes</text>
+    </g>
+</svg>

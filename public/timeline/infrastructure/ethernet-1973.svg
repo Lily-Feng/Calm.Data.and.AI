@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260" role="img" aria-label="Ethernet, 1973">
+    <rect width="520" height="260" fill="#f4f2ec"/>
+    <rect x="0" y="0" width="520" height="10" fill="#ffcbb2"/>
+    <g transform="translate(0, 12)"><line x1="30" y1="104" x2="490" y2="104" stroke="#15271f" stroke-width="1.6" stroke-dasharray="7 7" opacity=".5"/>
+            <circle cx="30" cy="104" r="13" fill="none" stroke="#15271f" stroke-width="2.6"/>
+            <circle cx="490" cy="104" r="13" fill="none" stroke="#15271f" stroke-width="2.6"/><rect x="46" y="74" width="40" height="26" rx="4" fill="#f4f2ec" stroke="#15271f" stroke-width="2.2"/><rect x="108" y="91" width="40" height="26" rx="4" fill="#ffcbb2" stroke="#15271f" stroke-width="2.2"/><rect x="170" y="120" width="40" height="26" rx="4" fill="#f4f2ec" stroke="#15271f" stroke-width="2.2"/><rect x="232" y="83" width="40" height="26" rx="4" fill="#ffcbb2" stroke="#15271f" stroke-width="2.2"/><rect x="294" y="103" width="40" height="26" rx="4" fill="#f4f2ec" stroke="#15271f" stroke-width="2.2"/><rect x="356" y="94" width="40" height="26" rx="4" fill="#ffcbb2" stroke="#15271f" stroke-width="2.2"/><rect x="418" y="114" width="40" height="26" rx="4" fill="#f4f2ec" stroke="#15271f" stroke-width="2.2"/></g>
+    <g transform="translate(34, 224)">
+        <text font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="30" font-weight="700" fill="#15271f" y="0">1973</text>
+        <text x="112" y="-11" font-family="Georgia, 'Times New Roman', serif" font-size="14" fill="#15271f" opacity=".82">Ethernet</text>
+    </g>
+</svg>

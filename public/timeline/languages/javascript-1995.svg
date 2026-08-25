@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260" role="img" aria-label="JavaScript, 1995">
+    <rect width="520" height="260" fill="#f4f2ec"/>
+    <rect x="0" y="0" width="520" height="10" fill="#f9e293"/>
+    <g transform="translate(0, 12)"><g stroke="#15271f" stroke-width="2.2" opacity=".6"><path d="M116 52 C 180 52, 230 104, 300 104" fill="none"/><path d="M116 104 C 180 104, 230 104, 300 104" fill="none"/><path d="M116 156 C 180 156, 230 104, 300 104" fill="none"/></g>
+            <g fill="none" stroke="#15271f" stroke-width="2.4"><rect x="70" y="37" width="46" height="30" rx="5"/><rect x="70" y="89" width="46" height="30" rx="5"/><rect x="70" y="141" width="46" height="30" rx="5"/></g>
+            <circle cx="358" cy="104" r="46" fill="#f9e293" stroke="#15271f" stroke-width="3"/>
+            <text x="358" y="112" text-anchor="middle" font-family="Georgia, serif" font-size="24" fill="#15271f">JS</text></g>
+    <g transform="translate(34, 224)">
+        <text font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="30" font-weight="700" fill="#15271f" y="0">1995</text>
+        <text x="112" y="-11" font-family="Georgia, 'Times New Roman', serif" font-size="14" fill="#15271f" opacity=".82">JavaScript</text>
+    </g>
+</svg>

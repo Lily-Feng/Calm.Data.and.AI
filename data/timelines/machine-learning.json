@@ -1,0 +1,228 @@
+{
+  "id": "machine-learning",
+  "title": "Teaching machines to guess",
+  "tagline": "Eighty years of trying to get a program to improve at something nobody told it how to do — including two long stretches when everyone agreed it would not work.",
+  "axis": { "scale": "ordinal", "precision": "year", "direction": "horizontal" },
+  "style": "polaroid",
+  "lanes": [
+    { "id": "neural", "label": "Neural networks", "accent": "#d9ff62" },
+    { "id": "symbolic", "label": "Symbolic & foundational", "accent": "#d9cdfd" },
+    { "id": "benchmark", "label": "Data & benchmarks", "accent": "#bfe8cf" },
+    { "id": "applied", "label": "Out in the world", "accent": "#b8d9ff" }
+  ],
+  "events": [
+    {
+      "id": "mcculloch-pitts-1943",
+      "at": "1943",
+      "lane": "neural",
+      "weight": 0.76,
+      "title": "A Logical Calculus of Nervous Activity",
+      "byline": "Warren McCulloch & Walter Pitts",
+      "summary": "Models a neuron as a threshold gate, and shows that a network of them can compute any logical proposition.",
+      "media": { "type": "image", "src": "public/timeline/machine-learning/mcculloch-pitts-1943.svg", "alt": "Layered network motif", "motion": "pulse" },
+      "keyPoints": [
+        "The neuron is reduced to weighted inputs and a firing threshold.",
+        "Networks of these units are shown to be computationally universal.",
+        "There is no learning rule yet — the weights are set, not found.",
+        "Von Neumann cited it while designing stored-program machines."
+      ],
+      "impact": "Established the unit that every neural network since has been built from, and the idea that cognition might be a computation rather than a mystery.",
+      "resources": [{ "type": "paper", "label": "A Logical Calculus of the Ideas Immanent in Nervous Activity", "href": "https://doi.org/10.1007/BF02478259", "note": "Bulletin of Mathematical Biophysics, 1943" }]
+    },
+    {
+      "id": "turing-test-1950",
+      "at": "1950",
+      "lane": "symbolic",
+      "weight": 0.8,
+      "title": "Computing Machinery and Intelligence",
+      "byline": "Alan Turing",
+      "summary": "Replaces \"can machines think\" — which he calls too meaningless to discuss — with a question that can actually be settled by observation.",
+      "media": { "type": "image", "src": "public/timeline/machine-learning/turing-test-1950.svg", "alt": "Imitation game motif" },
+      "keyPoints": [
+        "The imitation game is a proposal about evidence, not a definition of mind.",
+        "Nine objections are stated and answered, including the ones still raised today.",
+        "Suggests building a child machine and educating it, rather than programming an adult one.",
+        "Predicts learning machines, and misses the timeline by about half a century."
+      ],
+      "impact": "Framed the entire field's evaluation problem. Every benchmark since is an attempt to make \"is it working\" answerable without appealing to what the system understands.",
+      "resources": [{ "type": "paper", "label": "Computing Machinery and Intelligence", "href": "https://doi.org/10.1093/mind/LIX.236.433", "note": "Mind, 1950" }]
+    },
+    {
+      "id": "perceptron-1958",
+      "at": "1958",
+      "lane": "neural",
+      "weight": 0.84,
+      "title": "The perceptron",
+      "byline": "Frank Rosenblatt, Cornell Aeronautical Laboratory",
+      "summary": "The first network that finds its own weights — and the first time a machine-learning result got ahead of itself in the press.",
+      "media": { "type": "image", "src": "public/timeline/machine-learning/perceptron-1958.svg", "alt": "Weighted-threshold motif for the perceptron", "motion": "drift" },
+      "keyPoints": [
+        "A learning rule: adjust weights in proportion to the error on each example.",
+        "The convergence theorem guarantees it finds a separator if one exists.",
+        "Built as physical hardware — the Mark I Perceptron, with motor-driven weights.",
+        "The guarantee is only about linearly separable problems, which is the whole story."
+      ],
+      "impact": "Introduced learning from examples as an engineering method. It also set the field's recurring pattern: a real result, oversold, followed by a correction that overshoots.",
+      "resources": [{ "type": "paper", "label": "The Perceptron: A Probabilistic Model", "href": "https://doi.org/10.1037/h0042519", "note": "Psychological Review, 1958" }]
+    },
+    {
+      "id": "perceptrons-1969",
+      "at": "1969",
+      "lane": "symbolic",
+      "weight": 0.68,
+      "title": "Perceptrons",
+      "byline": "Marvin Minsky & Seymour Papert",
+      "summary": "Proves precisely what a single-layer network cannot do, and is read by a generation as proving that neural networks cannot do anything.",
+      "media": { "type": "image", "src": "public/timeline/machine-learning/perceptrons-1969.svg", "alt": "XOR truth-table motif" },
+      "keyPoints": [
+        "XOR is not linearly separable, so one layer cannot learn it.",
+        "The book is careful about the single-layer case and speculative about deeper ones.",
+        "No practical way to train multiple layers existed yet, which made the point moot.",
+        "Funding moved to symbolic AI, and neural work went quiet for over a decade."
+      ],
+      "impact": "The first AI winter's proximate cause. It is also a lesson in how a correct, narrow result travels: the proof was about one architecture, the reception was about a whole approach.",
+      "resources": [{ "type": "reference", "label": "Perceptrons", "href": "https://mitpress.mit.edu/9780262534772/perceptrons/", "note": "MIT Press" }]
+    },
+    {
+      "id": "backprop-1986",
+      "at": "1986",
+      "lane": "neural",
+      "weight": 0.92,
+      "title": "Back-propagating errors",
+      "byline": "Rumelhart, Hinton & Williams",
+      "summary": "Gives the multi-layer network the training method it had been missing for seventeen years: send the error backwards and let the chain rule do the accounting.",
+      "media": { "type": "image", "src": "public/timeline/machine-learning/backprop-1986.svg", "alt": "Forward and backward pass motif" },
+      "keyPoints": [
+        "Gradients of the loss with respect to every weight, computed layer by layer.",
+        "Hidden layers can now learn useful intermediate representations.",
+        "The technique had been derived several times before; this is when the field noticed.",
+        "It works — and in 1986 there is neither the data nor the compute to show how well."
+      ],
+      "impact": "Still the algorithm. Every deep network trained today is doing this, and the 26-year gap before it paid off is the field's best evidence that a method can be right and premature at the same time.",
+      "resources": [{ "type": "paper", "label": "Learning representations by back-propagating errors", "href": "https://doi.org/10.1038/323533a0", "note": "Nature 323, 1986" }],
+      "children": {
+        "id": "backprop-descendants",
+        "axis": { "scale": "linear", "precision": "year", "direction": "horizontal" },
+        "style": "filmstrip",
+        "events": [
+          { "id": "ml-lstm-1997", "at": "1997", "lane": "neural", "weight": 0.78, "title": "LSTM", "byline": "Hochreiter & Schmidhuber", "summary": "Gates that let gradients survive long sequences, solving the vanishing-gradient problem.", "media": { "type": "glyph", "glyph": "⟳", "alt": "Recurrence" }, "resources": [{ "type": "paper", "label": "Long Short-Term Memory", "href": "https://doi.org/10.1162/neco.1997.9.8.1735" }] },
+          { "id": "ml-svm-1995", "at": "1995", "lane": "symbolic", "weight": 0.66, "title": "Support vector machines", "byline": "Cortes & Vapnik", "summary": "Margins and kernels win the 1990s on small data, and neural nets wait their turn.", "media": { "type": "glyph", "glyph": "⟋", "alt": "Separating hyperplane" } },
+          { "id": "ml-dropout-2012", "at": "2012", "lane": "neural", "weight": 0.6, "title": "Dropout", "byline": "Hinton et al.", "summary": "Randomly deleting units during training stops a big network memorising its data.", "media": { "type": "glyph", "glyph": "⋰", "alt": "Dropped units" } },
+          { "id": "ml-adam-2014", "at": "2014", "lane": "neural", "weight": 0.58, "title": "Adam", "byline": "Kingma & Ba", "summary": "An optimiser with sensible defaults, which quietly removed a whole class of tuning.", "media": { "type": "glyph", "glyph": "↘", "alt": "Descent" } }
+        ]
+      }
+    },
+    {
+      "id": "lenet-1998",
+      "at": "1998",
+      "lane": "applied",
+      "weight": 0.78,
+      "title": "LeNet-5",
+      "byline": "LeCun, Bottou, Bengio & Haffner",
+      "summary": "A convolutional network reading handwritten digits on real cheques — deep learning's first quiet commercial success.",
+      "media": { "type": "image", "src": "public/timeline/machine-learning/lenet-1998.svg", "alt": "Convolutional layers motif" },
+      "keyPoints": [
+        "Convolution shares weights across positions, so a feature is learned once, not per pixel.",
+        "Pooling gives tolerance to small shifts without being told about them.",
+        "The architecture encodes a prior about images rather than learning it from scratch.",
+        "Deployed at scale in banking while the wider field remained sceptical."
+      ],
+      "impact": "Showed that architectural priors beat brute force when data is limited, and produced the template — convolution, pooling, repeat — that AlexNet would scale up fourteen years later.",
+      "resources": [{ "type": "paper", "label": "Gradient-Based Learning Applied to Document Recognition", "href": "https://doi.org/10.1109/5.726791", "note": "Proc. IEEE, 1998" }]
+    },
+    {
+      "id": "imagenet-2009",
+      "at": "2009",
+      "lane": "benchmark",
+      "weight": 0.86,
+      "title": "ImageNet",
+      "byline": "Deng, Dong, Socher, Li, Li & Fei-Fei",
+      "summary": "Fourteen million labelled images, assembled on the argument that the bottleneck was not the algorithms but the data they were being starved of.",
+      "media": { "type": "image", "src": "public/timeline/machine-learning/imagenet-2009.svg", "alt": "Labelled-data grid motif" },
+      "keyPoints": [
+        "Built with crowdsourced labelling, which made the scale affordable.",
+        "Organised by WordNet, so the categories have structure rather than being a flat list.",
+        "The annual challenge gave the field a shared, public scoreboard.",
+        "A dataset published as a research contribution in its own right."
+      ],
+      "impact": "Turned progress into something measurable and comparable, which is what let the 2012 result be unambiguous. Most of the field's step changes since have arrived as a dataset plus a scoreboard.",
+      "resources": [{ "type": "paper", "label": "ImageNet: A Large-Scale Hierarchical Image Database", "href": "https://doi.org/10.1109/CVPR.2009.5206848", "note": "CVPR 2009" }]
+    },
+    {
+      "id": "alexnet-2012",
+      "at": "2012",
+      "lane": "neural",
+      "weight": 0.94,
+      "title": "AlexNet",
+      "byline": "Krizhevsky, Sutskever & Hinton",
+      "summary": "Wins ImageNet by ten points over the next entry, using ideas from 1986 and two consumer graphics cards.",
+      "media": { "type": "image", "src": "public/timeline/machine-learning/alexnet-2012.svg", "alt": "GPU racks motif for AlexNet", "motion": "pulse" },
+      "keyPoints": [
+        "Trained on two GTX 580s for about a week — the compute was the unlock.",
+        "ReLU activations and dropout made a network that deep trainable at all.",
+        "The margin was large enough that the result could not be argued with.",
+        "Nothing in it required a theoretical breakthrough; it required scale."
+      ],
+      "impact": "Ended the second AI winter in a single afternoon of results, and redirected the industry's capital toward GPUs, data collection, and depth.",
+      "resources": [
+        { "type": "paper", "label": "ImageNet Classification with Deep Convolutional Neural Networks", "href": "https://doi.org/10.1145/3065386", "note": "NeurIPS 2012" },
+        { "type": "successor", "label": "ResNet, 2015", "href": "https://arxiv.org/abs/1512.03385", "note": "Skip connections make 150 layers trainable" }
+      ],
+      "children": {
+        "id": "deep-learning-decade",
+        "axis": { "scale": "linear", "precision": "year", "direction": "horizontal" },
+        "style": "filmstrip",
+        "events": [
+          { "id": "ml-gan-2014", "at": "2014", "lane": "neural", "weight": 0.76, "title": "GANs", "byline": "Goodfellow et al.", "summary": "Two networks trained against each other, and generative modelling becomes a live field.", "media": { "type": "glyph", "glyph": "⇄", "alt": "Adversaries" }, "resources": [{ "type": "paper", "label": "Generative Adversarial Nets", "href": "https://arxiv.org/abs/1406.2661" }] },
+          { "id": "ml-resnet-2015", "at": "2015", "lane": "neural", "weight": 0.82, "title": "ResNet", "byline": "He et al.", "summary": "Skip connections let gradients reach the bottom of a very deep stack.", "media": { "type": "glyph", "glyph": "⤳", "alt": "Skip connection" } },
+          { "id": "ml-alphago-2016", "at": "2016", "lane": "applied", "weight": 0.8, "title": "AlphaGo", "byline": "Silver et al., DeepMind", "summary": "Search guided by learned value and policy networks beats a top human at Go.", "media": { "type": "glyph", "glyph": "⚫", "alt": "Go stone" } },
+          { "id": "ml-diffusion-2020", "at": "2020", "lane": "neural", "weight": 0.72, "title": "Diffusion models", "byline": "Ho, Jain & Abbeel", "summary": "Learn to reverse noise, and image generation stops being adversarial.", "media": { "type": "glyph", "glyph": "◍", "alt": "Noise" } }
+        ]
+      }
+    },
+    {
+      "id": "ml-transformer-2017",
+      "at": "2017-06",
+      "precision": "month",
+      "lane": "neural",
+      "weight": 0.96,
+      "title": "The Transformer",
+      "byline": "Vaswani et al., Google",
+      "summary": "Drops recurrence, so a sequence model can finally use every accelerator you point at it.",
+      "media": { "type": "image", "src": "public/timeline/machine-learning/ml-transformer-2017.svg", "alt": "Attention matrix motif", "motion": "float" },
+      "keyPoints": [
+        "Self-attention makes every position one step from every other.",
+        "Training parallelises across the sequence, not just across the batch.",
+        "Cost is quadratic in sequence length — the line item that defines the follow-on research.",
+        "Presented as a translation result; it was an architecture result."
+      ],
+      "impact": "Made model quality a function of compute spent. Once scaling laws made that explicit, capability became a budgeting exercise and the field's constraint moved to data centres.",
+      "resources": [
+        { "type": "paper", "label": "Attention Is All You Need", "href": "https://arxiv.org/abs/1706.03762", "note": "NeurIPS 2017" },
+        { "type": "code", "label": "The Annotated Transformer", "href": "https://nlp.seas.harvard.edu/annotated-transformer/" }
+      ]
+    },
+    {
+      "id": "alphafold-2021",
+      "at": "2021-07",
+      "precision": "month",
+      "lane": "applied",
+      "weight": 0.84,
+      "title": "AlphaFold 2",
+      "byline": "Jumper et al., DeepMind",
+      "summary": "Predicts protein structure accurately enough to be used instead of an experiment — a result judged by biologists, not by a leaderboard.",
+      "media": { "type": "image", "src": "public/timeline/machine-learning/alphafold-2021.svg", "alt": "Protein helix motif", "motion": "drift" },
+      "keyPoints": [
+        "Attention over evolutionary sequence alignments plus explicit geometric structure.",
+        "Accuracy at CASP14 was competitive with experimental determination.",
+        "Predicted structures for over 200 million proteins were released openly.",
+        "Domain structure is built into the architecture — it is not a generic model pointed at biology."
+      ],
+      "impact": "The clearest case of machine learning producing a scientific result rather than a benchmark score, and the strongest argument that encoding domain structure still beats scale alone.",
+      "resources": [
+        { "type": "paper", "label": "Highly accurate protein structure prediction with AlphaFold", "href": "https://doi.org/10.1038/s41586-021-03819-2", "note": "Nature 596, 2021" },
+        { "type": "dataset", "label": "AlphaFold Protein Structure Database", "href": "https://alphafold.ebi.ac.uk/" }
+      ]
+    }
+  ]
+}
