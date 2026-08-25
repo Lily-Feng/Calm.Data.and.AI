@@ -1,4 +1,4 @@
-name: Deploy Patternbook to GitHub Pages
+name: Deploy Calm Data and AI to GitHub Pages
 
 on:
   push:

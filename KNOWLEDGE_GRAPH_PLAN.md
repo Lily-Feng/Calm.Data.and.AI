@@ -1,8 +1,8 @@
-# Patternbook Knowledge Graph Plan
+# Calm Data and AI Knowledge Graph Plan
 
 Status: **Draft for review**
 
-This document proposes how Lily Feng's high-level knowledge garden and the detailed Patternbook atlas should fit together. It deliberately separates the stable graph structure from the slower work of writing every detailed guide.
+This document proposes how Lily Feng's high-level knowledge garden and the detailed Calm Data and AI atlas should fit together. It deliberately separates the stable graph structure from the slower work of writing every detailed guide.
 
 ## 1. Two-level architecture
 
@@ -14,7 +14,7 @@ flowchart TD
     G --> LP[Learning in Public]
     G --> EK[Engineering Knowledge]
 
-    EK --> P[Patternbook]
+    EK --> P[Calm Data and AI]
     P --> C[Cloud Systems]
     P --> D[Data Platforms]
     P --> PY[Python Patterns]
@@ -47,9 +47,9 @@ Recommended external node:
 | URL | `https://lily-feng.github.io/Efficient_Learning/` |
 | Bridges | Enterprise AI Platform Map, MLOps Lifecycle, Text-to-SQL Chat |
 
-### Patternbook responsibility
+### Calm Data and AI responsibility
 
-Patternbook should answer:
+Calm Data and AI should answer:
 
 - What are the essential concepts inside an engineering domain?
 - Which concepts depend on or reinforce each other?
@@ -241,7 +241,7 @@ The central graph invariant is: every goroutine must have an owner, a bounded re
 
 ## 4. Cross-domain bridges
 
-These edges should connect Patternbook domains without collapsing them into one graph:
+These edges should connect Calm Data and AI domains without collapsing them into one graph:
 
 | From | To | Shared idea |
 |---|---|---|
@@ -272,7 +272,7 @@ After the graph is approved, expand guides in this order:
 Please review these five choices before the main site is changed:
 
 1. **High-level name:** use `Engineering Knowledge`, `Technical Foundations`, or another label?
-2. **Scope:** should distributed systems be a future sixth Patternbook domain, or remain a bridge across Cloud and Go?
+2. **Scope:** should distributed systems be a future sixth Calm Data and AI domain, or remain a bridge across Cloud and Go?
 3. **Data platform boundary:** should Spark fundamentals live inside Data Platforms or become a separate processing cluster?
 4. **Python boundary:** should Python remain interview-pattern focused, or also include production Python engineering?
 5. **Graph depth:** is six clusters × three concepts per domain the right first level, or should the visible graph be smaller?

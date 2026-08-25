@@ -1,5 +1,5 @@
 /**
- * Patternbook manifest.
+ * Calm Data and AI manifest.
  *
  * TRACKS and guide metadata only. Each guide's body lives in its own
  * fragment at guides/<id>.html (see guides/README.md for the authoring

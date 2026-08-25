@@ -1,6 +1,6 @@
-# Patternbook — Agent Guide
+# Calm Data and AI — Agent Guide
 
-Patternbook is a released static engineering knowledge atlas. Keep it simple enough to run from any static file server and deploy directly to GitHub Pages.
+Calm Data and AI is a released static engineering knowledge atlas. Keep it simple enough to run from any static file server and deploy directly to GitHub Pages.
 
 ## Product boundaries
 
@@ -48,7 +48,7 @@ touches none of `js/app.js`.
 
 - `js/timeline/` is a **component**, not a page. It renders from a spec object
   and reports back through callbacks; it must not fetch data, read the URL, or
-  know about Patternbook guides. Page concerns — loading JSON, deep links, the
+  know about Calm Data and AI guides. Page concerns — loading JSON, deep links, the
   sidebar, jumping into the atlas — live in `js/timeline-page.js`.
 - `data/timelines/<id>.json` is the authored layer. `js/timeline/schema.js`
   documents every field and is the only place that parses authored values.

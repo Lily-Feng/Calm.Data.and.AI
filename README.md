@@ -1,6 +1,6 @@
-# Patternbook
+# Calm Data and AI
 
-Patternbook is a connected engineering knowledge atlas for:
+Calm Data and AI is a connected engineering knowledge atlas for:
 
 - Cloud systems — vendor-neutral architecture with AWS, Azure, and GCP translations
 - Data platforms — workload-based reasoning across Databricks, Snowflake, and Fabric
