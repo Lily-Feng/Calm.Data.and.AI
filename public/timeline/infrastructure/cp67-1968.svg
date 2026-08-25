@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260" role="img" aria-label="CP-67 and the Virtual Machine, 1968">
+    <rect width="520" height="260" fill="#f4f2ec"/>
+    <rect x="0" y="0" width="520" height="10" fill="#b8d9ff"/>
+    <g transform="translate(0, 12)"><path d="M260 104 L 260.0 30.0 A 74 74 0 0 1 324.1 67.0 Z" fill="#f4f2ec" stroke="#15271f" stroke-width="2.2"/><path d="M260 104 L 324.1 67.0 A 74 74 0 0 1 324.1 141.0 Z" fill="#b8d9ff" stroke="#15271f" stroke-width="2.2"/><path d="M260 104 L 324.1 141.0 A 74 74 0 0 1 260.0 178.0 Z" fill="#f4f2ec" stroke="#15271f" stroke-width="2.2"/><path d="M260 104 L 260.0 178.0 A 74 74 0 0 1 195.9 141.0 Z" fill="#b8d9ff" stroke="#15271f" stroke-width="2.2"/><path d="M260 104 L 195.9 141.0 A 74 74 0 0 1 195.9 67.0 Z" fill="#f4f2ec" stroke="#15271f" stroke-width="2.2"/><path d="M260 104 L 195.9 67.0 A 74 74 0 0 1 260.0 30.0 Z" fill="#b8d9ff" stroke="#15271f" stroke-width="2.2"/><circle cx="260" cy="104" r="7" fill="#15271f"/></g>
+    <g transform="translate(34, 224)">
+        <text font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="30" font-weight="700" fill="#15271f" y="0">1968</text>
+        <text x="112" y="-11" font-family="Georgia, 'Times New Roman', serif" font-size="14" fill="#15271f" opacity=".82">CP-67 and the Virtual Machine</text>
+    </g>
+</svg>

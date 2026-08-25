@@ -1,0 +1,44 @@
+<article class="guide-content">
+    <h2>What Codd was actually arguing against</h2>
+    <p>
+        In 1970 the working data stores were hierarchical and network databases, where
+        a query was a program that followed pointers. The access path was written into
+        the application. Reorganising storage for performance meant rewriting every
+        program that touched it, and the cost of that coupling was the real subject of
+        the paper.
+    </p>
+
+    <h3>Three independences</h3>
+    <ul>
+        <li><strong>Ordering independence.</strong> A relation is a set. Nothing in the meaning of the data depends on row order.</li>
+        <li><strong>Indexing independence.</strong> Indexes are a performance decision, invisible to the query's meaning.</li>
+        <li><strong>Access-path independence.</strong> The application states <em>what</em> it wants; the system chooses <em>how</em>.</li>
+    </ul>
+    <p>
+        The third is the expensive one, and it is the reason relational systems needed
+        a query optimiser at all. IBM's System R spent six years finding out how hard
+        it is to make that promise good.
+    </p>
+
+    <h3>Why the model outlived its critics</h3>
+    <p>
+        Every generation has declared the relational model finished — object
+        databases, XML stores, the NoSQL decade, the data lake. Each time, the
+        application-side cost of hand-written access paths reappeared, and each time
+        the industry rebuilt a declarative query layer on top: HiveQL over MapReduce,
+        Spark SQL over RDDs, SQL endpoints over object storage, table formats bringing
+        transactions back to the lake.
+    </p>
+    <blockquote>
+        The pattern is consistent: a new storage substrate wins on cost or scale,
+        loses on developer productivity, and reacquires a relational interface within
+        about seven years.
+    </blockquote>
+
+    <h3>What to carry away</h3>
+    <ul>
+        <li>Physical independence is what you buy with a query optimiser. When you hand-tune access paths, you are spending it back.</li>
+        <li>Normalisation is about update anomalies, not about elegance — denormalise deliberately, for a read pattern you can name.</li>
+        <li>If a new store has no declarative layer, budget for the one you will end up writing.</li>
+    </ul>
+</article>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260" role="img" aria-label="On Computable Numbers, 1936">
+    <rect width="520" height="260" fill="#f4f2ec"/>
+    <rect x="0" y="0" width="520" height="10" fill="#d9cdfd"/>
+    <g transform="translate(0, 12)"><g fill="#15271f" opacity=".82"><circle cx="58" cy="144" r="5.5"/><circle cx="92" cy="84" r="5.5"/><circle cx="92" cy="104" r="5.5"/><circle cx="92" cy="124" r="5.5"/><circle cx="126" cy="84" r="5.5"/><circle cx="126" cy="144" r="5.5"/><circle cx="160" cy="64" r="5.5"/><circle cx="160" cy="144" r="5.5"/><circle cx="194" cy="64" r="5.5"/><circle cx="194" cy="84" r="5.5"/><circle cx="194" cy="104" r="5.5"/><circle cx="228" cy="64" r="5.5"/><circle cx="228" cy="124" r="5.5"/><circle cx="228" cy="144" r="5.5"/><circle cx="262" cy="104" r="5.5"/><circle cx="262" cy="124" r="5.5"/><circle cx="296" cy="64" r="5.5"/><circle cx="296" cy="84" r="5.5"/><circle cx="296" cy="124" r="5.5"/><circle cx="330" cy="64" r="5.5"/><circle cx="330" cy="84" r="5.5"/><circle cx="330" cy="104" r="5.5"/><circle cx="364" cy="64" r="5.5"/><circle cx="364" cy="84" r="5.5"/><circle cx="364" cy="104" r="5.5"/><circle cx="364" cy="124" r="5.5"/><circle cx="364" cy="144" r="5.5"/><circle cx="398" cy="104" r="5.5"/><circle cx="398" cy="144" r="5.5"/><circle cx="432" cy="64" r="5.5"/><circle cx="432" cy="104" r="5.5"/><circle cx="432" cy="144" r="5.5"/><circle cx="466" cy="64" r="5.5"/><circle cx="466" cy="84" r="5.5"/><circle cx="466" cy="104" r="5.5"/><circle cx="466" cy="124" r="5.5"/><circle cx="466" cy="144" r="5.5"/></g>
+            <rect x="40" y="46" width="440" height="112" rx="6" fill="none" stroke="#d9cdfd" stroke-width="4"/></g>
+    <g transform="translate(34, 224)">
+        <text font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="30" font-weight="700" fill="#15271f" y="0">1936</text>
+        <text x="112" y="-11" font-family="Georgia, 'Times New Roman', serif" font-size="14" fill="#15271f" opacity=".82">On Computable Numbers</text>
+    </g>
+</svg>

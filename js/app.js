@@ -1,5 +1,5 @@
 /**
- * Patternbook knowledge atlas.
+ * Calm Data and AI knowledge atlas.
  * Static, dependency-free, and intentionally free of progress tracking.
  */
 

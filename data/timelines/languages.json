@@ -1,0 +1,248 @@
+{
+  "id": "languages",
+  "title": "Tongues of the machine",
+  "tagline": "Every language is an argument about what programmers should have to think about. Sixty years of that argument, in the order it was made.",
+  "axis": { "scale": "ordinal", "precision": "year", "direction": "horizontal" },
+  "style": "polaroid",
+  "lanes": [
+    { "id": "imperative", "label": "Imperative & systems", "accent": "#b8d9ff" },
+    { "id": "symbolic", "label": "Symbolic & functional", "accent": "#d9cdfd" },
+    { "id": "objects", "label": "Objects & abstraction", "accent": "#ffcbb2" },
+    { "id": "everyday", "label": "Everyday & the web", "accent": "#bfe8cf" },
+    { "id": "safety", "label": "Types & safety", "accent": "#f9e293" }
+  ],
+  "events": [
+    {
+      "id": "fortran-1957",
+      "at": "1957",
+      "lane": "imperative",
+      "weight": 0.93,
+      "title": "Fortran",
+      "byline": "John Backus & team, IBM",
+      "summary": "The first high-level language people actually adopted — because its compiler produced code fast enough to end the argument.",
+      "media": { "type": "image", "src": "public/timeline/languages/fortran-1957.svg", "alt": "Punch-card grid motif for Fortran", "motion": "float" },
+      "keyPoints": [
+        "Formulas could be written as formulas instead of as register moves.",
+        "The team's real problem was credibility: assembly programmers had to believe the output was competitive.",
+        "It made the optimising compiler a necessity, not a luxury.",
+        "Still the language of record in high-performance numerical computing."
+      ],
+      "impact": "Established that a language could be worth a layer of translation — the assumption every language since has inherited.",
+      "resources": [
+        { "type": "paper", "label": "The FORTRAN Automatic Coding System", "href": "https://doi.org/10.1145/1455567.1455599", "note": "Backus et al., 1957" },
+        { "type": "reference", "label": "Backus on the history of Fortran", "href": "https://doi.org/10.1145/800025.808380", "note": "HOPL, 1978" }
+      ]
+    },
+    {
+      "id": "lisp-1958",
+      "at": "1958",
+      "lane": "symbolic",
+      "weight": 0.95,
+      "title": "Lisp",
+      "byline": "John McCarthy, MIT",
+      "summary": "A notation for symbolic expressions that turned out to be a language — and one where a program is just another piece of data.",
+      "media": { "type": "image", "src": "public/timeline/languages/lisp-1958.svg", "alt": "Nested-squares motif for Lisp", "motion": "pulse" },
+      "keyPoints": [
+        "Code and data share one representation, so programs can write programs.",
+        "Garbage collection appears here, because symbolic work makes manual freeing untenable.",
+        "Recursion, first-class functions, and the read-eval-print loop all arrive together.",
+        "`eval` was written to prove a point and turned out to be an interpreter."
+      ],
+      "impact": "Most ideas that later feel new in mainstream languages — closures, dynamic typing, REPLs, macros, garbage collection — were in Lisp first, sometimes by thirty years.",
+      "resources": [
+        { "type": "paper", "label": "Recursive Functions of Symbolic Expressions", "href": "https://doi.org/10.1145/367177.367199", "note": "CACM 3(4), 1960" },
+        { "type": "reference", "label": "The Roots of Lisp", "href": "https://paulgraham.com/rootsoflisp.html", "note": "Paul Graham's reconstruction" }
+      ],
+      "children": {
+        "id": "lisp-descendants",
+        "axis": { "scale": "linear", "precision": "year", "direction": "horizontal" },
+        "style": "filmstrip",
+        "events": [
+          { "id": "lang-ml-1973", "at": "1973", "lane": "symbolic", "weight": 0.8, "title": "ML", "byline": "Robin Milner", "summary": "Type inference and algebraic data types, invented to keep a theorem prover honest.", "media": { "type": "glyph", "glyph": "λ", "alt": "Lambda" } },
+          { "id": "lang-scheme-1975", "at": "1975", "lane": "symbolic", "weight": 0.72, "title": "Scheme", "byline": "Sussman & Steele", "summary": "Lisp reduced to its core: lexical scope, proper tail calls, first-class continuations.", "media": { "type": "glyph", "glyph": "◯", "alt": "Circle" } },
+          { "id": "lang-haskell-1990", "at": "1990", "lane": "symbolic", "weight": 0.75, "title": "Haskell", "byline": "A committee, deliberately", "summary": "Purity and laziness as defaults, so effects have to be admitted in the type.", "media": { "type": "glyph", "glyph": "≫", "alt": "Bind operator" } },
+          { "id": "lang-ocaml-1996", "at": "1996", "lane": "symbolic", "weight": 0.6, "title": "OCaml", "byline": "INRIA", "summary": "ML with objects and a compiler fast enough for industry to notice.", "media": { "type": "glyph", "glyph": "◈", "alt": "Diamond" } },
+          { "id": "lang-clojure-2007", "at": "2007", "lane": "symbolic", "weight": 0.62, "title": "Clojure", "byline": "Rich Hickey", "summary": "A Lisp on the JVM built around immutable data and explicit state.", "media": { "type": "glyph", "glyph": "☯", "alt": "Balance" } }
+        ]
+      }
+    },
+    {
+      "id": "cobol-1959",
+      "at": "1959",
+      "lane": "everyday",
+      "weight": 0.68,
+      "title": "COBOL",
+      "byline": "CODASYL, with Grace Hopper's influence",
+      "summary": "Designed so that business people could read the program, on the theory that readable code outlives its author.",
+      "media": { "type": "image", "src": "public/timeline/languages/cobol-1959.svg", "alt": "Ledger-column motif for COBOL" },
+      "keyPoints": [
+        "English-like syntax was a deliberate bet on maintenance over brevity.",
+        "Fixed-point decimal arithmetic, because money is not a float.",
+        "Record and file structure are first-class parts of the language.",
+        "The bet largely paid off: much of it is still running."
+      ],
+      "impact": "Proved that legibility to non-authors is a real design axis — and produced the longest-lived production code in the industry.",
+      "resources": [{ "type": "reference", "label": "COBOL at sixty", "href": "https://doi.org/10.1145/3379482", "note": "CACM retrospective" }]
+    },
+    {
+      "id": "algol-1960",
+      "at": "1960",
+      "lane": "imperative",
+      "weight": 0.85,
+      "title": "ALGOL 60",
+      "byline": "An international committee",
+      "summary": "Barely used in production, and the ancestor of nearly everything — including the way we write down what a language even is.",
+      "media": { "type": "image", "src": "public/timeline/languages/algol-1960.svg", "alt": "Block-structure tree motif for ALGOL 60" },
+      "keyPoints": [
+        "Block structure and lexical scope: names mean something local.",
+        "Its report defined the language in BNF, so grammars became formal artefacts.",
+        "Recursion was specified deliberately, not discovered accidentally.",
+        "Hoare: \"an improvement on nearly all of its successors.\""
+      ],
+      "impact": "Every curly-brace language is an ALGOL descendant, and the ALGOL 60 report set the standard for what a language specification should look like.",
+      "resources": [
+        { "type": "paper", "label": "Report on the Algorithmic Language ALGOL 60", "href": "https://doi.org/10.1145/367236.367262", "note": "CACM 3(5), 1960" },
+        { "type": "guide", "label": "Graph traversal patterns", "guide": "python-graph-traversal", "note": "Recursion, as ALGOL made routine" }
+      ]
+    },
+    {
+      "id": "c-1972",
+      "at": "1972",
+      "lane": "imperative",
+      "weight": 0.97,
+      "title": "C",
+      "byline": "Dennis Ritchie, Bell Labs",
+      "summary": "Close enough to the machine to write an operating system, portable enough that the operating system could move.",
+      "media": { "type": "image", "src": "public/timeline/languages/c-1972.svg", "alt": "Braces motif for C", "motion": "float" },
+      "keyPoints": [
+        "The abstract machine is thin: what you write is close to what runs.",
+        "Rewriting UNIX in C in 1973 proved systems software need not be assembly.",
+        "Manual memory management is the price of that thinness, and the source of decades of vulnerabilities.",
+        "Its ABI is still the interoperability layer between every other language."
+      ],
+      "impact": "Became the substrate. Operating systems, language runtimes, databases, and the calling convention that lets any two languages talk are all C-shaped.",
+      "resources": [
+        { "type": "paper", "label": "The Development of the C Language", "href": "https://doi.org/10.1145/154766.155580", "note": "Ritchie, HOPL-II, 1993" },
+        { "type": "reference", "label": "The C Programming Language", "href": "https://archive.org/details/cprogramminglang0000kern", "note": "Kernighan & Ritchie" }
+      ],
+      "children": {
+        "id": "c-descendants",
+        "axis": { "scale": "linear", "precision": "year", "direction": "horizontal" },
+        "style": "filmstrip",
+        "events": [
+          { "id": "lang-cpp-1985", "at": "1985", "lane": "objects", "weight": 0.85, "title": "C++", "byline": "Bjarne Stroustrup", "summary": "Abstraction with no runtime cost you did not ask for — and a language that never removes anything.", "media": { "type": "glyph", "glyph": "⊕", "alt": "Plus" }, "resources": [{ "type": "reference", "label": "A History of C++", "href": "https://doi.org/10.1145/234286.1057836" }] },
+          { "id": "lang-java-1995", "at": "1995", "lane": "objects", "weight": 0.8, "title": "Java", "byline": "James Gosling, Sun", "summary": "A managed runtime as the portability layer, and garbage collection for the mainstream.", "media": { "type": "glyph", "glyph": "☕", "alt": "Cup" } },
+          { "id": "lang-csharp-2000", "at": "2000", "lane": "objects", "weight": 0.62, "title": "C#", "byline": "Anders Hejlsberg, Microsoft", "summary": "Java's shape with faster iteration — generics, LINQ, async/await arrive early.", "media": { "type": "glyph", "glyph": "♯", "alt": "Sharp" } },
+          { "id": "lang-go-2009", "at": "2009", "lane": "imperative", "weight": 0.75, "title": "Go", "byline": "Griesemer, Pike & Thompson", "summary": "Deliberately small, with concurrency as a language feature rather than a library.", "media": { "type": "glyph", "glyph": "⇉", "alt": "Goroutines" }, "resources": [{ "type": "guide", "label": "Bounded worker pools", "guide": "go-worker-pool" }] },
+          { "id": "lang-rust-2010", "at": "2010", "lane": "safety", "weight": 0.78, "title": "Rust", "byline": "Graydon Hoare", "summary": "The memory-safety argument, settled at compile time instead of at runtime.", "media": { "type": "glyph", "glyph": "⛨", "alt": "Shield" } }
+        ]
+      }
+    },
+    {
+      "id": "smalltalk-1980",
+      "at": "1980",
+      "lane": "objects",
+      "weight": 0.8,
+      "title": "Smalltalk-80",
+      "byline": "Alan Kay, Adele Goldberg & team, Xerox PARC",
+      "summary": "Not a language so much as a whole running world, in which objects get things done by asking each other.",
+      "media": { "type": "image", "src": "public/timeline/languages/smalltalk-1980.svg", "alt": "Message-passing network motif for Smalltalk" },
+      "keyPoints": [
+        "Everything is an object; the only operation is sending a message.",
+        "The environment is live — you edit a running system rather than restart one.",
+        "The class browser, the debugger, and the overlapping-window GUI shipped with it.",
+        "Kay's \"object-oriented\" meant messaging and late binding, not inheritance hierarchies."
+      ],
+      "impact": "Gave the industry object-orientation, the modern IDE, and the desktop metaphor — then watched the first of those get adopted with the least of its original meaning.",
+      "resources": [
+        { "type": "paper", "label": "The Early History of Smalltalk", "href": "https://doi.org/10.1145/155360.155364", "note": "Kay, HOPL-II, 1993" },
+        { "type": "talk", "label": "The Computer Revolution Hasn't Happened Yet", "href": "https://www.youtube.com/watch?v=oKg1hTOQXoY", "note": "Kay, OOPSLA 1997" }
+      ]
+    },
+    {
+      "id": "python-1991",
+      "at": "1991-02",
+      "precision": "month",
+      "lane": "everyday",
+      "weight": 0.9,
+      "title": "Python",
+      "byline": "Guido van Rossum, CWI",
+      "summary": "Optimised for the time a program spends being read, which turned out to be most of its life.",
+      "media": { "type": "image", "src": "public/timeline/languages/python-1991.svg", "alt": "Pipeline motif for Python", "motion": "drift" },
+      "keyPoints": [
+        "Indentation is syntax, so the layout cannot lie about the structure.",
+        "Batteries included: the standard library was the adoption strategy.",
+        "The C API made it the glue over fast native code — which became its second career.",
+        "The 2-to-3 migration is the industry's clearest lesson in the cost of a breaking change."
+      ],
+      "impact": "Became the default language of scientific computing, data work, and machine learning — largely because it is comfortable to read and easy to wrap around something faster.",
+      "resources": [
+        { "type": "reference", "label": "The Zen of Python", "href": "https://peps.python.org/pep-0020/", "note": "PEP 20" },
+        { "type": "guide", "label": "Sliding-window patterns", "guide": "python-sliding-window" },
+        { "type": "guide", "label": "Top-K selection", "guide": "python-top-k" }
+      ]
+    },
+    {
+      "id": "java-1995",
+      "at": "1995-05",
+      "precision": "month",
+      "lane": "objects",
+      "weight": 0.84,
+      "title": "Java",
+      "byline": "James Gosling & team, Sun Microsystems",
+      "summary": "Sold as write-once-run-anywhere; its lasting contribution was making a managed runtime respectable.",
+      "media": { "type": "image", "src": "public/timeline/languages/java-1995.svg", "alt": "Layered runtime motif for Java" },
+      "keyPoints": [
+        "The JVM, not the syntax, is the durable artefact — a dozen languages now target it.",
+        "Garbage collection at enterprise scale stopped being a research question.",
+        "JIT compilation showed that late binding need not mean slow.",
+        "Verbosity was a deliberate trade for tooling and large-team legibility."
+      ],
+      "impact": "Set the template for the managed-runtime platform, and its JIT and GC research fed back into every runtime built since.",
+      "resources": [{ "type": "reference", "label": "The Java Language Environment", "href": "https://www.oracle.com/java/technologies/language-environment.html", "note": "The original white paper" }]
+    },
+    {
+      "id": "javascript-1995",
+      "at": "1995-12",
+      "precision": "month",
+      "lane": "everyday",
+      "weight": 0.88,
+      "title": "JavaScript",
+      "byline": "Brendan Eich, Netscape",
+      "summary": "Written in ten days to make web pages twitch, and now the only language every computer on earth can already run.",
+      "media": { "type": "image", "src": "public/timeline/languages/javascript-1995.svg", "alt": "Everything-compiles-to-JS motif", "motion": "pulse" },
+      "keyPoints": [
+        "Prototypes and first-class functions came from Self and Scheme, under a Java-shaped syntax.",
+        "Its universal availability made it a compilation target for everything else.",
+        "The event loop made non-blocking I/O the default mental model for a generation.",
+        "Standardising it (ECMAScript) is how a rushed language was made repairable."
+      ],
+      "impact": "The web's only native language, which means every alternative — TypeScript, Elm, WebAssembly's early story — is defined by its relationship to it.",
+      "resources": [
+        { "type": "paper", "label": "JavaScript: The First 20 Years", "href": "https://doi.org/10.1145/3386327", "note": "Wirfs-Brock & Eich, HOPL IV" },
+        { "type": "reference", "label": "TypeScript", "href": "https://www.typescriptlang.org/", "note": "Gradual types over the same runtime" }
+      ]
+    },
+    {
+      "id": "rust-2010",
+      "at": "2010",
+      "lane": "safety",
+      "weight": 0.82,
+      "title": "Rust",
+      "byline": "Graydon Hoare, then Mozilla",
+      "summary": "Argues that memory safety and manual control are not a trade-off, if the compiler is willing to be difficult about it.",
+      "media": { "type": "image", "src": "public/timeline/languages/rust-2010.svg", "alt": "Ownership and lock motif for Rust" },
+      "keyPoints": [
+        "Ownership and borrowing move lifetime errors from runtime to compile time.",
+        "No garbage collector, and no use-after-free — the two were assumed to be a package deal.",
+        "\"Fearless concurrency\": data races are a type error rather than a debugging story.",
+        "The learning curve is the cost, and it is charged up front on purpose."
+      ],
+      "impact": "Shifted the industry's default assumption about systems programming. Memory-safety mandates now name it explicitly, and both Linux and Windows have taken it into the kernel.",
+      "resources": [
+        { "type": "reference", "label": "The Rust Book", "href": "https://doc.rust-lang.org/book/" },
+        { "type": "reference", "label": "Memory-safe roadmaps", "href": "https://www.cisa.gov/case-memory-safe-roadmaps", "note": "Why regulators started caring" }
+      ]
+    }
+  ]
+}

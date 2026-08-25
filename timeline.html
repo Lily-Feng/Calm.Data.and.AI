@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f2ec">
+    <meta name="description" content="Taste of the Past — illustrated, weighted timelines of the ideas computing was built on.">
+    <link rel="canonical" href="https://lily-feng.github.io/Efficient_Learning/timeline.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Calm Data and AI">
+    <meta property="og:title" content="Taste of the Past">
+    <meta property="og:description" content="Taste of the Past — illustrated, weighted timelines of the ideas the field was built on.">
+    <meta property="og:url" content="https://lily-feng.github.io/Efficient_Learning/timeline.html">
+    <meta property="og:image" content="https://lily-feng.github.io/Efficient_Learning/public/og.png">
+    <title>Taste of the Past</title>
+    <link rel="icon" href="public/logo.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/timeline.css">
+</head>
+<body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <div class="app-shell">
+        <aside class="sidebar" id="sidebar">
+            <div class="brand-row">
+                <a class="brand" href="index.html" aria-label="Calm Data and AI home">
+                    <img class="brand-mark" src="public/logo.svg" alt="" width="43" height="43">
+                    <span>
+                        <strong>Calm Data and AI</strong>
+                        <small>Learning made easy with notes and AI</small>
+                    </span>
+                </a>
+                <button class="icon-button sidebar-close" id="sidebar-close" type="button" aria-label="Close navigation">×</button>
+            </div>
+
+            <nav class="primary-nav" aria-label="Sections">
+                <a class="nav-item" href="index.html">
+                    <span class="nav-symbol">◎</span>
+                    <span>Overview</span>
+                </a>
+                <p class="nav-label">Taste of the Past</p>
+                <div id="series-nav"></div>
+            </nav>
+        </aside>
+
+        <div class="page-shell">
+            <header class="topbar">
+                <button class="icon-button menu-button" id="menu-button" type="button" aria-label="Open navigation">☰</button>
+                <p class="topbar-title">Taste of the Past</p>
+                <a class="topbar-link" href="index.html">Back to the atlas <span>→</span></a>
+            </header>
+
+            <main id="main-content">
+                <section class="view">
+                    <div class="hero hero--timeline">
+                        <div class="hero-copy">
+                            <p class="eyebrow">Taste of the Past · a series</p>
+                            <h1>Ideas, in the order<br><em>they arrived.</em></h1>
+                            <p class="hero-intro">
+                                Each entry carries a weight that decides how prominent it is on the rail; click any of them for
+                                the detail, the links, and what it set in motion. The heaviest entries open a sub-timeline of
+                                their own descendants.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div id="series-sections"></div>
+
+                    <section class="section-block" aria-labelledby="authoring-title">
+                        <div class="section-heading">
+                            <div>
+                                <p class="eyebrow">Authoring</p>
+                                <h2 id="authoring-title">Adding a timeline</h2>
+                            </div>
+                        </div>
+                        <div class="method-grid">
+                            <article>
+                                <h3>1 · Write the data</h3>
+                                <p>One JSON file in <code>data/timelines/</code>. Stamps carry their own precision, so <code>1936</code>, <code>2026-08-24</code>, and <code>06:40</code> all sit on the same axis machinery.</p>
+                            </article>
+                            <article>
+                                <h3>2 · Weight the entries</h3>
+                                <p>A <code>weight</code> from 0 to 1 sets the tier, which sets the marker size, the card width, and whether the entry reads as a landmark.</p>
+                            </article>
+                            <article>
+                                <h3>3 · Call the component</h3>
+                                <p><code>createTimeline(mount, spec)</code> — see <code>js/timeline-page.js</code>. Nesting a <code>children</code> block on an entry gives it a sub-timeline, drawn by the same function.</p>
+                            </article>
+                        </div>
+                    </section>
+                </section>
+            </main>
+
+            <footer>
+                <div>
+                    <strong>Calm Data and AI</strong>
+                    <p>Learning made easy with notes and AI.</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <div class="sidebar-scrim" id="sidebar-scrim"></div>
+
+    <script type="module" src="js/timeline-page.js"></script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 /**
- * Patternbook atlas taxonomy.
+ * Calm Data and AI atlas taxonomy.
  *
  * This file describes the knowledge graph: domains, clusters, concepts, and
  * the detailed guides they connect to. Detailed guide content remains in

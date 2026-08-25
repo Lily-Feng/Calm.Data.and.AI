@@ -1,0 +1,226 @@
+{
+  "id": "data-storage",
+  "title": "Where the data sleeps",
+  "tagline": "Storage keeps being reinvented by the same pendulum: give up structure for scale, then spend a decade putting the structure back.",
+  "axis": { "scale": "ordinal", "precision": "year", "direction": "horizontal" },
+  "style": "polaroid",
+  "lanes": [
+    { "id": "iron", "label": "Iron & tape", "accent": "#ffcbb2" },
+    { "id": "relational", "label": "Relational", "accent": "#bfe8cf" },
+    { "id": "scale", "label": "Scale-out", "accent": "#b8d9ff" },
+    { "id": "analytics", "label": "Analytics", "accent": "#d9cdfd" },
+    { "id": "open", "label": "Open formats", "accent": "#d9ff62" }
+  ],
+  "events": [
+    {
+      "id": "ramac-1956",
+      "at": "1956",
+      "lane": "iron",
+      "weight": 0.82,
+      "title": "IBM 350 RAMAC",
+      "byline": "IBM, San Jose",
+      "summary": "Five megabytes on fifty spinning platters — and the first time a computer could reach a record without winding through the ones before it.",
+      "media": { "type": "image", "src": "public/timeline/data-storage/ramac-1956.svg", "alt": "Disk platter motif for the RAMAC", "motion": "pulse" },
+      "keyPoints": [
+        "Random access, as opposed to tape's strictly sequential reading.",
+        "About one ton, five megabytes, and rented rather than sold.",
+        "Made interactive queries against live business records conceivable.",
+        "Every index, B-tree, and access-path decision since assumes this machine's descendant."
+      ],
+      "impact": "Random access is the hardware fact that made databases a category. Sequential storage gives you batch reports; addressable storage gives you a query.",
+      "resources": [{ "type": "reference", "label": "IBM 350 disk storage unit", "href": "https://www.ibm.com/history/storage", "note": "IBM's own archive" }]
+    },
+    {
+      "id": "ims-1968",
+      "at": "1968",
+      "lane": "iron",
+      "weight": 0.6,
+      "title": "IMS",
+      "byline": "IBM, for the Apollo programme",
+      "summary": "A hierarchical database built to track the bill of materials for a Saturn V, and a demonstration of what pointer-walking costs you.",
+      "media": { "type": "image", "src": "public/timeline/data-storage/ims-1968.svg", "alt": "Hierarchy motif for IMS" },
+      "keyPoints": [
+        "Data is a tree; a query is a program that navigates it.",
+        "Extremely fast for the access path it was designed around, and only that one.",
+        "Changing the physical layout meant changing every program that read it.",
+        "Still in production in banking and insurance, decades on."
+      ],
+      "impact": "The thing Codd was arguing against. IMS worked, which is exactly why the cost of hard-coded access paths needed a paper to make it visible.",
+      "resources": [{ "type": "reference", "label": "IMS at fifty", "href": "https://www.ibm.com/products/ims", "note": "Still shipping" }]
+    },
+    {
+      "id": "relational-1970",
+      "at": "1970",
+      "lane": "relational",
+      "weight": 0.95,
+      "title": "The relational model",
+      "byline": "Edgar F. Codd, IBM",
+      "summary": "Ask for data by what it is, not by where somebody put it — the idea the rest of this rail keeps rediscovering.",
+      "media": { "type": "image", "src": "public/timeline/data-storage/relational-1970.svg", "alt": "Table motif for the relational model", "motion": "float" },
+      "keyPoints": [
+        "A relation is a set: order and physical layout carry no meaning.",
+        "Physical data independence — storage can change without rewriting applications.",
+        "The query optimiser exists because the query no longer names an access path.",
+        "Normalisation targets update anomalies, not tidiness."
+      ],
+      "impact": "Declarative querying became the default interface to data, and the optimiser became the most valuable component in any data platform.",
+      "resources": [
+        { "type": "paper", "label": "A Relational Model of Data for Large Shared Data Banks", "href": "https://doi.org/10.1145/362384.362685", "note": "CACM 13(6), 1970" },
+        { "type": "guide", "label": "Choosing a data platform by workload", "guide": "data-platform-selection" }
+      ]
+    },
+    {
+      "id": "oracle-1979",
+      "at": "1979",
+      "lane": "relational",
+      "weight": 0.72,
+      "title": "Oracle V2",
+      "byline": "Relational Software, Inc.",
+      "summary": "The first commercial SQL database, shipped by a company betting that a research idea could be sold before IBM finished shipping it.",
+      "media": { "type": "image", "src": "public/timeline/data-storage/oracle-1979.svg", "alt": "Lock and transaction motif for Oracle" },
+      "keyPoints": [
+        "There was no V1; the version number was a sales decision.",
+        "ACID transactions made concurrent access a solved problem for application authors.",
+        "Locking and isolation levels are where the theory meets a contended production system.",
+        "SQL became a standard in 1986, which turned a product into a skill."
+      ],
+      "impact": "Made the relational model commercially inevitable and made SQL a portable skill — the reason an engineer can move between vendors without relearning how to ask a question.",
+      "resources": [
+        { "type": "guide", "label": "Top-N per group", "guide": "sql-top-n-per-group" },
+        { "type": "guide", "label": "Deduplicating rows", "guide": "sql-deduplicate" }
+      ]
+    },
+    {
+      "id": "warehouse-1992",
+      "at": "1992",
+      "lane": "analytics",
+      "weight": 0.75,
+      "title": "The data warehouse",
+      "byline": "Bill Inmon, then Ralph Kimball",
+      "summary": "Notices that the questions a business asks about its history are a different workload from the transactions that made it.",
+      "media": { "type": "image", "src": "public/timeline/data-storage/warehouse-1992.svg", "alt": "Racks motif for the data warehouse" },
+      "keyPoints": [
+        "Analytical reads and transactional writes want opposite physical layouts.",
+        "Inmon argued top-down from an enterprise model; Kimball bottom-up from dimensional marts.",
+        "Slowly changing dimensions are the durable idea: history is a modelling problem, not a backup.",
+        "ETL becomes a named discipline, and a permanent source of operational cost."
+      ],
+      "impact": "Separating analytics from operations is now assumed. Every modern lakehouse, warehouse, and read replica is a version of this split.",
+      "resources": [
+        { "type": "reference", "label": "The Data Warehouse Toolkit", "href": "https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/books/", "note": "Kimball's dimensional modelling" },
+        { "type": "guide", "label": "Performance reasoning on data platforms", "guide": "data-performance" }
+      ]
+    },
+    {
+      "id": "hadoop-2006",
+      "at": "2006",
+      "lane": "scale",
+      "weight": 0.85,
+      "title": "Hadoop",
+      "byline": "Doug Cutting & Mike Cafarella",
+      "summary": "Google's two papers, rebuilt in the open, so that anyone with a room full of cheap disks could process more data than would fit on one machine.",
+      "media": { "type": "image", "src": "public/timeline/data-storage/hadoop-2006.svg", "alt": "Layered cluster motif for Hadoop", "motion": "drift" },
+      "keyPoints": [
+        "Move the computation to the data, because moving petabytes is the expensive part.",
+        "Commodity hardware plus replication beats reliable hardware on cost.",
+        "Schema-on-read: store first, decide what it means later.",
+        "That last one is also how the data swamp got created."
+      ],
+      "impact": "Made storing everything cheap enough to be the default, which set up the next fifteen years of work putting structure and governance back on top of it.",
+      "resources": [
+        { "type": "paper", "label": "The Google File System", "href": "https://doi.org/10.1145/1165389.945450" },
+        { "type": "guide", "label": "Incremental pipelines", "guide": "data-incremental-pipelines" }
+      ],
+      "children": {
+        "id": "hadoop-descendants",
+        "axis": { "scale": "linear", "precision": "year", "direction": "horizontal" },
+        "style": "filmstrip",
+        "events": [
+          { "id": "ds-hive-2010", "at": "2010", "lane": "scale", "weight": 0.72, "title": "Hive", "byline": "Facebook", "summary": "SQL over MapReduce — the declarative layer comes back within four years.", "media": { "type": "glyph", "glyph": "▤", "alt": "Table" } },
+          { "id": "ds-spark-2010", "at": "2010", "lane": "scale", "weight": 0.85, "title": "Spark", "byline": "Zaharia et al., Berkeley", "summary": "Keeps working sets in memory between stages, and makes iterative jobs practical.", "media": { "type": "glyph", "glyph": "✦", "alt": "Spark" }, "resources": [{ "type": "paper", "label": "Resilient Distributed Datasets", "href": "https://dl.acm.org/doi/10.5555/2228298.2228301" }] },
+          { "id": "ds-presto-2013", "at": "2013", "lane": "analytics", "weight": 0.62, "title": "Presto", "byline": "Facebook", "summary": "Interactive SQL straight against the lake, with no ingestion step in between.", "media": { "type": "glyph", "glyph": "⚡", "alt": "Fast query" } },
+          { "id": "ds-cloud-shift-2019", "at": "2019", "lane": "scale", "weight": 0.55, "title": "The cluster dissolves", "byline": "The market", "summary": "Object storage plus elastic compute makes owning a permanent cluster look expensive.", "media": { "type": "glyph", "glyph": "☁", "alt": "Cloud" } }
+        ]
+      }
+    },
+    {
+      "id": "dynamo-2007",
+      "at": "2007",
+      "lane": "scale",
+      "weight": 0.78,
+      "title": "Dynamo",
+      "byline": "DeCandia et al., Amazon",
+      "summary": "Decides that for a shopping cart, always accepting a write matters more than every replica agreeing on what it says.",
+      "media": { "type": "image", "src": "public/timeline/data-storage/dynamo-2007.svg", "alt": "Consistent-hashing ring motif for Dynamo" },
+      "keyPoints": [
+        "Consistent hashing, vector clocks, and eventual consistency in one production system.",
+        "Availability is chosen over consistency, deliberately and with the business reason stated.",
+        "Conflict resolution is pushed up to the application, which knows what a merge means.",
+        "Started the NoSQL decade — and much of the industry read only the headline."
+      ],
+      "impact": "Made the CAP trade-off a concrete engineering decision rather than a theorem, and produced a generation of stores that were right for some workloads and adopted for all of them.",
+      "resources": [{ "type": "paper", "label": "Dynamo: Amazon's Highly Available Key-value Store", "href": "https://doi.org/10.1145/1323293.1294281", "note": "SOSP 2007" }]
+    },
+    {
+      "id": "parquet-2013",
+      "at": "2013",
+      "lane": "open",
+      "weight": 0.74,
+      "title": "Parquet",
+      "byline": "Twitter & Cloudera",
+      "summary": "Stores a table down its columns instead of across its rows, which is what analytical queries were asking for all along.",
+      "media": { "type": "image", "src": "public/timeline/data-storage/parquet-2013.svg", "alt": "Columnar storage motif for Parquet" },
+      "keyPoints": [
+        "Read only the columns the query names; skip the rest of the bytes entirely.",
+        "Values of one type sit together, so compression and encoding get dramatically better.",
+        "Row-group statistics let a reader skip whole blocks without decoding them.",
+        "An open format, so the file outlives the engine that wrote it."
+      ],
+      "impact": "The default physical format for analytical data. Separating the file format from the query engine is what made engines interchangeable.",
+      "resources": [{ "type": "reference", "label": "Apache Parquet", "href": "https://parquet.apache.org/docs/file-format/" }]
+    },
+    {
+      "id": "snowflake-2014",
+      "at": "2014",
+      "lane": "analytics",
+      "weight": 0.86,
+      "title": "Separating storage and compute",
+      "byline": "Dageville et al., Snowflake",
+      "summary": "Puts the data in object storage and rents the query engine by the second, so the two stop having to be sized together.",
+      "media": { "type": "image", "src": "public/timeline/data-storage/snowflake-2014.svg", "alt": "Cloud storage and compute motif", "motion": "float" },
+      "keyPoints": [
+        "Storage scales with the data; compute scales with the questions being asked.",
+        "Independent warehouses over one dataset end the contention between teams.",
+        "Elasticity turns capacity planning into a billing decision.",
+        "The architecture, not the SQL dialect, was the product."
+      ],
+      "impact": "Reset the expectations for every data platform. Warehouses, lakehouses, and streaming engines are now all judged on whether they can scale the two halves apart.",
+      "resources": [
+        { "type": "paper", "label": "The Snowflake Elastic Data Warehouse", "href": "https://doi.org/10.1145/2882903.2903741", "note": "SIGMOD 2016" },
+        { "type": "guide", "label": "Choosing a data platform by workload", "guide": "data-platform-selection" }
+      ]
+    },
+    {
+      "id": "lakehouse-2017",
+      "at": "2017",
+      "lane": "open",
+      "weight": 0.8,
+      "title": "Open table formats",
+      "byline": "Iceberg at Netflix, Delta Lake at Databricks, Hudi at Uber",
+      "summary": "Adds a transaction log over the files, so a directory of Parquet finally behaves like a table again.",
+      "media": { "type": "image", "src": "public/timeline/data-storage/lakehouse-2017.svg", "alt": "Pipeline motif for open table formats" },
+      "keyPoints": [
+        "A metadata layer gives atomic commits, snapshot isolation, and time travel.",
+        "Schema evolution stops being a rewrite of the whole dataset.",
+        "Several engines can read and write the same table without a shared server.",
+        "The pendulum completes its swing: the lake gets its structure back."
+      ],
+      "impact": "Closes the loop this rail opened. Fifty years after Codd, the industry's answer to \"where should the data live\" is again a table with a schema and a transaction — just spread over object storage.",
+      "resources": [
+        { "type": "paper", "label": "Lakehouse: A New Generation of Open Platforms", "href": "https://www.cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf", "note": "CIDR 2021" },
+        { "type": "reference", "label": "Apache Iceberg spec", "href": "https://iceberg.apache.org/spec/" },
+        { "type": "guide", "label": "Incremental pipelines", "guide": "data-incremental-pipelines" }
+      ]
+    }
+  ]
+}

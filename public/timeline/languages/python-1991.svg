@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260" role="img" aria-label="Python, 1991">
+    <rect width="520" height="260" fill="#f4f2ec"/>
+    <rect x="0" y="0" width="520" height="10" fill="#bfe8cf"/>
+    <g transform="translate(0, 12)"><rect x="62" y="74" width="82" height="60" rx="9" fill="#f4f2ec" stroke="#15271f" stroke-width="2.6"/><path d="M144 104 h 18 m -7 -6 l 7 6 l -7 6" fill="none" stroke="#15271f" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="170" y="74" width="82" height="60" rx="9" fill="#bfe8cf" stroke="#15271f" stroke-width="2.6"/><path d="M252 104 h 18 m -7 -6 l 7 6 l -7 6" fill="none" stroke="#15271f" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="278" y="74" width="82" height="60" rx="9" fill="#f4f2ec" stroke="#15271f" stroke-width="2.6"/><path d="M360 104 h 18 m -7 -6 l 7 6 l -7 6" fill="none" stroke="#15271f" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="386" y="74" width="82" height="60" rx="9" fill="#bfe8cf" stroke="#15271f" stroke-width="2.6"/></g>
+    <g transform="translate(34, 224)">
+        <text font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="30" font-weight="700" fill="#15271f" y="0">1991</text>
+        <text x="112" y="-11" font-family="Georgia, 'Times New Roman', serif" font-size="14" fill="#15271f" opacity=".82">Python</text>
+    </g>
+</svg>

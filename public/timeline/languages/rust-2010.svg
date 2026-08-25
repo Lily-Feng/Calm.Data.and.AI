@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260" role="img" aria-label="Rust, 2010">
+    <rect width="520" height="260" fill="#f4f2ec"/>
+    <rect x="0" y="0" width="520" height="10" fill="#f9e293"/>
+    <g transform="translate(0, 12)"><g stroke="#15271f" stroke-width="2.6" fill="none">
+                <path d="M110 60 C 200 60, 220 148, 300 148"/>
+                <path d="M110 148 C 200 148, 220 60, 300 60"/>
+            </g>
+            <circle cx="110" cy="60" r="20" fill="#f4f2ec" stroke="#15271f" stroke-width="3"/>
+            <circle cx="110" cy="148" r="20" fill="#f4f2ec" stroke="#15271f" stroke-width="3"/>
+            <rect x="330" y="70" width="112" height="68" rx="10" fill="#f9e293" stroke="#15271f" stroke-width="3"/>
+            <path d="M366 70 v-14 a20 20 0 0 1 40 0 v14" fill="none" stroke="#15271f" stroke-width="3"/></g>
+    <g transform="translate(34, 224)">
+        <text font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="30" font-weight="700" fill="#15271f" y="0">2010</text>
+        <text x="112" y="-11" font-family="Georgia, 'Times New Roman', serif" font-size="14" fill="#15271f" opacity=".82">Rust</text>
+    </g>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260" role="img" aria-label="S3 and EC2, 2006">
+    <rect width="520" height="260" fill="#f4f2ec"/>
+    <rect x="0" y="0" width="520" height="10" fill="#bfe8cf"/>
+    <g transform="translate(0, 12)"><g transform="translate(6 -22)">
+                <path d="M158 140 a34 34 0 0 1 4 -67 a44 44 0 0 1 84 -14 a38 38 0 0 1 56 24 a30 30 0 0 1 -6 57 z"
+                    fill="#bfe8cf" stroke="#15271f" stroke-width="3"/>
+                <g fill="none" stroke="#15271f" stroke-width="2.4">
+                    <line x1="200" y1="140" x2="200" y2="166"/><line x1="256" y1="140" x2="256" y2="166"/><line x1="312" y1="140" x2="312" y2="166"/>
+                </g>
+                <g fill="#f4f2ec" stroke="#15271f" stroke-width="2.4">
+                    <rect x="180" y="166" width="40" height="24" rx="4"/><rect x="236" y="166" width="40" height="24" rx="4"/><rect x="292" y="166" width="40" height="24" rx="4"/>
+                </g>
+            </g></g>
+    <g transform="translate(34, 224)">
+        <text font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="30" font-weight="700" fill="#15271f" y="0">2006</text>
+        <text x="112" y="-11" font-family="Georgia, 'Times New Roman', serif" font-size="14" fill="#15271f" opacity=".82">S3 and EC2</text>
+    </g>
+</svg>

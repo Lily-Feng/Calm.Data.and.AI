@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260" role="img" aria-label="ALGOL 60, 1960">
+    <rect width="520" height="260" fill="#f4f2ec"/>
+    <rect x="0" y="0" width="520" height="10" fill="#d9cdfd"/>
+    <g transform="translate(0, 12)"><g stroke="#15271f" stroke-width="2.4" opacity=".55"><line x1="260" y1="44" x2="150" y2="100"/><line x1="260" y1="44" x2="370" y2="100"/><line x1="150" y1="100" x2="100" y2="156"/><line x1="150" y1="100" x2="200" y2="156"/><line x1="370" y1="100" x2="320" y2="156"/><line x1="370" y1="100" x2="420" y2="156"/></g>
+            <g fill="#d9cdfd" stroke="#15271f" stroke-width="2.4">
+                <circle cx="260" cy="44" r="15"/><circle cx="150" cy="100" r="12"/><circle cx="370" cy="100" r="12"/>
+                <circle cx="100" cy="156" r="9"/><circle cx="200" cy="156" r="9"/><circle cx="320" cy="156" r="9"/><circle cx="420" cy="156" r="9"/>
+            </g></g>
+    <g transform="translate(34, 224)">
+        <text font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="30" font-weight="700" fill="#15271f" y="0">1960</text>
+        <text x="112" y="-11" font-family="Georgia, 'Times New Roman', serif" font-size="14" fill="#15271f" opacity=".82">ALGOL 60</text>
+    </g>
+</svg>

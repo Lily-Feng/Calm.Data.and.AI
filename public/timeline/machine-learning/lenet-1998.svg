@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260" role="img" aria-label="LeNet-5, 1998">
+    <rect width="520" height="260" fill="#f4f2ec"/>
+    <rect x="0" y="0" width="520" height="10" fill="#d9ff62"/>
+    <g transform="translate(0, 12)"><rect x="132" y="160" width="256" height="28" rx="6"
+                fill="#f4f2ec" stroke="#15271f" stroke-width="2.6"/><rect x="146" y="124" width="228" height="28" rx="6"
+                fill="#f4f2ec" stroke="#15271f" stroke-width="2.6"/><rect x="160" y="88" width="200" height="28" rx="6"
+                fill="#f4f2ec" stroke="#15271f" stroke-width="2.6"/><rect x="174" y="52" width="172" height="28" rx="6"
+                fill="#d9ff62" stroke="#15271f" stroke-width="2.6"/></g>
+    <g transform="translate(34, 224)">
+        <text font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="30" font-weight="700" fill="#15271f" y="0">1998</text>
+        <text x="112" y="-11" font-family="Georgia, 'Times New Roman', serif" font-size="14" fill="#15271f" opacity=".82">LeNet-5</text>
+    </g>
+</svg>
