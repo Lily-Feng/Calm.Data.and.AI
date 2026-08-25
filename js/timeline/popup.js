@@ -71,6 +71,7 @@ function renderResource(resource, meta) {
 
 export function createPopup({ onOpenGuide } = {}) {
     let dialog = null;
+    let watcher = null;
     let token = 0;
 
     function ensure() {
@@ -100,10 +101,17 @@ export function createPopup({ onOpenGuide } = {}) {
                 document.dispatchEvent(new CustomEvent("tl:branch", { detail: { id: branchButton.dataset.branch } }));
             }
         });
-        dialog.addEventListener("close", () => {
+        // Watch the `open` attribute rather than listening for the `close`
+        // event. A dialog can be dismissed four ways — the close button, the
+        // backdrop, Escape, or programmatically — and only the attribute is
+        // guaranteed to change on all of them. (Chrome 151 headless does not
+        // fire `close` at all, which is how this was found.)
+        watcher = new MutationObserver(() => {
+            if (dialog.open) return;
             token += 1;
             dialog.dispatchEvent(new CustomEvent("tl-popup-closed", { bubbles: true }));
         });
+        watcher.observe(dialog, { attributes: true, attributeFilter: ["open"] });
         document.body.append(dialog);
         return dialog;
     }
@@ -179,6 +187,8 @@ export function createPopup({ onOpenGuide } = {}) {
             return ensure();
         },
         destroy() {
+            watcher?.disconnect();
+            watcher = null;
             dialog?.remove();
             dialog = null;
         },
