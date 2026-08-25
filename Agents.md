@@ -40,9 +40,10 @@ Every entry in `js/manifest.js` must include:
 
 Every guide fragment should read as one deep, reusable note — a representative problem, an ordered reasoning sequence, failure modes, and a concise synthesis — rather than several product-specific fragments, but the HTML format doesn't enforce a fixed shape.
 
-## Timeline architecture
+## Taste of the Past (timeline) architecture
 
-`timeline.html` is a second page with its own stylesheet and its own ES-module
+`timeline.html` hosts the **Taste of the Past** series. It is a second page
+with its own stylesheet and its own ES-module
 entry point. It shares `css/styles.css` and the shell markup with the atlas but
 touches none of `js/app.js`.
 

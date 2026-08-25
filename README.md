@@ -32,9 +32,10 @@ Push to `main`. `.github/workflows/deploy-pages.yml` publishes the static site a
 
 The graph structure, guide metadata, and guide content are intentionally separate. A concept can have a useful place and summary before a long guide is written, and a guide's body can be rewritten without touching its graph location or metadata.
 
-## Timelines
+## Taste of the Past
 
-`timeline.html` renders illustrated, weighted timelines. The page owns no
+`timeline.html` hosts **Taste of the Past**, a series of illustrated,
+weighted timelines. The page owns no
 timeline markup — it loads authored JSON and calls the component:
 
 ```js
@@ -61,7 +62,7 @@ per entry (`event.style` → `lane.style` → `timeline.style`), so one rail can
 them. Add a pack in `js/timeline/styles/`, register it in that directory's
 `index.js`, and reference its id from a JSON file.
 
-### Add a timeline
+### Add a timeline to the series
 
 1. Write `data/timelines/<id>.json`. See `js/timeline/schema.js` for the full
    field reference — lanes, weights, media, key points, impact, and resources.
