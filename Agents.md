@@ -93,7 +93,7 @@ node --check js/manifest.js
 node --check js/atlas.js
 node --check js/app.js
 for f in js/timeline-page.js js/timeline/*.js js/timeline/styles/*.js; do node --check "$f"; done
-node -e 'require("./data/timelines/cs-papers.json"); require("./data/timelines/deep-work-day.json")'
+for f in data/timelines/*.json; do node -e "require('./$f')"; done
 node scripts/make-covers.mjs   # deterministic; leaves the tree clean if art is current
 python3 -m http.server 8080
 ```

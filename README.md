@@ -46,7 +46,8 @@ const rail = createTimeline(document.querySelector("#rail"), spec, { onOpenGuide
 
 Timestamps carry their own precision, so `1936`, `1970-06`, `2026-08-24`,
 `2026-08-24T06:30`, and the clock-only `06:40` all sit on the same axis
-machinery — one component serves eight decades of papers and one working day.
+machinery — the same component serves eight decades of papers and a single
+working day.
 Three axis scales are available: `ordinal` (even spacing, real gaps named
 between the markers), `linear` (distance is elapsed time), and `log`.
 

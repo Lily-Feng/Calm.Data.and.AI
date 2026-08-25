@@ -14,7 +14,6 @@ import { createTimeline } from "./timeline/index.js";
 
 const RAILS = [
     { mount: "#rail-cs-papers", src: "data/timelines/cs-papers.json" },
-    { mount: "#rail-deep-work-day", src: "data/timelines/deep-work-day.json" },
 ];
 
 const rails = new Map();
