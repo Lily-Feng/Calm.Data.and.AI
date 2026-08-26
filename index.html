@@ -21,9 +21,9 @@
     <meta name="twitter:image" content="https://lily-feng.github.io/Calm.Data.and.AI/public/og.png">
     <title>Calm Data and AI</title>
     <link rel="icon" href="public/logo.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/styles.css?v=20260826-2">
 </head>
-<body>
+<body data-view="overview">
     <a class="skip-link" href="#main-content">Skip to content</a>
 
     <div class="app-shell">
@@ -42,33 +42,13 @@
             <nav class="primary-nav" aria-label="Knowledge domains">
                 <p class="nav-label">Domain maps</p>
                 <div id="domain-navigation"></div>
-                <button class="nav-item" type="button" data-view="guides">
-                    <span class="nav-symbol">≡</span>
-                    <span>All detailed guides</span>
-                </button>
             </nav>
 
-            <div class="sidebar-footer">
-                <div class="legend-card">
-                    <p>Graph key</p>
-                    <span><i class="legend-dot legend-dot--root"></i> Domain</span>
-                    <span><i class="legend-dot legend-dot--cluster"></i> Concept cluster</span>
-                    <span><i class="legend-dot legend-dot--concept"></i> Key concept</span>
-                    <span><i class="legend-dot legend-dot--guide"></i> Detailed guide</span>
-                </div>
-            </div>
         </aside>
 
         <div class="page-shell">
             <header class="topbar">
                 <button class="icon-button menu-button" id="menu-button" type="button" aria-label="Open navigation">☰</button>
-                <div class="search-wrap">
-                    <span aria-hidden="true">⌕</span>
-                    <label class="sr-only" for="global-search">Search the knowledge atlas</label>
-                    <input id="global-search" type="search" placeholder="Search concepts, trade-offs, or problems…" autocomplete="off">
-                    <kbd>/</kbd>
-                </div>
-                <a class="topbar-link" href="https://github.com/Lily-Feng/Calm.Data.and.AI" target="_blank" rel="noreferrer">View source <span>↗</span></a>
             </header>
 
             <main id="main-content">
@@ -83,13 +63,12 @@
                     </div>
 
                     <div class="home-content">
-                        <a class="timeline-feature" id="home-feature" href="timeline.html">
+                        <figure class="timeline-feature" id="home-feature">
                             <img src="public/taste-of-the-past.webp" alt="A paper collage tracing computing from punch cards and mainframes to personal computers and connected systems">
-                            <span>
+                            <figcaption>
                                 <strong>Taste of the Past</strong>
-                                <i aria-hidden="true">→</i>
-                            </span>
-                        </a>
+                            </figcaption>
+                        </figure>
 
                         <section class="home-results hidden" id="home-results" aria-live="polite">
                             <p id="home-results-count"></p>
@@ -134,7 +113,7 @@
                         <div class="cluster-index" id="cluster-index"></div>
                     </section>
 
-                    <section class="section-block" aria-labelledby="domain-guides-title">
+                    <section class="section-block" id="domain-guides-section" aria-labelledby="domain-guides-title">
                         <div class="section-heading">
                             <div>
                                 <p class="eyebrow">Applied depth</p>
@@ -145,31 +124,7 @@
                     </section>
                 </section>
 
-                <section class="view hidden" id="guides-view" aria-labelledby="guide-library-title">
-                    <div class="library-header">
-                        <div>
-                            <p class="eyebrow" id="library-eyebrow">Detailed knowledge base</p>
-                            <h1 id="guide-library-title">All guides</h1>
-                            <p id="library-description">Applied explanations that connect concepts to representative problems and implementation patterns.</p>
-                        </div>
-                        <div class="library-count" id="library-count">0 guides</div>
-                    </div>
-                    <div class="domain-filters" id="domain-filters" role="group" aria-label="Filter guides by domain"></div>
-                    <div class="guide-grid guide-grid--library" id="guide-library"></div>
-                    <div class="empty-state hidden" id="empty-state">
-                        <span>⌕</span>
-                        <h2>No matching knowledge</h2>
-                        <p>Try a broader concept, product, or problem.</p>
-                    </div>
-                </section>
             </main>
-
-            <footer>
-                <div>
-                    <strong>Calm Data and AI</strong>
-                    <p>Learning made easy with notes and AI.</p>
-                </div>
-            </footer>
         </div>
     </div>
 
@@ -184,8 +139,8 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="js/manifest.js"></script>
-    <script src="js/atlas.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/manifest.js?v=20260826-2"></script>
+    <script src="js/atlas.js?v=20260826-2"></script>
+    <script src="js/app.js?v=20260826-2"></script>
 </body>
 </html>

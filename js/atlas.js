@@ -341,6 +341,72 @@ const ATLAS = {
                     ]
                 }
             ]
+        },
+        rust: {
+            thesis: "Use ownership and the type system to make resource lifecycles, failure, and concurrency explicit before runtime.",
+            principles: ["Make ownership visible", "Model invalid states out", "Use unsafe code only behind a safe boundary"],
+            clusters: [
+                {
+                    id: "rust-foundations",
+                    label: "Language foundations",
+                    summary: "Understand how Rust turns source code and types into predictable native programs.",
+                    nodes: [
+                        { id: "rust-compilation", label: "Compilation model", summary: "Follow crates, modules, targets, and compiler feedback as one development loop." },
+                        { id: "rust-types", label: "Types & mutability", summary: "Use explicit types, immutability by default, and controlled mutation to state program intent." },
+                        { id: "rust-cargo", label: "Cargo & crates", summary: "Manage builds, dependencies, features, tests, and documentation through Cargo." }
+                    ]
+                },
+                {
+                    id: "rust-ownership",
+                    label: "Ownership & borrowing",
+                    summary: "Control memory and resource lifetimes without a garbage collector.",
+                    nodes: [
+                        { id: "rust-ownership-rules", label: "Ownership", summary: "Give each value a clear owner and understand when moves transfer responsibility." },
+                        { id: "rust-borrowing", label: "Borrowing", summary: "Share references under rules that prevent dangling pointers and conflicting mutation." },
+                        { id: "rust-lifetimes", label: "Lifetimes", summary: "Describe relationships between references when inference cannot prove their validity." }
+                    ]
+                },
+                {
+                    id: "rust-data-modeling",
+                    label: "Data modeling",
+                    summary: "Represent state and failure explicitly with algebraic data types.",
+                    nodes: [
+                        { id: "rust-structs-enums", label: "Structs & enums", summary: "Model product states with data-bearing variants instead of flags and nullable fields." },
+                        { id: "rust-patterns", label: "Pattern matching", summary: "Handle every meaningful shape of data with exhaustive matches and focused destructuring." },
+                        { id: "rust-errors", label: "Result & Option", summary: "Make absence and recoverable failure part of the function contract." }
+                    ]
+                },
+                {
+                    id: "rust-abstraction",
+                    label: "Abstraction",
+                    summary: "Build reusable behavior without hiding ownership or runtime cost.",
+                    nodes: [
+                        { id: "rust-traits", label: "Traits", summary: "Define shared capabilities and select static or dynamic dispatch deliberately." },
+                        { id: "rust-generics", label: "Generics", summary: "Reuse algorithms across types while preserving compile-time guarantees." },
+                        { id: "rust-iterators", label: "Iterators & closures", summary: "Compose lazy transformations that remain expressive and optimizable." }
+                    ]
+                },
+                {
+                    id: "rust-concurrency",
+                    label: "Concurrency & async",
+                    summary: "Carry ownership guarantees across threads, tasks, and shared state.",
+                    nodes: [
+                        { id: "rust-send-sync", label: "Send & Sync", summary: "Understand which values may cross threads or be shared safely." },
+                        { id: "rust-threads-channels", label: "Threads & channels", summary: "Coordinate owned work with message passing or carefully scoped shared state." },
+                        { id: "rust-async", label: "Async & await", summary: "Run cooperative tasks while keeping blocking work, cancellation, and ownership explicit." }
+                    ]
+                },
+                {
+                    id: "rust-production",
+                    label: "Production practice",
+                    summary: "Test, observe, optimize, and isolate low-level escape hatches.",
+                    nodes: [
+                        { id: "rust-testing", label: "Testing & tooling", summary: "Use unit, integration, documentation, lint, and formatting checks as one quality system." },
+                        { id: "rust-unsafe", label: "Unsafe & FFI", summary: "Keep unverifiable operations small and expose them through documented safe APIs." },
+                        { id: "rust-performance", label: "Performance", summary: "Measure allocation, layout, contention, and I/O before introducing complexity." }
+                    ]
+                }
+            ]
         }
     }
 };

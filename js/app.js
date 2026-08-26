@@ -10,7 +10,6 @@ const elements = {
     body: document.body,
     overviewView: document.getElementById("overview-view"),
     domainView: document.getElementById("domain-view"),
-    guidesView: document.getElementById("guides-view"),
     domainNavigation: document.getElementById("domain-navigation"),
     homeSearch: document.getElementById("home-search"),
     homeFeature: document.getElementById("home-feature"),
@@ -18,20 +17,13 @@ const elements = {
     homeResultsCount: document.getElementById("home-results-count"),
     homeResultsGrid: document.getElementById("home-results-grid"),
     homeEmptyState: document.getElementById("home-empty-state"),
-    search: document.getElementById("global-search"),
     domainHeader: document.getElementById("domain-header"),
     principleStrip: document.getElementById("principle-strip"),
     domainGraph: document.getElementById("domain-graph"),
     conceptInspector: document.getElementById("concept-inspector"),
     clusterIndex: document.getElementById("cluster-index"),
+    domainGuidesSection: document.getElementById("domain-guides-section"),
     domainGuides: document.getElementById("domain-guides"),
-    domainFilters: document.getElementById("domain-filters"),
-    guideLibrary: document.getElementById("guide-library"),
-    libraryEyebrow: document.getElementById("library-eyebrow"),
-    guideLibraryTitle: document.getElementById("guide-library-title"),
-    libraryDescription: document.getElementById("library-description"),
-    libraryCount: document.getElementById("library-count"),
-    emptyState: document.getElementById("empty-state"),
     topicDialog: document.getElementById("topic-dialog"),
     dialogContent: document.getElementById("dialog-content"),
     toast: document.getElementById("toast")
@@ -39,7 +31,6 @@ const elements = {
 
 let activeView = "overview";
 let activeDomain = tracks[0].id;
-let activeFilter = "all";
 let activeGraphNode = "root";
 let toastTimer;
 let openGuideToken = 0;
@@ -72,7 +63,6 @@ async function preloadGuideBodies() {
         const topic = topics[index];
         guideText.set(topic.id, result.status === "fulfilled" ? stripHtml(result.value) : "");
     });
-    if (elements.search.value.trim() && activeView === "guides") renderGuideLibrary();
     if (elements.homeSearch.value.trim() && activeView === "overview") renderHomeSearch();
 }
 
@@ -127,12 +117,33 @@ function findGuideLocation(guideId) {
 }
 
 function renderNavigation() {
-    elements.domainNavigation.innerHTML = tracks.map((track) => `
-        <button class="nav-item" type="button" data-domain="${escapeHtml(track.id)}">
+    const programmingIds = new Set(["python", "sql", "go", "rust"]);
+    const trackLink = (track, isChild = false) => `
+        <a class="nav-item${isChild ? " nav-subitem" : ""}" href="#domain=${encodeURIComponent(track.id)}&concept=root" data-domain="${escapeHtml(track.id)}">
             <span class="nav-symbol">${escapeHtml(track.mark)}</span>
             <span>${escapeHtml(track.shortName)}</span>
-        </button>
-    `).join("");
+        </a>
+    `;
+    const primaryTracks = tracks.filter((track) => !programmingIds.has(track.id));
+    const programmingTracks = tracks.filter((track) => programmingIds.has(track.id));
+
+    elements.domainNavigation.innerHTML = `
+        ${primaryTracks.map((track) => trackLink(track)).join("")}
+        <div class="nav-group">
+            <button class="nav-item nav-group-toggle" type="button" data-nav-toggle="programming" aria-expanded="false" aria-controls="programming-navigation">
+                <span class="nav-symbol">PL</span>
+                <span>Programming Languages</span>
+                <i aria-hidden="true">⌄</i>
+            </button>
+            <div class="nav-submenu" id="programming-navigation" hidden>
+                ${programmingTracks.map((track) => trackLink(track, true)).join("")}
+            </div>
+        </div>
+        <a class="nav-item nav-feature-link" href="timeline.html">
+            <span class="nav-symbol">⟜</span>
+            <span>Taste of the Past</span>
+        </a>
+    `;
 }
 
 function renderGuideCard(topic) {
@@ -156,27 +167,32 @@ function setView(view, options = {}) {
     elements.body.dataset.view = view;
     elements.overviewView.classList.toggle("hidden", view !== "overview");
     elements.domainView.classList.toggle("hidden", view !== "domain");
-    elements.guidesView.classList.toggle("hidden", view !== "guides");
 
     if (view === "domain") {
         activeDomain = options.domain || activeDomain;
         activeGraphNode = options.concept || "root";
-        elements.search.value = "";
         renderDomain();
-    } else if (view === "guides") {
-        if (options.filter) activeFilter = options.filter;
-        renderGuideLibrary();
+        if (!options.fromHash) {
+            const hash = new URLSearchParams({ domain: activeDomain, concept: activeGraphNode });
+            history.replaceState(null, "", `#${hash.toString()}`);
+        }
     } else {
-        elements.search.value = "";
         elements.homeSearch.value = "";
         renderHomeSearch();
+        if (!options.fromHash && location.hash) history.replaceState(null, "", `${location.pathname}${location.search}`);
     }
 
     document.querySelectorAll(".nav-item").forEach((item) => {
-        const activeGuides = view === "guides" && item.dataset.view === "guides";
         const activeDomainItem = view === "domain" && item.dataset.domain === activeDomain;
-        item.classList.toggle("active", activeGuides || activeDomainItem);
+        item.classList.toggle("active", activeDomainItem);
     });
+
+    if (["python", "sql", "go", "rust"].includes(activeDomain) && view === "domain") {
+        const programmingToggle = document.querySelector('[data-nav-toggle="programming"]');
+        const programmingMenu = document.getElementById("programming-navigation");
+        programmingToggle?.setAttribute("aria-expanded", "true");
+        if (programmingMenu) programmingMenu.hidden = false;
+    }
 
     closeSidebar();
     if (!options.noScroll) window.scrollTo({ top: 0, behavior: "smooth" });
@@ -185,6 +201,7 @@ function setView(view, options = {}) {
 function renderDomain() {
     const track = getTrack(activeDomain);
     const domain = getDomain(activeDomain);
+    const domainGuides = getDomainGuides(activeDomain);
     const conceptCount = domain.clusters.reduce((total, cluster) => total + cluster.nodes.length, 0);
 
     elements.domainHeader.innerHTML = `
@@ -196,13 +213,14 @@ function renderDomain() {
         <div class="domain-summary" style="--domain-color: ${track.color}">
             <strong>${domain.clusters.length}</strong><span>concept clusters</span>
             <strong>${conceptCount}</strong><span>key concepts</span>
-            <strong>${getDomainGuides(activeDomain).length}</strong><span>detailed guides</span>
+            ${domainGuides.length ? `<strong>${domainGuides.length}</strong><span>detailed guides</span>` : ""}
         </div>
     `;
     elements.principleStrip.innerHTML = domain.principles.map((principle, index) => `<span><i>0${index + 1}</i>${escapeHtml(principle)}</span>`).join("");
     renderGraph();
     renderClusterIndex();
-    elements.domainGuides.innerHTML = getDomainGuides(activeDomain).map(renderGuideCard).join("");
+    elements.domainGuidesSection.classList.toggle("hidden", domainGuides.length === 0);
+    elements.domainGuides.innerHTML = domainGuides.map(renderGuideCard).join("");
 }
 
 function graphGeometry() {
@@ -386,14 +404,7 @@ function renderClusterIndex() {
     `).join("");
 }
 
-function renderDomainFilters() {
-    elements.domainFilters.innerHTML = `
-        <button class="domain-filter ${activeFilter === "all" ? "active" : ""}" type="button" data-filter="all">All domains</button>
-        ${tracks.map((track) => `<button class="domain-filter ${activeFilter === track.id ? "active" : ""}" type="button" data-filter="${escapeHtml(track.id)}">${escapeHtml(track.shortName)}</button>`).join("")}
-    `;
-}
-
-function searchKnowledge(query, filter = activeFilter) {
+function searchKnowledge(query, filter = "all") {
     const term = query.trim().toLowerCase();
     const guideResults = topics.filter((topic) => {
         if (filter !== "all" && topic.track !== filter) return false;
@@ -447,26 +458,6 @@ function renderHomeSearch() {
     elements.homeResultsGrid.innerHTML = results.join("");
     elements.homeResultsGrid.classList.toggle("hidden", total === 0);
     elements.homeEmptyState.classList.toggle("hidden", total !== 0);
-}
-
-function renderGuideLibrary() {
-    const query = elements.search.value.trim();
-    const { guideResults, conceptResults } = searchKnowledge(query);
-    const total = guideResults.length + conceptResults.length;
-    const track = activeFilter === "all" ? null : getTrack(activeFilter);
-
-    elements.libraryEyebrow.textContent = query ? "Search across the atlas" : "Detailed knowledge base";
-    elements.guideLibraryTitle.textContent = query ? `“${query}”` : track ? `${track.shortName} guides` : "All guides";
-    elements.libraryDescription.textContent = query
-        ? "Results include both graph concepts and detailed applied guides."
-        : track
-            ? getDomain(track.id).thesis
-            : "Applied explanations that connect concepts to representative problems and implementation patterns.";
-    elements.libraryCount.textContent = `${total} result${total === 1 ? "" : "s"}`;
-    renderDomainFilters();
-    elements.guideLibrary.innerHTML = `${conceptResults.map(renderConceptResult).join("")}${guideResults.map(renderGuideCard).join("")}`;
-    elements.guideLibrary.classList.toggle("hidden", total === 0);
-    elements.emptyState.classList.toggle("hidden", total !== 0);
 }
 
 function relatedGuides(topic) {
@@ -556,14 +547,21 @@ function closeSidebar() {
 function setupEvents() {
     document.addEventListener("click", (event) => {
         const viewButton = event.target.closest("[data-view]");
+        const navToggle = event.target.closest("[data-nav-toggle]");
         const domainButton = event.target.closest("[data-domain]");
         const conceptButton = event.target.closest("[data-concept]");
         const guideButton = event.target.closest("[data-guide]");
-        const filterButton = event.target.closest("[data-filter]");
         const copyButton = event.target.closest("[data-copy-code]");
 
-        if (viewButton) setView(viewButton.dataset.view === "guides" ? "guides" : "overview");
+        if (navToggle) {
+            const menu = document.getElementById(`${navToggle.dataset.navToggle}-navigation`);
+            const opening = navToggle.getAttribute("aria-expanded") !== "true";
+            navToggle.setAttribute("aria-expanded", String(opening));
+            if (menu) menu.hidden = !opening;
+        }
+        if (viewButton) setView("overview");
         if (domainButton) {
+            event.preventDefault();
             if (elements.topicDialog.open) closeGuide();
             setView("domain", { domain: domainButton.dataset.domain, concept: conceptButton?.dataset.concept || "root" });
         } else if (conceptButton && activeView === "domain") {
@@ -571,26 +569,16 @@ function setupEvents() {
             document.querySelector(".graph-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
         }
         if (guideButton) openGuide(guideButton.dataset.guide);
-        if (filterButton) {
-            activeFilter = filterButton.dataset.filter;
-            renderGuideLibrary();
-        }
         if (copyButton) copyCode(copyButton);
-    });
-
-    elements.search.addEventListener("input", () => {
-        if (activeView !== "guides") setView("guides", { noScroll: true });
-        else renderGuideLibrary();
     });
 
     elements.homeSearch.addEventListener("input", renderHomeSearch);
 
     document.addEventListener("keydown", (event) => {
-        const searchTarget = activeView === "overview" ? elements.homeSearch : elements.search;
         const isTyping = ["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName);
-        if (event.key === "/" && document.activeElement !== searchTarget && !isTyping) {
+        if (event.key === "/" && activeView === "overview" && document.activeElement !== elements.homeSearch && !isTyping) {
             event.preventDefault();
-            searchTarget.focus();
+            elements.homeSearch.focus();
         }
     });
 
@@ -613,14 +601,12 @@ function initFromHash() {
     const domainId = params.get("domain");
     const conceptId = params.get("concept");
     if (guideId && getGuide(guideId)) openGuide(guideId, { fromHash: true });
-    else if (domainId && getDomain(domainId)) setView("domain", { domain: domainId, concept: conceptId || "root", noScroll: true });
+    else if (domainId && getDomain(domainId)) setView("domain", { domain: domainId, concept: conceptId || "root", noScroll: true, fromHash: true });
 }
 
 function init() {
     renderNavigation();
-    elements.body.dataset.view = "overview";
     renderHomeSearch();
-    renderGuideLibrary();
     setupEvents();
     initFromHash();
     preloadGuideBodies();

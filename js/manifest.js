@@ -51,6 +51,15 @@ const TRACKS = [
         "color": "#bfe8cf",
         "description": "Safe, bounded concurrency patterns for production systems.",
         "topics": "Workers · cancellation · ownership"
+    },
+    {
+        "id": "rust",
+        "name": "Rust",
+        "shortName": "Rust",
+        "mark": "RS",
+        "color": "#e8a47c",
+        "description": "Memory-safe systems programming through ownership, types, and explicit concurrency.",
+        "topics": "Ownership · traits · async"
     }
 ];
 
