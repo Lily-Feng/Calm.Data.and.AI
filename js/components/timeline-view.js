@@ -41,9 +41,7 @@ class TimelineView extends HTMLElement {
         sections.innerHTML = `
             <section class="timeline-series" aria-labelledby="heading-${escapeHtml(entry.id)}">
                 <header class="timeline-series__heading">
-                    ${entry.eyebrow ? `<p class="eyebrow">${escapeHtml(entry.eyebrow)}</p>` : ""}
                     <h1 id="heading-${escapeHtml(entry.id)}">${escapeHtml(entry.heading)}</h1>
-                    ${entry.note ? `<p>${escapeHtml(entry.note)}</p>` : ""}
                 </header>
                 <div id="rail-${escapeHtml(entry.id)}" class="tl-mount" data-state="loading">
                     <p class="tl-fallback">Loading the rail…</p>

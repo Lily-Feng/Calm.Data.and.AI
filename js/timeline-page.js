@@ -9,7 +9,7 @@ import { escapeHtml } from "./timeline/dom.js";
 import { createTimeline } from "./timeline/index.js";
 import "./components/site-header.js";
 import "./components/side-navigation.js";
-import "./components/timeline-view.js";
+import "./components/timeline-view.js?v=20260826-5";
 
 const SERIES_URL = "data/timelines/series.json";
 const PUBLIC_URL = "https://lily-feng.github.io/Calm.Data.and.AI/timeline.html";
@@ -47,7 +47,7 @@ async function mount(entry) {
         rails.set(
             entry.id,
             createTimeline(container, spec, {
-                chrome: { title: false, tagline: true, legend: true },
+                chrome: false,
                 onOpenGuide: openGuide,
                 onSelect: (event) => writeHash({ event: event.id }),
                 onExpand: (event) => writeHash({ branch: event.id }),
