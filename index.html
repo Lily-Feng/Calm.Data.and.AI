@@ -20,67 +20,22 @@
     <meta name="twitter:description" content="A calm, searchable engineering reference.">
     <meta name="twitter:image" content="https://lily-feng.github.io/Calm.Data.and.AI/public/og.png">
     <title>Calm Data and AI</title>
-    <link rel="icon" href="public/logo.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="css/styles.css?v=20260826-3">
+    <link rel="stylesheet" href="css/styles.css?v=20260826-4">
 </head>
 <body data-view="overview">
     <a class="skip-link" href="#main-content">Skip to content</a>
 
     <div class="app-shell">
         <aside class="sidebar" id="sidebar">
-            <div class="brand-row">
-                <button class="brand" type="button" data-view="overview" aria-label="Go to the homepage">
-                    <img class="brand-mark" src="public/logo.svg" alt="" width="43" height="43">
-                    <span>
-                        <strong>Calm Data and AI</strong>
-                        <small>Learning made easy with notes and AI</small>
-                    </span>
-                </button>
-                <button class="icon-button sidebar-close" id="sidebar-close" type="button" aria-label="Close navigation">×</button>
-            </div>
-
-            <nav class="primary-nav" aria-label="Knowledge domains">
-                <p class="nav-label">Domain maps</p>
-                <div id="domain-navigation"></div>
-            </nav>
-
+            <site-header home-mode="button"></site-header>
+            <side-navigation variant="atlas"></side-navigation>
         </aside>
 
         <div class="page-shell">
-            <header class="topbar">
-                <button class="icon-button menu-button" id="menu-button" type="button" aria-label="Open navigation">☰</button>
-            </header>
+            <site-header variant="topbar"></site-header>
 
             <main id="main-content">
-                <section class="view home-view" id="overview-view" aria-labelledby="overview-title">
-                    <h1 class="sr-only" id="overview-title">Calm Data and AI</h1>
-
-                    <div class="home-search">
-                        <span aria-hidden="true">⌕</span>
-                        <label class="sr-only" for="home-search">Search Calm Data and AI</label>
-                        <input id="home-search" type="search" placeholder="Search anything…" autocomplete="off">
-                        <kbd>/</kbd>
-                    </div>
-
-                    <div class="home-content">
-                        <figure class="timeline-feature" id="home-feature">
-                            <img src="public/calm-data-and-ai.webp" alt="A paper collage connecting cloud systems, data platforms, programming, and practical AI">
-                            <figcaption>
-                                <strong>Calm Data and AI</strong>
-                            </figcaption>
-                        </figure>
-
-                        <section class="home-results hidden" id="home-results" aria-live="polite">
-                            <p id="home-results-count"></p>
-                            <div class="guide-grid" id="home-results-grid"></div>
-                            <div class="empty-state hidden" id="home-empty-state">
-                                <span>⌕</span>
-                                <h2>No matching knowledge</h2>
-                                <p>Try a broader concept, product, or problem.</p>
-                            </div>
-                        </section>
-                    </div>
-                </section>
+                <search-view></search-view>
 
                 <section class="view hidden" id="domain-view" aria-labelledby="domain-title">
                     <div class="domain-header" id="domain-header"></div>
@@ -139,8 +94,8 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="js/manifest.js?v=20260826-3"></script>
-    <script src="js/atlas.js?v=20260826-3"></script>
-    <script src="js/app.js?v=20260826-3"></script>
+    <script src="js/manifest.js?v=20260826-4"></script>
+    <script src="js/atlas.js?v=20260826-4"></script>
+    <script type="module" src="js/app.js?v=20260826-4"></script>
 </body>
 </html>

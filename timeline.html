@@ -13,61 +13,23 @@
     <meta property="og:url" content="https://lily-feng.github.io/Calm.Data.and.AI/timeline.html">
     <meta property="og:image" content="https://lily-feng.github.io/Calm.Data.and.AI/public/taste-of-the-past.webp">
     <title>Taste of the Past</title>
-    <link rel="icon" href="public/logo.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="css/styles.css?v=20260826-3">
-    <link rel="stylesheet" href="css/timeline.css?v=20260826-3">
+    <link rel="stylesheet" href="css/styles.css?v=20260826-4">
+    <link rel="stylesheet" href="css/timeline.css?v=20260826-4">
 </head>
 <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
 
     <div class="app-shell">
         <aside class="sidebar" id="sidebar">
-            <div class="brand-row">
-                <a class="brand" href="index.html" aria-label="Calm Data and AI home">
-                    <img class="brand-mark" src="public/logo.svg" alt="" width="43" height="43">
-                    <span>
-                        <strong>Calm Data and AI</strong>
-                        <small>Learning made easy with notes and AI</small>
-                    </span>
-                </a>
-                <button class="icon-button sidebar-close" id="sidebar-close" type="button" aria-label="Close navigation">×</button>
-            </div>
-
-            <nav class="primary-nav" aria-label="Sections">
-                <a class="nav-item" href="index.html">
-                    <span class="nav-symbol">◎</span>
-                    <span>Calm Data and AI</span>
-                </a>
-                <a class="nav-item" id="timeline-home-link" href="timeline.html">
-                    <span class="nav-symbol">⟜</span>
-                    <span>Taste of the Past</span>
-                </a>
-                <p class="nav-label">Timelines</p>
-                <div id="series-nav"></div>
-            </nav>
+            <site-header home-href="index.html"></site-header>
+            <side-navigation variant="timeline"></side-navigation>
         </aside>
 
         <div class="page-shell">
-            <header class="topbar">
-                <button class="icon-button menu-button" id="menu-button" type="button" aria-label="Open navigation">☰</button>
-                <p class="topbar-title" id="timeline-topbar-title">Taste of the Past</p>
-                <a class="topbar-link" href="index.html">Calm Data and AI <span>→</span></a>
-            </header>
+            <site-header variant="topbar" heading="Taste of the Past" home-href="index.html" home-label="Calm Data and AI"></site-header>
 
             <main id="main-content">
-                <section class="view timeline-page-view">
-                    <section class="timeline-home" id="timeline-home" aria-labelledby="timeline-home-title">
-                        <h1 class="sr-only" id="timeline-home-title">Taste of the Past</h1>
-                        <figure class="timeline-landing-image">
-                            <img src="public/taste-of-the-past.webp" alt="A paper collage tracing computing from punch cards and mainframes to personal computers and connected systems">
-                            <figcaption><strong>Taste of the Past</strong></figcaption>
-                        </figure>
-                    </section>
-
-                    <section class="timeline-detail hidden" id="timeline-detail" aria-live="polite">
-                        <div id="series-sections"></div>
-                    </section>
-                </section>
+                <timeline-view></timeline-view>
             </main>
 
         </div>
@@ -75,6 +37,6 @@
 
     <div class="sidebar-scrim" id="sidebar-scrim"></div>
 
-    <script type="module" src="js/timeline-page.js?v=20260826-3"></script>
+    <script type="module" src="js/timeline-page.js?v=20260826-4"></script>
 </body>
 </html>

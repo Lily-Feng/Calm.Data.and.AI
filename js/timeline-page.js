@@ -7,6 +7,9 @@
  */
 import { escapeHtml } from "./timeline/dom.js";
 import { createTimeline } from "./timeline/index.js";
+import "./components/site-header.js";
+import "./components/side-navigation.js";
+import "./components/timeline-view.js";
 
 const SERIES_URL = "data/timelines/series.json";
 const PUBLIC_URL = "https://lily-feng.github.io/Calm.Data.and.AI/timeline.html";
@@ -31,30 +34,6 @@ function applyHash() {
         if (branchId && rail.events.some((event) => event.id === branchId)) rail.expand(branchId);
         if (eventId && rail.events.some((event) => event.id === eventId)) rail.select(eventId);
     }
-}
-
-function navMarkup(entry, selectedId) {
-    const active = entry.id === selectedId;
-    return `
-        <a class="nav-item ${active ? "active" : ""}" href="timeline.html?series=${encodeURIComponent(entry.id)}"
-           ${active ? 'aria-current="page"' : ""}>
-            <span class="nav-symbol">${escapeHtml(entry.symbol || "◷")}</span>
-            <span>${escapeHtml(entry.label || entry.heading)}</span>
-        </a>`;
-}
-
-function sectionMarkup(entry) {
-    return `
-        <section class="timeline-series" aria-labelledby="heading-${escapeHtml(entry.id)}">
-            <header class="timeline-series__heading">
-                ${entry.eyebrow ? `<p class="eyebrow">${escapeHtml(entry.eyebrow)}</p>` : ""}
-                <h1 id="heading-${escapeHtml(entry.id)}">${escapeHtml(entry.heading)}</h1>
-                ${entry.note ? `<p>${escapeHtml(entry.note)}</p>` : ""}
-            </header>
-            <div id="rail-${escapeHtml(entry.id)}" class="tl-mount" data-state="loading">
-                <p class="tl-fallback">Loading the rail…</p>
-            </div>
-        </section>`;
 }
 
 async function mount(entry) {
@@ -87,7 +66,7 @@ function updatePageMetadata(entry) {
     const url = entry ? `${PUBLIC_URL}?series=${encodeURIComponent(entry.id)}` : PUBLIC_URL;
 
     document.title = title;
-    document.getElementById("timeline-topbar-title").textContent = entry?.label || "Taste of the Past";
+    document.querySelector('site-header[variant="topbar"]')?.setHeading(entry?.label || "Taste of the Past");
     document.querySelector('link[rel="canonical"]')?.setAttribute("href", url);
     document.querySelector('meta[property="og:title"]')?.setAttribute("content", title);
     document.querySelector('meta[property="og:description"]')?.setAttribute("content", description);
@@ -99,7 +78,6 @@ function setupSidebar() {
     document.getElementById("menu-button")?.addEventListener("click", () => body.classList.add("sidebar-open"));
     document.getElementById("sidebar-close")?.addEventListener("click", () => body.classList.remove("sidebar-open"));
     document.getElementById("sidebar-scrim")?.addEventListener("click", () => body.classList.remove("sidebar-open"));
-    document.getElementById("series-nav")?.addEventListener("click", () => body.classList.remove("sidebar-open"));
     document.addEventListener("keydown", (keyEvent) => {
         if (keyEvent.key === "Escape") body.classList.remove("sidebar-open");
     });
@@ -107,11 +85,8 @@ function setupSidebar() {
 
 async function init() {
     setupSidebar();
-    const home = document.getElementById("timeline-home");
-    const homeLink = document.getElementById("timeline-home-link");
-    const detail = document.getElementById("timeline-detail");
-    const sections = document.getElementById("series-sections");
-    const nav = document.getElementById("series-nav");
+    const view = document.querySelector("timeline-view");
+    const navigation = document.querySelector('side-navigation[variant="timeline"]');
     const selectedId = new URLSearchParams(location.search).get("series");
 
     let series;
@@ -120,34 +95,28 @@ async function init() {
         if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
         series = await response.json();
     } catch (error) {
-        home.classList.add("hidden");
-        detail.classList.remove("hidden");
-        sections.innerHTML = `<p class="tl-fallback">The series index could not be loaded (${escapeHtml(error.message)}). Check that <code>${SERIES_URL}</code> is reachable.</p>`;
+        view.showError(`The series index could not be loaded (${error.message}).`, SERIES_URL);
         return;
     }
 
     const entries = series.timelines || [];
     const selected = selectedId ? entries.find((entry) => entry.id === selectedId) : null;
-    nav.innerHTML = entries.map((entry) => navMarkup(entry, selected?.id)).join("");
-    homeLink.classList.toggle("active", !selectedId);
-    if (!selectedId) homeLink.setAttribute("aria-current", "page");
-    else homeLink.removeAttribute("aria-current");
+    navigation.setTimelineSeries(entries, selectedId || "");
 
     if (!selectedId) {
         updatePageMetadata(null);
+        view.showHome();
         return;
     }
 
-    home.classList.add("hidden");
-    detail.classList.remove("hidden");
     if (!selected) {
         updatePageMetadata(null);
-        sections.innerHTML = `<div class="tl-fallback"><strong>Timeline not found.</strong><br><a href="timeline.html">Return to Taste of the Past</a></div>`;
+        view.showNotFound();
         return;
     }
 
     updatePageMetadata(selected);
-    sections.innerHTML = sectionMarkup(selected);
+    view.showTimeline(selected);
     await mount(selected);
     applyHash();
     window.addEventListener("hashchange", applyHash);

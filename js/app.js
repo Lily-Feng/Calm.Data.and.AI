@@ -1,3 +1,7 @@
+import "./components/site-header.js";
+import "./components/side-navigation.js";
+import "./components/search-view.js";
+
 /**
  * Calm Data and AI knowledge atlas.
  * Static, dependency-free, and intentionally free of progress tracking.
@@ -10,13 +14,9 @@ const elements = {
     body: document.body,
     overviewView: document.getElementById("overview-view"),
     domainView: document.getElementById("domain-view"),
-    domainNavigation: document.getElementById("domain-navigation"),
-    homeSearch: document.getElementById("home-search"),
-    homeFeature: document.getElementById("home-feature"),
-    homeResults: document.getElementById("home-results"),
-    homeResultsCount: document.getElementById("home-results-count"),
-    homeResultsGrid: document.getElementById("home-results-grid"),
-    homeEmptyState: document.getElementById("home-empty-state"),
+    sideNavigation: document.querySelector('side-navigation[variant="atlas"]'),
+    searchView: document.querySelector("search-view"),
+    homeSearch: document.querySelector("search-view")?.input,
     domainHeader: document.getElementById("domain-header"),
     principleStrip: document.getElementById("principle-strip"),
     domainGraph: document.getElementById("domain-graph"),
@@ -117,33 +117,7 @@ function findGuideLocation(guideId) {
 }
 
 function renderNavigation() {
-    const programmingIds = new Set(["python", "sql", "go", "rust"]);
-    const trackLink = (track, isChild = false) => `
-        <a class="nav-item${isChild ? " nav-subitem" : ""}" href="#domain=${encodeURIComponent(track.id)}&concept=root" data-domain="${escapeHtml(track.id)}">
-            <span class="nav-symbol">${escapeHtml(track.mark)}</span>
-            <span>${escapeHtml(track.shortName)}</span>
-        </a>
-    `;
-    const primaryTracks = tracks.filter((track) => !programmingIds.has(track.id));
-    const programmingTracks = tracks.filter((track) => programmingIds.has(track.id));
-
-    elements.domainNavigation.innerHTML = `
-        ${primaryTracks.map((track) => trackLink(track)).join("")}
-        <div class="nav-group">
-            <button class="nav-item nav-group-toggle" type="button" data-nav-toggle="programming" aria-expanded="false" aria-controls="programming-navigation">
-                <span class="nav-symbol">PL</span>
-                <span>Programming Languages</span>
-                <i aria-hidden="true">⌄</i>
-            </button>
-            <div class="nav-submenu" id="programming-navigation" hidden>
-                ${programmingTracks.map((track) => trackLink(track, true)).join("")}
-            </div>
-        </div>
-        <a class="nav-item nav-feature-link" href="timeline.html">
-            <span class="nav-symbol">⟜</span>
-            <span>Taste of the Past</span>
-        </a>
-    `;
+    elements.sideNavigation.setTracks(tracks);
 }
 
 function renderGuideCard(topic) {
@@ -177,22 +151,12 @@ function setView(view, options = {}) {
             history.replaceState(null, "", `#${hash.toString()}`);
         }
     } else {
-        elements.homeSearch.value = "";
+        elements.searchView.clear();
         renderHomeSearch();
         if (!options.fromHash && location.hash) history.replaceState(null, "", `${location.pathname}${location.search}`);
     }
 
-    document.querySelectorAll(".nav-item").forEach((item) => {
-        const activeDomainItem = view === "domain" && item.dataset.domain === activeDomain;
-        item.classList.toggle("active", activeDomainItem);
-    });
-
-    if (["python", "sql", "go", "rust"].includes(activeDomain) && view === "domain") {
-        const programmingToggle = document.querySelector('[data-nav-toggle="programming"]');
-        const programmingMenu = document.getElementById("programming-navigation");
-        programmingToggle?.setAttribute("aria-expanded", "true");
-        if (programmingMenu) programmingMenu.hidden = false;
-    }
+    elements.sideNavigation.setActiveDomain(view === "domain" ? activeDomain : "");
 
     closeSidebar();
     if (!options.noScroll) window.scrollTo({ top: 0, behavior: "smooth" });
@@ -437,11 +401,9 @@ function renderConceptResult(result) {
 }
 
 function renderHomeSearch() {
-    const query = elements.homeSearch.value.trim();
+    const query = elements.searchView.value.trim();
     if (!query) {
-        elements.homeFeature.classList.remove("hidden");
-        elements.homeResults.classList.add("hidden");
-        elements.homeResultsGrid.innerHTML = "";
+        elements.searchView.showFeature();
         return;
     }
 
@@ -452,12 +414,7 @@ function renderHomeSearch() {
     ].slice(0, 12);
     const total = guideResults.length + conceptResults.length;
 
-    elements.homeFeature.classList.add("hidden");
-    elements.homeResults.classList.remove("hidden");
-    elements.homeResultsCount.textContent = `${total} result${total === 1 ? "" : "s"}`;
-    elements.homeResultsGrid.innerHTML = results.join("");
-    elements.homeResultsGrid.classList.toggle("hidden", total === 0);
-    elements.homeEmptyState.classList.toggle("hidden", total !== 0);
+    elements.searchView.showResults(total, results.join(""));
 }
 
 function relatedGuides(topic) {
@@ -547,18 +504,11 @@ function closeSidebar() {
 function setupEvents() {
     document.addEventListener("click", (event) => {
         const viewButton = event.target.closest("[data-view]");
-        const navToggle = event.target.closest("[data-nav-toggle]");
         const domainButton = event.target.closest("[data-domain]");
         const conceptButton = event.target.closest("[data-concept]");
         const guideButton = event.target.closest("[data-guide]");
         const copyButton = event.target.closest("[data-copy-code]");
 
-        if (navToggle) {
-            const menu = document.getElementById(`${navToggle.dataset.navToggle}-navigation`);
-            const opening = navToggle.getAttribute("aria-expanded") !== "true";
-            navToggle.setAttribute("aria-expanded", String(opening));
-            if (menu) menu.hidden = !opening;
-        }
         if (viewButton) setView("overview");
         if (domainButton) {
             event.preventDefault();
@@ -572,13 +522,13 @@ function setupEvents() {
         if (copyButton) copyCode(copyButton);
     });
 
-    elements.homeSearch.addEventListener("input", renderHomeSearch);
+    elements.searchView.addEventListener("search-change", renderHomeSearch);
 
     document.addEventListener("keydown", (event) => {
         const isTyping = ["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName);
         if (event.key === "/" && activeView === "overview" && document.activeElement !== elements.homeSearch && !isTyping) {
             event.preventDefault();
-            elements.homeSearch.focus();
+            elements.searchView.focusSearch();
         }
     });
 

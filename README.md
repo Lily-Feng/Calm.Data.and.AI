@@ -26,6 +26,7 @@ Push to `main`. `.github/workflows/deploy-pages.yml` publishes the static site a
 
 - `js/atlas.js` defines the graph taxonomy: domains, clusters, concepts, and guide connections.
 - `js/manifest.js` defines `TRACKS` and guide metadata (title, summary, tags, difficulty, and a `bodyUrl` pointing at the guide's fragment).
+- `js/components/` contains the shared light-DOM Web Components for the site header, side navigation, homepage search, and timeline page view.
 - `guides/<id>.html` holds each guide's actual body — freeform HTML, authored directly rather than as JS object fields. See `guides/README.md` for the fragment contract.
 - `js/app.js` renders the header (title/summary/tags/graph location) from the manifest, then fetches and injects the matching fragment. It also preloads every fragment once at startup to build a full-text search index.
 - `KNOWLEDGE_GRAPH_PLAN.md` documents the proposed integration with the main knowledge garden and the expansion plan for each domain.
@@ -69,8 +70,8 @@ them. Add a pack in `js/timeline/styles/`, register it in that directory's
 1. Write `data/timelines/<id>.json`. See `js/timeline/schema.js` for the full
    field reference — lanes, weights, media, key points, impact, and resources.
 2. Add one entry to `timelines` in `data/timelines/series.json`. The page builds
-   the section, the sidebar link, and the scroll-spy from it; no HTML or JS
-   changes are needed.
+   its sidebar link and direct one-rail view from it; no HTML or JS changes are
+   needed.
 3. Optionally give an entry a `bodyUrl` pointing at a long-form fragment in
    `timelines/<timeline>/<event>.html` — see `timelines/README.md`.
 
@@ -130,6 +131,7 @@ A guide typically covers a representative problem, a reusable reasoning sequence
 ├── js/manifest.js
 ├── js/app.js
 ├── js/timeline-page.js
+├── js/components/          # shared page Web Components
 ├── js/timeline/            # the timeline component
 ├── data/timelines/<id>.json
 ├── guides/<id>.html

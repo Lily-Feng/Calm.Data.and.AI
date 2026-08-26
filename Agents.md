@@ -86,7 +86,11 @@ Rules for changing the component:
 
 ## UI architecture
 
-- `index.html` contains the semantic page shell.
+- `index.html` and `timeline.html` contain only their page-specific shell and
+  metadata. Shared light-DOM Web Components live in `js/components/`:
+  `site-header`, `side-navigation`, `search-view`, and `timeline-view`.
+  Components own reusable markup and small UI state; page entry points still
+  own data loading, routing, and domain behavior.
 - `css/styles.css` owns the responsive visual system, including baseline typography for `.guide-content` fragments.
 - `js/app.js` renders the overview graph, domain graphs, concept inspector, and search from `js/manifest.js` + `js/atlas.js`, and fetches/injects the matching `guides/<id>.html` fragment when a guide opens. It also preloads every fragment once at startup (`Promise.allSettled`, cached) to build the full-text search index — a fragment that fails to load degrades to metadata-only search for that guide rather than breaking the page.
 - There are no runtime dependencies or external assets, and no build step — fetch-based fragment loading works directly against the static file server / GitHub Pages.

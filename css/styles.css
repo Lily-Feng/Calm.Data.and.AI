@@ -17,6 +17,7 @@
 }
 
 * { box-sizing: border-box; }
+site-header, side-navigation, search-view, timeline-view { display: contents; }
 html { scroll-behavior: smooth; }
 body {
     margin: 0;
