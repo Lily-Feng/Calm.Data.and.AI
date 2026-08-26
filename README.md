@@ -35,8 +35,10 @@ The graph structure, guide metadata, and guide content are intentionally separat
 ## Taste of the Past
 
 `timeline.html` hosts **Taste of the Past**, a series of illustrated,
-weighted timelines. The page owns no
-timeline markup — it loads authored JSON and calls the component:
+weighted timelines. The unqualified page is the series landing page. Each
+timeline has a direct, shareable URL such as
+`timeline.html?series=cs-papers`, and that page renders only the selected rail.
+The page owns no timeline markup — it loads authored JSON and calls the component:
 
 ```js
 import { createTimeline } from "./js/timeline/index.js";

@@ -49,10 +49,11 @@ touches none of `js/app.js`.
 
 - `js/timeline/` is a **component**, not a page. It renders from a spec object
   and reports back through callbacks; it must not fetch data, read the URL, or
-  know about Calm Data and AI guides. Page concerns — loading JSON, deep links, the
-  sidebar, jumping into the atlas — live in `js/timeline-page.js`.
+  know about Calm Data and AI guides. Page concerns — loading JSON, direct links,
+  the sidebar, jumping into the atlas — live in `js/timeline-page.js`.
 - `data/timelines/series.json` is the series index: it lists the timelines and
-  drives the sections, the sidebar navigation, and the scroll-spy. Adding a
+  drives the sidebar navigation. `timeline.html` without a query is the quiet
+  series home; `timeline.html?series=<id>` renders exactly one rail. Adding a
   timeline should never require editing `timeline.html`.
 - `data/timelines/<id>.json` is the authored layer. `js/timeline/schema.js`
   documents every field and is the only place that parses authored values.
@@ -80,8 +81,8 @@ Rules for changing the component:
   `popup.js` guards with a monotonic token so opening entry A then B cannot let
   A's late response overwrite B.
 - Preserve keyboard access (arrow keys walk the markers, one tab stop per
-  entry), the reduced-motion path, dialog close behaviour, and the
-  `#event=` / `#branch=` deep links.
+  entry), the reduced-motion path, dialog close behaviour, the shareable
+  `?series=` page links, and the `#event=` / `#branch=` entry deep links.
 
 ## UI architecture
 

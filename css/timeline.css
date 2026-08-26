@@ -317,15 +317,30 @@
 /* ── Page chrome for timeline.html ──────────────────────────────────────── */
 
 a.nav-item { text-decoration: none; }
-/* The sidebar tracks which timeline is on screen, so a section needs somewhere
-   to arrive under the sticky topbar. */
-.section-block[id^="section-"] { scroll-margin-top: 88px; }
 .topbar-title { margin: 0; font: 500 17px Georgia, "Times New Roman", serif; letter-spacing: -.02em; }
-.hero--timeline { min-height: 0; grid-template-columns: 1fr; }
-.hero--timeline .hero-intro { max-width: 68ch; }
+.timeline-page-view { min-height: calc(100vh - 72px); }
+.timeline-home { display: grid; min-height: calc(100vh - 225px); place-items: center; }
+.timeline-landing-image { width: min(720px, 100%); overflow: hidden; margin: 0; border: 1px solid var(--line); border-radius: 20px; background: var(--card); box-shadow: 0 18px 48px rgba(21,39,31,.07); }
+.timeline-landing-image img { display: block; width: 100%; height: auto; max-height: 320px; object-fit: contain; }
+.timeline-landing-image figcaption { padding: 19px 23px 20px; border-top: 1px solid var(--line); }
+.timeline-landing-image strong { font: 500 clamp(20px, 2.4vw, 28px)/1 Georgia, "Times New Roman", serif; }
+.timeline-series__heading { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 380px); gap: 30px; align-items: end; margin-bottom: 30px; }
+.timeline-series__heading .eyebrow { grid-column: 1; margin-bottom: -18px; }
+.timeline-series__heading h1 { grid-column: 1; margin: 0; font: 500 clamp(38px, 5vw, 60px)/.98 Georgia, "Times New Roman", serif; letter-spacing: -.045em; }
+.timeline-series__heading > p:last-child { grid-column: 2; grid-row: 1 / span 2; margin: 0; color: var(--ink-soft); font-size: 11px; text-align: right; }
 .tl-mount { min-height: 120px; }
 .tl-mount[data-state="loading"], .tl-mount[data-state="error"] { display: grid; place-items: center; padding: 40px; border: 1px dashed var(--line); border-radius: 20px; background: var(--card); }
 .tl-fallback { max-width: 60ch; margin: 0; color: var(--ink-soft); font-size: 11px; text-align: center; }
 .tl-fallback code { padding: 2px 5px; border-radius: 4px; background: var(--paper-deep); font-size: 10px; }
-.method-grid h3 { font-size: 21px; }
-.method-grid code { padding: 1px 5px; border-radius: 4px; background: var(--paper-deep); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; }
+
+@media (max-width: 760px) {
+    .timeline-page-view { min-height: calc(100vh - 58px); }
+    .timeline-home { min-height: calc(100vh - 181px); }
+    .timeline-landing-image { border-radius: 15px; }
+    .timeline-landing-image img { max-height: none; }
+    .timeline-landing-image figcaption { padding: 16px 17px; }
+    .timeline-series__heading { display: block; margin-bottom: 24px; }
+    .timeline-series__heading .eyebrow { margin-bottom: 12px; }
+    .timeline-series__heading h1 { font-size: clamp(36px, 11vw, 50px); }
+    .timeline-series__heading > p:last-child { margin-top: 14px; text-align: left; }
+}
