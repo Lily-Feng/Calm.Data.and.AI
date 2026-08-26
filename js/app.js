@@ -12,9 +12,12 @@ const elements = {
     domainView: document.getElementById("domain-view"),
     guidesView: document.getElementById("guides-view"),
     domainNavigation: document.getElementById("domain-navigation"),
-    overviewMap: document.getElementById("overview-map"),
-    domainGrid: document.getElementById("domain-grid"),
-    featuredGuides: document.getElementById("featured-guides"),
+    homeSearch: document.getElementById("home-search"),
+    homeFeature: document.getElementById("home-feature"),
+    homeResults: document.getElementById("home-results"),
+    homeResultsCount: document.getElementById("home-results-count"),
+    homeResultsGrid: document.getElementById("home-results-grid"),
+    homeEmptyState: document.getElementById("home-empty-state"),
     search: document.getElementById("global-search"),
     domainHeader: document.getElementById("domain-header"),
     principleStrip: document.getElementById("principle-strip"),
@@ -70,6 +73,7 @@ async function preloadGuideBodies() {
         guideText.set(topic.id, result.status === "fulfilled" ? stripHtml(result.value) : "");
     });
     if (elements.search.value.trim() && activeView === "guides") renderGuideLibrary();
+    if (elements.homeSearch.value.trim() && activeView === "overview") renderHomeSearch();
 }
 
 function escapeHtml(value = "") {
@@ -131,61 +135,6 @@ function renderNavigation() {
     `).join("");
 }
 
-function renderOverviewMap() {
-    const positions = [
-        { x: 50, y: 12 },
-        { x: 84, y: 38 },
-        { x: 71, y: 80 },
-        { x: 29, y: 80 },
-        { x: 16, y: 38 }
-    ];
-    const center = { x: 50, y: 50 };
-    const crossLinks = [[0, 1], [0, 4], [1, 3], [2, 3], [2, 4]];
-    const line = (from, to, className = "") => `<line x1="${from.x}" y1="${from.y}" x2="${to.x}" y2="${to.y}" class="${className}" />`;
-
-    elements.overviewMap.innerHTML = `
-        <div class="overview-map__canvas">
-            <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-                ${positions.map((position) => line(center, position)).join("")}
-                ${crossLinks.map(([a, b]) => line(positions[a], positions[b], "bridge-line")).join("")}
-            </svg>
-            <div class="overview-root" style="--x: 50%; --y: 50%">
-                <span>Root domain</span>
-                <strong>${escapeHtml(atlas.root.title)}</strong>
-            </div>
-            ${tracks.map((track, index) => {
-                const domain = getDomain(track.id);
-                const conceptCount = domain.clusters.reduce((total, cluster) => total + cluster.nodes.length, 0);
-                return `
-                    <button class="overview-node" type="button" data-domain="${escapeHtml(track.id)}" style="--x: ${positions[index].x}%; --y: ${positions[index].y}%; --node-color: ${track.color}">
-                        <span>${escapeHtml(track.mark)}</span>
-                        <strong>${escapeHtml(track.shortName)}</strong>
-                        <small>${domain.clusters.length} clusters · ${conceptCount} concepts</small>
-                    </button>
-                `;
-            }).join("")}
-            <div class="bridge-label bridge-label--one">platforms</div>
-            <div class="bridge-label bridge-label--two">problem solving</div>
-            <div class="bridge-label bridge-label--three">distributed systems</div>
-        </div>
-    `;
-}
-
-function renderDomainGrid() {
-    elements.domainGrid.innerHTML = tracks.map((track) => {
-        const domain = getDomain(track.id);
-        const conceptCount = domain.clusters.reduce((total, cluster) => total + cluster.nodes.length, 0);
-        return `
-            <button class="domain-card" type="button" data-domain="${escapeHtml(track.id)}" style="--domain-color: ${track.color}">
-                <span class="domain-card__top"><i>${escapeHtml(track.mark)}</i><b>↗</b></span>
-                <h3>${escapeHtml(track.name)}</h3>
-                <p>${escapeHtml(domain.thesis)}</p>
-                <span class="domain-card__meta">${domain.clusters.length} clusters · ${conceptCount} connected concepts</span>
-            </button>
-        `;
-    }).join("");
-}
-
 function renderGuideCard(topic) {
     const track = getTrack(topic.track);
     const location = findGuideLocation(topic.id);
@@ -202,16 +151,9 @@ function renderGuideCard(topic) {
     `;
 }
 
-function renderFeaturedGuides() {
-    // One row, no dangling gap: the guide-grid is 3 columns, so cap at 3
-    // rather than one-per-track (5), which left an unfinished-looking
-    // partial second row. "View every guide" covers the rest.
-    const featured = tracks.slice(0, 3).flatMap((track) => getDomainGuides(track.id).slice(0, 1));
-    elements.featuredGuides.innerHTML = featured.map(renderGuideCard).join("");
-}
-
 function setView(view, options = {}) {
     activeView = view;
+    elements.body.dataset.view = view;
     elements.overviewView.classList.toggle("hidden", view !== "overview");
     elements.domainView.classList.toggle("hidden", view !== "domain");
     elements.guidesView.classList.toggle("hidden", view !== "guides");
@@ -226,13 +168,14 @@ function setView(view, options = {}) {
         renderGuideLibrary();
     } else {
         elements.search.value = "";
+        elements.homeSearch.value = "";
+        renderHomeSearch();
     }
 
     document.querySelectorAll(".nav-item").forEach((item) => {
-        const activeOverview = view === "overview" && item.dataset.view === "overview";
         const activeGuides = view === "guides" && item.dataset.view === "guides";
         const activeDomainItem = view === "domain" && item.dataset.domain === activeDomain;
-        item.classList.toggle("active", activeOverview || activeGuides || activeDomainItem);
+        item.classList.toggle("active", activeGuides || activeDomainItem);
     });
 
     closeSidebar();
@@ -450,10 +393,10 @@ function renderDomainFilters() {
     `;
 }
 
-function searchKnowledge(query) {
+function searchKnowledge(query, filter = activeFilter) {
     const term = query.trim().toLowerCase();
     const guideResults = topics.filter((topic) => {
-        if (activeFilter !== "all" && topic.track !== activeFilter) return false;
+        if (filter !== "all" && topic.track !== filter) return false;
         if (!term) return true;
         const location = findGuideLocation(topic.id);
         const haystack = [topic.title, topic.summary, topic.type, ...(topic.tags || []), location?.cluster.label, guideText.get(topic.id) || ""].join(" ").toLowerCase();
@@ -462,7 +405,7 @@ function searchKnowledge(query) {
     const conceptResults = [];
     if (term) {
         tracks.forEach((track) => {
-            if (activeFilter !== "all" && track.id !== activeFilter) return;
+            if (filter !== "all" && track.id !== filter) return;
             flattenDomain(track.id)
                 .filter((node) => node.kind !== "cluster" && [node.label, node.summary, node.clusterLabel, track.name].join(" ").toLowerCase().includes(term))
                 .forEach((node) => conceptResults.push({ ...node, track }));
@@ -480,6 +423,30 @@ function renderConceptResult(result) {
             <span class="guide-card__footer"><span>Knowledge graph node</span><b>View in map →</b></span>
         </button>
     `;
+}
+
+function renderHomeSearch() {
+    const query = elements.homeSearch.value.trim();
+    if (!query) {
+        elements.homeFeature.classList.remove("hidden");
+        elements.homeResults.classList.add("hidden");
+        elements.homeResultsGrid.innerHTML = "";
+        return;
+    }
+
+    const { guideResults, conceptResults } = searchKnowledge(query, "all");
+    const results = [
+        ...conceptResults.map((result) => renderConceptResult(result)),
+        ...guideResults.map((topic) => renderGuideCard(topic))
+    ].slice(0, 12);
+    const total = guideResults.length + conceptResults.length;
+
+    elements.homeFeature.classList.add("hidden");
+    elements.homeResults.classList.remove("hidden");
+    elements.homeResultsCount.textContent = `${total} result${total === 1 ? "" : "s"}`;
+    elements.homeResultsGrid.innerHTML = results.join("");
+    elements.homeResultsGrid.classList.toggle("hidden", total === 0);
+    elements.homeEmptyState.classList.toggle("hidden", total !== 0);
 }
 
 function renderGuideLibrary() {
@@ -616,10 +583,14 @@ function setupEvents() {
         else renderGuideLibrary();
     });
 
+    elements.homeSearch.addEventListener("input", renderHomeSearch);
+
     document.addEventListener("keydown", (event) => {
-        if (event.key === "/" && document.activeElement !== elements.search) {
+        const searchTarget = activeView === "overview" ? elements.homeSearch : elements.search;
+        const isTyping = ["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName);
+        if (event.key === "/" && document.activeElement !== searchTarget && !isTyping) {
             event.preventDefault();
-            elements.search.focus();
+            searchTarget.focus();
         }
     });
 
@@ -647,9 +618,8 @@ function initFromHash() {
 
 function init() {
     renderNavigation();
-    renderOverviewMap();
-    renderDomainGrid();
-    renderFeaturedGuides();
+    elements.body.dataset.view = "overview";
+    renderHomeSearch();
     renderGuideLibrary();
     setupEvents();
     initFromHash();
