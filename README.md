@@ -10,6 +10,8 @@ Calm Data and AI is a connected engineering knowledge atlas for:
 
 It is a detailed layer beneath [Lily Feng's high-level knowledge garden](https://lily-feng.github.io/knowledge). The site is deliberately static: no framework, package install, build step, database, account, or progress tracking.
 
+The homepage is a broad seven-layer Data & AI Field Atlas. The previous domain-map and guide experience remains available at `field-notes.html`.
+
 ## Run locally
 
 ```bash
@@ -24,6 +26,8 @@ Push to `main`. `.github/workflows/deploy-pages.yml` publishes the static site a
 
 ## Knowledge architecture
 
+- `data-ai-knowledge-graph.yaml` defines the broad homepage taxonomy. `js/data-ai-knowledge-graph.js` is its browser-ready export, loaded without a runtime dependency so the atlas also works when opened directly.
+- `js/knowledge-atlas.js` renders homepage layers, role trails, the cross-cutting compass, filters, search, and topic dialogs.
 - `js/atlas.js` defines the graph taxonomy: domains, clusters, concepts, and guide connections.
 - `js/manifest.js` defines `TRACKS` and guide metadata (title, summary, tags, difficulty, and a `bodyUrl` pointing at the guide's fragment).
 - `js/components/` contains the shared light-DOM Web Components for the site header, side navigation, homepage search, and timeline page view.
@@ -123,7 +127,9 @@ A guide typically covers a representative problem, a reusable reasoning sequence
 
 ```text
 .
-├── index.html
+├── index.html                 # broad field-atlas homepage
+├── field-notes.html           # detailed domain maps and guides
+├── knowledge-atlas.html       # direct atlas preview alias
 ├── timeline.html
 ├── css/styles.css
 ├── css/timeline.css

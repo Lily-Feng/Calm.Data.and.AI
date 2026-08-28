@@ -1,0 +1,731 @@
+version: 0.2
+name: Data and AI knowledge graph
+reviewed_at: "2026-08-26"
+description: >
+  Spine-first knowledge graph covering data and AI from hardware to presentation.
+  The spine is a strict three-level hierarchy: layer -> sub_domain -> topic.
+  Everything that is not a containment relationship is expressed as a facet or an edge.
+  Topics inherit facets from their sub_domain unless they declare their own.
+
+schema:
+  depth: 3
+  levels: [layer, sub_domain, topic]
+  rules:
+    - Every topic is something a person can learn and be tested on.
+    - A parent aims for 4 to 9 children. Fewer suggests merging; more suggests splitting.
+    - Tools never appear in the spine. They attach via implemented_by edges.
+    - A topic has exactly one parent. All other relationships are edges.
+
+  facets:
+    layer:
+      - infrastructure
+      - storage
+      - processing
+      - semantics
+      - intelligence
+      - serving
+      - consumption
+    concern:
+      - none
+      - orchestration
+      - metadata
+      - governance
+      - security
+      - quality
+      - cost
+      - reliability
+      - engineering-practice
+      - operating-model
+    stage: [design, build, operate, retire]
+    role:
+      - platform
+      - data_engineer
+      - analytics_engineer
+      - ml_engineer
+      - analyst
+      - scientist
+    maturity: [stable, evolving, emerging]
+
+  edge_types:
+    requires: A cannot be understood or used without B.
+    part_of: A is a component of B across the spine, not under it.
+    implemented_by: A is realised by tool or product B.
+    alternative_to: A and B solve the same problem differently.
+    enables: A makes B possible downstream.
+    governed_by: A is constrained by cross-cutting concern B.
+
+# ---------------------------------------------------------------------------
+# LAYER 1
+# ---------------------------------------------------------------------------
+layers:
+  - id: infrastructure
+    name: Infrastructure and hardware
+    summary: The physical and platform substrate everything else runs on.
+    sub_domains:
+
+      - id: compute-hardware
+        name: Compute hardware
+        facets: {layer: infrastructure, stage: design, role: platform, maturity: stable}
+        topics:
+          - {id: cpu-architecture, name: CPU architecture and cache behaviour}
+          - {id: gpu-and-accelerators, name: "GPUs, TPUs and custom accelerators"}
+          - {id: memory-hierarchy, name: Memory hierarchy and HBM}
+          - {id: numerical-precision-formats, name: Numerical precision formats}
+          - {id: hardware-selection-tradeoffs, name: Hardware selection tradeoffs}
+
+      - id: storage-hardware
+        name: Storage hardware and media
+        facets: {layer: infrastructure, stage: design, role: platform, maturity: stable}
+        topics:
+          - {id: block-file-object-media, name: "Block, file and object storage interfaces"}
+          - {id: nvme-and-ssd, name: NVMe and SSD characteristics}
+          - {id: storage-tiering, name: Storage tiering and archival media}
+          - {id: durability-and-replication, name: Durability and replication fundamentals}
+
+      - id: networking
+        name: Networking and interconnect
+        facets: {layer: infrastructure, stage: design, role: platform, maturity: stable}
+        topics:
+          - {id: datacenter-topology, name: Datacenter network topology}
+          - {id: interconnects, name: "NVLink, InfiniBand and RDMA"}
+          - {id: collective-communication, name: Collective communication primitives}
+          - {id: bandwidth-latency-budgeting, name: Bandwidth and latency budgeting}
+
+      - id: datacenter-and-capacity
+        name: Datacenter and capacity
+        facets: {layer: infrastructure, stage: design, role: platform, maturity: stable}
+        topics:
+          - {id: power-and-cooling, name: Power and cooling constraints}
+          - {id: colocation-vs-cloud, name: Colocation versus cloud versus on-premise}
+          - {id: capacity-planning, name: Capacity planning and procurement}
+          - {id: hardware-failure-modes, name: Hardware failure modes}
+
+      - id: virtualization-and-runtime
+        name: Virtualization and runtime
+        facets: {layer: infrastructure, stage: build, role: platform, maturity: stable}
+        topics:
+          - {id: virtual-machines, name: Virtual machines and hypervisors}
+          - {id: containers, name: Containers and isolation}
+          - {id: container-images, name: Container images and registries}
+          - {id: gpu-sharing, name: GPU virtualization and sharing}
+
+      - id: cluster-orchestration
+        name: Cluster orchestration
+        facets: {layer: infrastructure, stage: operate, role: platform, maturity: stable}
+        topics:
+          - {id: kubernetes-fundamentals, name: Kubernetes fundamentals}
+          - {id: batch-schedulers, name: Batch and HPC schedulers}
+          - {id: distributed-task-frameworks, name: Distributed task frameworks}
+          - {id: autoscaling-and-spot, name: Autoscaling and spot capacity}
+
+      - id: cloud-foundations
+        name: Cloud foundations
+        facets: {layer: infrastructure, stage: design, role: platform, maturity: stable}
+        topics:
+          - {id: service-models, name: "IaaS, PaaS and SaaS boundaries"}
+          - {id: regions-and-zones, name: "Regions, zones and placement"}
+          - {id: resource-hierarchy, name: "Accounts, projects and resource hierarchy"}
+          - {id: cloud-networking, name: Virtual networks and private connectivity}
+
+# ---------------------------------------------------------------------------
+# LAYER 2
+# ---------------------------------------------------------------------------
+  - id: storage
+    name: Storage and persistence
+    summary: How bytes are laid out, described and durably kept.
+    sub_domains:
+
+      - id: file-formats
+        name: File formats
+        facets: {layer: storage, stage: design, role: data_engineer, maturity: stable}
+        topics:
+          - {id: row-vs-columnar, name: Row versus columnar layout}
+          - {id: parquet, name: Parquet internals}
+          - {id: avro-and-protobuf, name: "Avro, Protobuf and serialization"}
+          - {id: compression-and-encoding, name: Compression and encoding schemes}
+
+      - id: table-formats
+        name: Open table formats
+        facets: {layer: storage, stage: design, role: data_engineer, maturity: evolving}
+        topics:
+          - {id: table-format-fundamentals, name: "Metadata, snapshots and manifests"}
+          - {id: acid-on-object-storage, name: ACID semantics on object storage}
+          - {id: schema-and-partition-evolution, name: Schema and partition evolution}
+          - {id: compaction-and-maintenance, name: Compaction and file maintenance}
+          - {id: time-travel, name: Time travel and rollback}
+
+      - id: lakehouse-architecture
+        name: Lakehouse architecture
+        facets: {layer: storage, stage: design, role: data_engineer, maturity: evolving}
+        topics:
+          - {id: lake-warehouse-lakehouse, name: "Lake, warehouse and lakehouse tradeoffs"}
+          - {id: zone-layering, name: "Raw, refined and curated zone layering"}
+          - {id: object-store-as-primary, name: Object storage as primary storage}
+          - {id: catalog-integration, name: Catalog and metastore integration}
+
+      - id: transactional-databases
+        name: Transactional databases
+        facets: {layer: storage, stage: build, role: data_engineer, maturity: stable}
+        topics:
+          - {id: relational-model, name: Relational model and SQL semantics}
+          - {id: acid-and-isolation, name: ACID and isolation levels}
+          - {id: indexing-and-query-plans, name: Indexing and query plans}
+          - {id: sharding-and-replication, name: Sharding and replication}
+          - {id: connection-and-concurrency, name: Connection pooling and concurrency}
+
+      - id: analytical-stores
+        name: Analytical stores
+        facets: {layer: storage, stage: build, role: data_engineer, maturity: stable}
+        topics:
+          - {id: columnar-warehouses, name: Columnar warehouse internals}
+          - {id: mpp-execution, name: MPP execution and distribution}
+          - {id: clustering-and-sort-keys, name: "Clustering, sort and partition keys"}
+          - {id: materialized-views, name: Materialized views and result reuse}
+
+      - id: specialized-stores
+        name: Specialized stores
+        facets: {layer: storage, stage: design, role: data_engineer, maturity: stable}
+        topics:
+          - {id: key-value-stores, name: Key-value stores}
+          - {id: document-stores, name: Document stores}
+          - {id: graph-databases, name: Graph databases}
+          - {id: time-series-databases, name: Time-series databases}
+
+      - id: search-and-vector-stores
+        name: Search and vector stores
+        facets: {layer: storage, stage: build, role: ml_engineer, maturity: evolving}
+        topics:
+          - {id: inverted-index-search, name: Inverted index and lexical search}
+          - {id: vector-index-hnsw, name: Vector index structures (HNSW)}
+          - {id: ivf-and-quantized-indexes, name: IVF and quantized indexes}
+          - {id: hybrid-search, name: Hybrid lexical and semantic search}
+          - {id: index-refresh-and-scale, name: "Index refresh, sizing and scale limits"}
+
+      - id: caching-layers
+        name: Caching layers
+        facets: {layer: storage, stage: operate, role: platform, maturity: stable}
+        topics:
+          - {id: cache-topologies, name: Cache topologies and placement}
+          - {id: eviction-policies, name: Eviction policies}
+          - {id: cache-invalidation, name: Cache invalidation strategies}
+          - {id: result-caching, name: Query and result caching}
+
+# ---------------------------------------------------------------------------
+# LAYER 3
+# ---------------------------------------------------------------------------
+  - id: processing
+    name: Processing and movement
+    summary: Getting data in, moving it, and reshaping it at scale.
+    sub_domains:
+
+      - id: ingestion
+        name: Ingestion
+        facets: {layer: processing, stage: build, role: data_engineer, maturity: stable}
+        topics:
+          - {id: batch-ingestion, name: Batch ingestion patterns}
+          - {id: api-and-saas-connectors, name: API and SaaS connectors}
+          - {id: file-and-log-ingestion, name: File and log ingestion}
+          - {id: schema-drift-handling, name: Schema drift handling}
+          - {id: ingestion-idempotency, name: Idempotency and replay}
+
+      - id: change-data-capture
+        name: Change data capture
+        facets: {layer: processing, stage: build, role: data_engineer, maturity: stable}
+        topics:
+          - {id: log-based-cdc, name: Log-based CDC}
+          - {id: snapshot-and-backfill, name: Snapshot and backfill strategies}
+          - {id: cdc-ordering-guarantees, name: Ordering and consistency guarantees}
+          - {id: cdc-to-analytics, name: Landing CDC into analytical stores}
+
+      - id: streaming-platforms
+        name: Streaming platforms
+        facets: {layer: processing, stage: operate, role: data_engineer, maturity: stable}
+        topics:
+          - {id: log-based-brokers, name: Log-based brokers and the commit log}
+          - {id: partitioning-and-consumer-groups, name: Partitioning and consumer groups}
+          - {id: delivery-semantics, name: "Delivery and processing semantics"}
+          - {id: retention-and-compaction, name: Retention and log compaction}
+
+      - id: stream-processing
+        name: Stream processing
+        facets: {layer: processing, stage: build, role: data_engineer, maturity: evolving}
+        topics:
+          - {id: event-time-vs-processing-time, name: Event time versus processing time}
+          - {id: windowing, name: Windowing strategies}
+          - {id: stateful-processing, name: Stateful processing and state backends}
+          - {id: watermarks-and-late-data, name: Watermarks and late-arriving data}
+          - {id: stream-table-duality, name: Stream and table duality}
+
+      - id: batch-processing
+        name: Batch processing
+        facets: {layer: processing, stage: build, role: data_engineer, maturity: stable}
+        topics:
+          - {id: distributed-execution-model, name: Distributed execution model}
+          - {id: shuffle-and-partitioning, name: Shuffle and partitioning}
+          - {id: data-skew, name: Data skew diagnosis and mitigation}
+          - {id: job-sizing-and-tuning, name: Job sizing and resource tuning}
+
+      - id: query-engines
+        name: Query engines
+        facets: {layer: processing, stage: operate, role: data_engineer, maturity: stable}
+        topics:
+          - {id: query-planning, name: Query planning and optimization}
+          - {id: vectorized-execution, name: Vectorized execution}
+          - {id: federated-query, name: Federated and cross-source query}
+          - {id: single-node-engines, name: Single-node and embedded engines}
+
+      - id: transformation-frameworks
+        name: Transformation frameworks
+        facets: {layer: processing, stage: build, role: analytics_engineer, maturity: stable}
+        topics:
+          - {id: elt-vs-etl, name: ELT versus ETL}
+          - {id: sql-transformation-modeling, name: SQL transformation modeling}
+          - {id: incremental-models, name: Incremental and snapshot models}
+          - {id: transformation-testing, name: Testing transformations}
+          - {id: macro-and-reuse-patterns, name: Macros and reuse patterns}
+
+      - id: dataframe-and-in-memory
+        name: Dataframe and in-memory processing
+        facets: {layer: processing, stage: build, role: scientist, maturity: stable}
+        topics:
+          - {id: dataframe-apis, name: Dataframe APIs and lazy evaluation}
+          - {id: arrow-memory-format, name: Arrow in-memory format}
+          - {id: out-of-core-processing, name: Out-of-core and streaming execution}
+          - {id: udf-performance, name: UDF performance and serialization cost}
+
+# ---------------------------------------------------------------------------
+# LAYER 4
+# ---------------------------------------------------------------------------
+  - id: semantics
+    name: Semantics and features
+    summary: Where raw data acquires agreed meaning and becomes model input.
+    sub_domains:
+
+      - id: data-modeling
+        name: Data modeling
+        facets: {layer: semantics, stage: design, role: analytics_engineer, maturity: stable}
+        topics:
+          - {id: normalization, name: Normalization and normal forms}
+          - {id: dimensional-modeling, name: Dimensional modeling}
+          - {id: data-vault, name: Data Vault modeling}
+          - {id: slowly-changing-dimensions, name: Slowly changing dimensions}
+          - {id: grain-and-key-design, name: Grain and key design}
+
+      - id: semantic-layer
+        name: Semantic and metric layer
+        facets: {layer: semantics, stage: design, role: analytics_engineer, maturity: evolving}
+        topics:
+          - {id: metric-definitions, name: Metric definitions and consistency}
+          - {id: headless-bi, name: Headless BI and metric APIs}
+          - {id: hierarchy-design, name: Dimension and hierarchy design}
+          - {id: governed-drill-paths, name: Governed drill paths}
+
+      - id: master-and-reference-data
+        name: Master and reference data
+        facets: {layer: semantics, stage: operate, role: data_engineer, maturity: stable}
+        topics:
+          - {id: entity-resolution, name: Entity resolution and matching}
+          - {id: master-data-management, name: Master data management}
+          - {id: reference-data, name: Reference data and code sets}
+          - {id: deduplication, name: Deduplication and survivorship rules}
+
+      - id: knowledge-representation
+        name: Knowledge representation
+        facets: {layer: semantics, stage: design, role: scientist, maturity: evolving}
+        topics:
+          - {id: taxonomies-and-ontologies, name: Taxonomies and ontologies}
+          - {id: knowledge-graphs, name: Knowledge graph construction}
+          - {id: rdf-vs-property-graphs, name: RDF versus property graphs}
+          - {id: graph-query-languages, name: Graph query languages}
+
+      - id: feature-engineering
+        name: Feature engineering
+        facets: {layer: semantics, stage: build, role: ml_engineer, maturity: stable}
+        topics:
+          - {id: feature-types-and-encoding, name: Feature types and encoding}
+          - {id: aggregation-windows, name: Aggregation and time windows}
+          - {id: leakage-prevention, name: Target leakage prevention}
+          - {id: feature-selection, name: Feature selection and importance}
+
+      - id: feature-stores
+        name: Feature stores
+        facets: {layer: semantics, stage: operate, role: ml_engineer, maturity: evolving}
+        topics:
+          - {id: offline-vs-online-store, name: Offline and online store split}
+          - {id: training-serving-consistency, name: Training and serving consistency}
+          - {id: point-in-time-correctness, name: Point-in-time correctness}
+          - {id: feature-versioning, name: Feature versioning and reuse}
+
+      - id: embeddings
+        name: Embeddings
+        facets: {layer: semantics, stage: build, role: ml_engineer, maturity: evolving}
+        topics:
+          - {id: embedding-models, name: Embedding model selection}
+          - {id: chunking-strategies, name: Chunking and segmentation strategies}
+          - {id: embedding-refresh, name: Embedding refresh and versioning}
+          - {id: embedding-cost-and-dimensionality, name: Dimensionality and storage cost}
+          - {id: multimodal-embeddings, name: Multimodal embeddings}
+
+# ---------------------------------------------------------------------------
+# LAYER 5
+# ---------------------------------------------------------------------------
+  - id: intelligence
+    name: Intelligence
+    summary: Building, adapting, running and applying models.
+    sub_domains:
+
+      - id: training-data
+        name: Training data
+        facets: {layer: intelligence, stage: build, role: ml_engineer, maturity: evolving}
+        topics:
+          - {id: labeling-and-annotation, name: Labeling and annotation}
+          - {id: dataset-curation, name: Dataset curation and filtering}
+          - {id: synthetic-data, name: Synthetic data generation}
+          - {id: tokenization, name: Tokenization and vocabularies}
+          - {id: data-mixture-and-weighting, name: Data mixture and weighting}
+
+      - id: classical-ml
+        name: Classical machine learning
+        facets: {layer: intelligence, stage: build, role: scientist, maturity: stable}
+        topics:
+          - {id: supervised-learning, name: Supervised learning}
+          - {id: unsupervised-learning, name: Unsupervised learning and clustering}
+          - {id: gradient-boosted-trees, name: Gradient boosted trees}
+          - {id: time-series-forecasting, name: Time series forecasting}
+          - {id: recommender-systems, name: Recommender systems}
+
+      - id: deep-learning-foundations
+        name: Deep learning foundations
+        facets: {layer: intelligence, stage: build, role: scientist, maturity: stable}
+        topics:
+          - {id: backpropagation, name: Backpropagation and autodiff}
+          - {id: optimizers-and-schedules, name: Optimizers and learning rate schedules}
+          - {id: regularization, name: Regularization and generalization}
+          - {id: transformer-architecture, name: Transformer architecture}
+          - {id: attention-mechanisms, name: Attention mechanisms}
+
+      - id: large-model-training
+        name: Large model training
+        facets: {layer: intelligence, stage: build, role: ml_engineer, maturity: evolving}
+        topics:
+          - {id: distributed-training-strategies, name: "Data, tensor and pipeline parallelism"}
+          - {id: mixed-precision-and-memory, name: Mixed precision and memory management}
+          - {id: scaling-laws, name: Scaling laws and compute budgeting}
+          - {id: checkpointing-and-recovery, name: Checkpointing and fault tolerance}
+          - {id: training-throughput-tuning, name: Throughput and utilization tuning}
+
+      - id: adaptation-and-alignment
+        name: Adaptation and alignment
+        facets: {layer: intelligence, stage: build, role: ml_engineer, maturity: evolving}
+        topics:
+          - {id: full-fine-tuning, name: Full fine-tuning}
+          - {id: parameter-efficient-tuning, name: Parameter-efficient tuning}
+          - {id: preference-optimization, name: Preference optimization}
+          - {id: continued-pretraining, name: Continued and domain pretraining}
+          - {id: adaptation-decision-framework, name: When to tune versus prompt versus retrieve}
+
+      - id: model-efficiency
+        name: Model efficiency
+        facets: {layer: intelligence, stage: operate, role: ml_engineer, maturity: evolving}
+        topics:
+          - {id: quantization, name: Quantization}
+          - {id: distillation, name: Distillation}
+          - {id: pruning-and-sparsity, name: Pruning and sparsity}
+          - {id: compilation-and-kernels, name: Compilation and kernel optimization}
+
+      - id: inference-systems
+        name: Inference systems
+        facets: {layer: intelligence, stage: operate, role: ml_engineer, maturity: evolving}
+        topics:
+          - {id: serving-runtimes, name: Serving runtimes}
+          - {id: batching-and-scheduling, name: Continuous batching and scheduling}
+          - {id: kv-cache-management, name: KV cache management}
+          - {id: latency-throughput-tradeoffs, name: Latency and throughput tradeoffs}
+          - {id: inference-autoscaling, name: Autoscaling and capacity for inference}
+
+      - id: retrieval-and-context
+        name: Retrieval and context engineering
+        facets: {layer: intelligence, stage: build, role: ml_engineer, maturity: emerging}
+        topics:
+          - {id: retrieval-pipeline-design, name: Retrieval pipeline design}
+          - {id: reranking, name: Reranking}
+          - {id: context-assembly, name: Context assembly and ordering}
+          - {id: prompt-design, name: Prompt design}
+          - {id: structured-output, name: Structured output and schema enforcement}
+          - {id: context-window-management, name: Context window management}
+
+      - id: agentic-systems
+        name: Agentic systems
+        facets: {layer: intelligence, stage: build, role: ml_engineer, maturity: emerging}
+        topics:
+          - {id: tool-use, name: Tool use and function calling}
+          - {id: planning-and-decomposition, name: Planning and task decomposition}
+          - {id: agent-memory, name: Agent memory and state}
+          - {id: multi-agent-coordination, name: Multi-agent coordination}
+          - {id: human-in-the-loop, name: Human-in-the-loop controls}
+
+# ---------------------------------------------------------------------------
+# LAYER 6
+# ---------------------------------------------------------------------------
+  - id: serving
+    name: Serving and access
+    summary: How data and model outputs are exposed to consumers.
+    sub_domains:
+
+      - id: api-design
+        name: API design
+        facets: {layer: serving, stage: design, role: platform, maturity: stable}
+        topics:
+          - {id: rest-apis, name: REST API design}
+          - {id: grpc-and-streaming-apis, name: gRPC and streaming APIs}
+          - {id: graphql, name: GraphQL and query flexibility}
+          - {id: api-versioning, name: API versioning and deprecation}
+
+      - id: model-endpoints
+        name: Model endpoints
+        facets: {layer: serving, stage: operate, role: ml_engineer, maturity: evolving}
+        topics:
+          - {id: online-inference-endpoints, name: Online inference endpoints}
+          - {id: batch-and-async-inference, name: Batch and asynchronous inference}
+          - {id: model-gateways-and-routing, name: Model gateways and routing}
+          - {id: canary-and-shadow-deployment, name: Canary and shadow deployment}
+          - {id: fallback-and-degradation, name: Fallback and graceful degradation}
+
+      - id: data-and-feature-serving
+        name: Data and feature serving
+        facets: {layer: serving, stage: operate, role: data_engineer, maturity: stable}
+        topics:
+          - {id: low-latency-feature-serving, name: Low-latency feature serving}
+          - {id: prediction-caching, name: Prediction and response caching}
+          - {id: reverse-etl, name: Reverse ETL to operational systems}
+          - {id: analytics-apis, name: Embedded analytics APIs}
+
+      - id: access-control
+        name: Access control at the edge
+        facets: {layer: serving, stage: operate, role: platform, concern: security, maturity: stable}
+        topics:
+          - {id: authentication, name: Authentication mechanisms}
+          - {id: authorization-models, name: "RBAC, ABAC and policy engines"}
+          - {id: rate-limiting, name: Rate limiting and quotas}
+          - {id: tenant-isolation, name: Multi-tenant isolation}
+
+      - id: data-sharing
+        name: Data sharing and products
+        facets: {layer: serving, stage: design, role: data_engineer, maturity: evolving}
+        topics:
+          - {id: data-products, name: Data products and interfaces}
+          - {id: data-contracts, name: Data contracts}
+          - {id: cross-org-sharing, name: Cross-organization sharing}
+          - {id: residency-and-egress, name: Residency and egress constraints}
+
+      - id: real-time-delivery
+        name: Real-time delivery
+        facets: {layer: serving, stage: build, role: platform, maturity: stable}
+        topics:
+          - {id: websockets-and-sse, name: WebSockets and server-sent events}
+          - {id: push-vs-pull, name: Push versus pull delivery}
+          - {id: token-streaming, name: Token streaming to applications}
+          - {id: backpressure, name: Backpressure and flow control}
+
+# ---------------------------------------------------------------------------
+# LAYER 7
+# ---------------------------------------------------------------------------
+  - id: consumption
+    name: Consumption and experience
+    summary: Where people actually meet the data and the models.
+    sub_domains:
+
+      - id: business-intelligence
+        name: Business intelligence
+        facets: {layer: consumption, stage: build, role: analyst, maturity: stable}
+        topics:
+          - {id: dashboard-design, name: Dashboard design}
+          - {id: self-service-analytics, name: Self-service analytics}
+          - {id: report-distribution, name: Report distribution and subscriptions}
+          - {id: bi-semantic-integration, name: BI and semantic layer integration}
+
+      - id: visualization
+        name: Visualization
+        facets: {layer: consumption, stage: design, role: analyst, maturity: stable}
+        topics:
+          - {id: chart-selection, name: Chart selection}
+          - {id: visual-encoding, name: Visual encoding principles}
+          - {id: interactive-exploration, name: Interactive exploration}
+          - {id: visualization-accessibility, name: Accessibility in visualization}
+
+      - id: analytics-practice
+        name: Analytics practice
+        facets: {layer: consumption, stage: build, role: analyst, maturity: stable}
+        topics:
+          - {id: exploratory-data-analysis, name: Exploratory data analysis}
+          - {id: experimentation, name: Experimentation and A/B testing}
+          - {id: causal-inference, name: Causal inference basics}
+          - {id: cohort-and-funnel-analysis, name: Cohort and funnel analysis}
+          - {id: statistical-literacy, name: Statistical literacy and pitfalls}
+
+      - id: notebooks-and-data-apps
+        name: Notebooks and data apps
+        facets: {layer: consumption, stage: build, role: scientist, maturity: stable}
+        topics:
+          - {id: notebook-workflows, name: Notebook workflows}
+          - {id: reproducible-analysis, name: Reproducible analysis}
+          - {id: lightweight-data-apps, name: Lightweight data applications}
+          - {id: notebook-to-production, name: Notebook to production paths}
+
+      - id: conversational-interfaces
+        name: Conversational interfaces
+        facets: {layer: consumption, stage: build, role: analytics_engineer, maturity: emerging}
+        topics:
+          - {id: natural-language-to-sql, name: Natural language to SQL}
+          - {id: conversational-analytics, name: Conversational analytics patterns}
+          - {id: answer-grounding, name: Answer grounding and trust signals}
+          - {id: ambiguity-handling, name: Ambiguity and clarification handling}
+
+      - id: decision-support
+        name: Decision support
+        facets: {layer: consumption, stage: operate, role: analyst, maturity: stable}
+        topics:
+          - {id: data-storytelling, name: Narrative and data storytelling}
+          - {id: alerting-and-anomalies, name: Alerting and anomaly surfacing}
+          - {id: decision-workflows, name: Decision workflows and thresholds}
+          - {id: operational-embedding, name: Embedding insight into operations}
+
+# ---------------------------------------------------------------------------
+# CROSS-CUTTING CONCERNS
+# Parallel spine. These are not layers. Each one recurs at every layer above.
+# ---------------------------------------------------------------------------
+concerns:
+
+  - id: orchestration
+    name: Orchestration
+    topics:
+      - {id: workflow-orchestration, name: Workflow orchestration models}
+      - {id: dag-design, name: DAG design and dependency management}
+      - {id: scheduling-and-triggers, name: "Scheduling, triggers and sensors"}
+      - {id: retries-and-idempotency, name: "Retries, idempotency and recovery"}
+      - {id: backfills, name: Backfills and reprocessing}
+      - {id: cross-layer-pipeline-design, name: Cross-layer pipeline design}
+
+  - id: metadata
+    name: Metadata and lineage
+    topics:
+      - {id: data-catalogs, name: Data catalogs and metastores}
+      - {id: metadata-types, name: "Technical, business and operational metadata"}
+      - {id: column-level-lineage, name: Column-level lineage}
+      - {id: model-provenance, name: "Dataset, model and prompt provenance"}
+      - {id: discovery-and-search, name: Discovery and search experience}
+
+  - id: governance
+    name: Governance
+    topics:
+      - {id: data-classification, name: Data classification and sensitivity}
+      - {id: retention-and-deletion, name: Retention and deletion policy}
+      - {id: privacy-regulation, name: Privacy regulation and consent}
+      - {id: ai-regulation, name: AI regulation and model documentation}
+      - {id: policy-management, name: Access policy definition and enforcement}
+      - {id: stewardship-model, name: Ownership and stewardship}
+
+  - id: security
+    name: Security and privacy
+    topics:
+      - {id: identity-and-access-management, name: Identity and access management}
+      - {id: encryption, name: Encryption at rest and in transit}
+      - {id: secrets-management, name: Secrets management}
+      - {id: supply-chain-security, name: Software and model supply chain}
+      - {id: privacy-techniques, name: "Masking, tokenization and differential privacy"}
+      - {id: ai-specific-threats, name: "Prompt injection, unsafe agency and model attacks"}
+
+  - id: quality
+    name: Quality and observability
+    topics:
+      - {id: data-quality-dimensions, name: Data quality dimensions}
+      - {id: assertions-and-tests, name: "Assertions, tests and contracts"}
+      - {id: model-evaluation, name: Model evaluation methodology}
+      - {id: llm-evaluation, name: LLM and agent evaluation}
+      - {id: drift-detection, name: Drift and degradation detection}
+      - {id: pipeline-monitoring, name: Pipeline and inference monitoring}
+      - {id: incident-response, name: Incident response and postmortems}
+
+  - id: cost
+    name: Cost management
+    topics:
+      - {id: unit-economics, name: Unit economics per layer}
+      - {id: cost-attribution, name: Cost attribution and showback}
+      - {id: pricing-and-commitments, name: Pricing models and commitment planning}
+      - {id: workload-efficiency, name: Workload efficiency and right-sizing}
+      - {id: budgets-and-anomalies, name: Budgets and cost anomaly detection}
+
+  - id: reliability
+    name: Reliability and resilience
+    topics:
+      - {id: slos-and-error-budgets, name: SLOs and error budgets}
+      - {id: disaster-recovery, name: Backup and disaster recovery}
+      - {id: capacity-and-scaling, name: Capacity planning and scaling policy}
+      - {id: fault-tolerance, name: Fault tolerance and graceful degradation}
+      - {id: failure-domains, name: Availability targets and failure domains}
+
+  - id: engineering-practice
+    name: Engineering practice
+    topics:
+      - {id: version-control-and-cicd, name: Version control and CI/CD}
+      - {id: infrastructure-as-code, name: Infrastructure as code}
+      - {id: environments-and-promotion, name: Environments and promotion}
+      - {id: testing-strategy, name: Testing strategy for data and models}
+      - {id: documentation-practice, name: Documentation practice}
+
+  - id: operating-model
+    name: People and operating model
+    topics:
+      - {id: team-topologies, name: Team topologies for data and AI}
+      - {id: centralized-vs-mesh, name: "Centralized, federated and mesh models"}
+      - {id: roles-and-skills, name: Roles and skill definitions}
+      - {id: data-literacy, name: Data and AI literacy}
+      - {id: responsible-ai-practice, name: Responsible AI in practice}
+
+# ---------------------------------------------------------------------------
+# EDGES
+# Seed set only. These are the relationships a tree cannot express.
+# Add the rest one edge type at a time across the whole graph.
+# ---------------------------------------------------------------------------
+edges:
+  - {from: vector-index-hnsw, type: requires, to: embedding-models}
+  - {from: vector-index-hnsw, type: enables, to: retrieval-pipeline-design}
+  - {from: ivf-and-quantized-indexes, type: alternative_to, to: vector-index-hnsw}
+  - {from: hybrid-search, type: requires, to: inverted-index-search}
+  - {from: retrieval-pipeline-design, type: enables, to: answer-grounding}
+  - {from: chunking-strategies, type: enables, to: retrieval-pipeline-design}
+  - {from: context-assembly, type: requires, to: context-window-management}
+
+  - {from: collective-communication, type: enables, to: distributed-training-strategies}
+  - {from: interconnects, type: requires, to: bandwidth-latency-budgeting}
+  - {from: numerical-precision-formats, type: enables, to: mixed-precision-and-memory}
+  - {from: quantization, type: requires, to: numerical-precision-formats}
+  - {from: kv-cache-management, type: requires, to: memory-hierarchy}
+  - {from: batching-and-scheduling, type: enables, to: latency-throughput-tradeoffs}
+  - {from: gpu-sharing, type: enables, to: inference-autoscaling}
+
+  - {from: cdc-to-analytics, type: requires, to: log-based-cdc}
+  - {from: delivery-semantics, type: requires, to: retries-and-idempotency}
+  - {from: stream-table-duality, type: requires, to: table-format-fundamentals}
+  - {from: acid-on-object-storage, type: requires, to: object-store-as-primary}
+  - {from: compaction-and-maintenance, type: part_of, to: workflow-orchestration}
+
+  - {from: point-in-time-correctness, type: requires, to: slowly-changing-dimensions}
+  - {from: training-serving-consistency, type: requires, to: offline-vs-online-store}
+  - {from: feature-types-and-encoding, type: enables, to: supervised-learning}
+  - {from: leakage-prevention, type: requires, to: point-in-time-correctness}
+  - {from: metric-definitions, type: enables, to: natural-language-to-sql}
+  - {from: knowledge-graphs, type: enables, to: retrieval-pipeline-design}
+
+  - {from: adaptation-decision-framework, type: requires, to: retrieval-pipeline-design}
+  - {from: parameter-efficient-tuning, type: alternative_to, to: full-fine-tuning}
+  - {from: distillation, type: alternative_to, to: quantization}
+
+  - {from: data-classification, type: enables, to: retention-and-deletion}
+  - {from: dataset-curation, type: governed_by, to: privacy-regulation}
+  - {from: online-inference-endpoints, type: governed_by, to: ai-specific-threats}
+  - {from: reverse-etl, type: governed_by, to: policy-management}
+  - {from: llm-evaluation, type: requires, to: model-evaluation}
+  - {from: drift-detection, type: part_of, to: pipeline-monitoring}
+  - {from: unit-economics, type: requires, to: cost-attribution}
+  - {from: token-streaming, type: part_of, to: online-inference-endpoints}

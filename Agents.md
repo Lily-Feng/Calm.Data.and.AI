@@ -20,6 +20,7 @@ Do not add completion states, streaks, review queues, mastery scores, or other l
 
 The taxonomy, guide metadata, and guide content are three separate layers:
 
+- `data-ai-knowledge-graph.yaml` is the source of truth for the broad seven-layer field atlas shown on the homepage. `js/data-ai-knowledge-graph.js` is its dependency-free browser export; keep the two synchronized.
 - `js/atlas.js` defines domains, clusters, concepts, and graph-to-guide connections.
 - `js/manifest.js` holds `TRACKS` and guide metadata only (`id`, `track`, `type`, `title`, `difficulty`, `minutes`, `summary`, `tags`, `bodyUrl`) — no guide body content.
 - `guides/<id>.html` holds each guide's actual body as a freeform HTML fragment, authored directly rather than as JS object fields. `guides/README.md` is the authoring contract (one `<article class="guide-content">` wrapper, no `<script>`/inline handlers/full document, asset paths relative to `index.html`, repo-owned content only).
@@ -86,13 +87,18 @@ Rules for changing the component:
 
 ## UI architecture
 
-- `index.html` and `timeline.html` contain only their page-specific shell and
-  metadata. Shared light-DOM Web Components live in `js/components/`:
+- `index.html` is the broad Data & AI Field Atlas homepage;
+  `knowledge-atlas.html` is its direct preview alias. Both use
+  `css/knowledge-atlas.css`, `js/data-ai-knowledge-graph.js`, and
+  `js/knowledge-atlas.js`.
+- `field-notes.html` preserves the detailed domain-map and guide experience
+  previously hosted at `index.html`. `timeline.html` remains the timeline page.
+  Shared light-DOM Web Components live in `js/components/`:
   `site-header`, `side-navigation`, `search-view`, and `timeline-view`.
   Components own reusable markup and small UI state; page entry points still
   own data loading, routing, and domain behavior.
 - `css/styles.css` owns the responsive visual system, including baseline typography for `.guide-content` fragments.
-- `js/app.js` renders the overview graph, domain graphs, concept inspector, and search from `js/manifest.js` + `js/atlas.js`, and fetches/injects the matching `guides/<id>.html` fragment when a guide opens. It also preloads every fragment once at startup (`Promise.allSettled`, cached) to build the full-text search index — a fragment that fails to load degrades to metadata-only search for that guide rather than breaking the page.
+- `js/app.js` renders the field-notes overview graph, domain graphs, concept inspector, and search from `js/manifest.js` + `js/atlas.js`, and fetches/injects the matching `guides/<id>.html` fragment when a guide opens. It also preloads every fragment once at startup (`Promise.allSettled`, cached) to build the full-text search index — a fragment that fails to load degrades to metadata-only search for that guide rather than breaking the page.
 - There are no runtime dependencies or external assets, and no build step — fetch-based fragment loading works directly against the static file server / GitHub Pages.
 
 When changing the application, preserve keyboard access, mobile navigation, dialog close behavior, empty states, and deep links for guides and graph concepts. `openGuide()` guards against stale fetches with a monotonic token — if you touch it, keep that guard so rapidly opening guide A then B can't let A's late response overwrite B's content.

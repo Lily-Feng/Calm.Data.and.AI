@@ -95,6 +95,10 @@ class SideNavigation extends HTMLElement {
         const programmingOpen = PROGRAMMING_IDS.has(this.activeDomain);
         this.innerHTML = `
             <nav class="primary-nav" aria-label="Knowledge domains">
+                <a class="nav-item nav-feature-link" href="index.html">
+                    <span class="nav-symbol">✣</span>
+                    <span>Data &amp; AI Field Atlas</span>
+                </a>
                 <p class="nav-label">Domain maps</p>
                 ${primaryTracks.map((track) => this.trackLink(track)).join("")}
                 <div class="nav-group">
