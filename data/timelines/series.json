@@ -40,6 +40,15 @@
       "note": "Including the two long stretches when the field agreed this would never work."
     },
     {
+      "id": "reinforcement-learning",
+      "src": "data/timelines/reinforcement-learning.json",
+      "label": "Reinforcement",
+      "symbol": "RL",
+      "eyebrow": "Reinforcement learning",
+      "heading": "Three threads of reinforcement learning",
+      "note": "Trial and error, optimal control, and temporal difference developed largely independently before Q-learning braided them into one field in 1989. Events and dates follow Sutton and Barto, Reinforcement Learning: An Introduction, 2nd edition, §1.7."
+    },
+    {
       "id": "infrastructure",
       "src": "data/timelines/infrastructure.json",
       "label": "Machine room",

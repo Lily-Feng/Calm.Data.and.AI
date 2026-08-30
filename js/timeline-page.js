@@ -9,7 +9,7 @@ import { escapeHtml } from "./timeline/dom.js";
 import { createTimeline } from "./timeline/index.js";
 import "./components/site-header.js";
 import "./components/side-navigation.js";
-import "./components/timeline-view.js?v=20260826-5";
+import "./components/timeline-view.js?v=20260829-1";
 
 const SERIES_URL = "data/timelines/series.json";
 const PUBLIC_URL = "https://lily-feng.github.io/Calm.Data.and.AI/timeline.html";

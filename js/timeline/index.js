@@ -75,7 +75,9 @@ export function createTimeline(container, spec, options = {}) {
 
     function decorate(event) {
         return Object.assign(event, {
-            stampLabel: formatStamp(event.at),
+            // A range such as "1951–52" still needs one machine-readable point
+            // on the axis, but should not pretend to be a single-year event.
+            stampLabel: event.displayAt || formatStamp(event.at),
             pack: stylePack(event.style, styles),
             /** Sub-timelines only exist while there is depth left to nest into. */
             branchable: Boolean(event.children) && depth < MAX_DEPTH - 1,

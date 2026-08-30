@@ -16,6 +16,7 @@ export const sticker = {
         return `
             ${renderMedia(event.media, { size: "chip" })}
             <div class="tl-card__body">
+                <p class="tl-card__lane">${escapeHtml(event.lane.label)}</p>
                 <h3>${escapeHtml(event.title)}</h3>
                 ${event.summary ? `<p class="tl-card__summary">${escapeHtml(event.summary)}</p>` : ""}
             </div>`;

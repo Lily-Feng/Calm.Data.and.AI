@@ -1,0 +1,293 @@
+{
+  "id": "reinforcement-learning",
+  "title": "Three threads of reinforcement learning",
+  "tagline": "Trial-and-error learning came from animal psychology, optimal control from dynamical systems, and temporal-difference learning from prediction. Q-learning is where the three threads finally meet.",
+  "axis": { "scale": "ordinal", "precision": "year", "direction": "horizontal" },
+  "style": "sticker",
+  "lanes": [
+    { "id": "trial", "label": "Trial and error", "accent": "#bfe8cf" },
+    { "id": "control", "label": "Optimal control", "accent": "#d9cdfd" },
+    { "id": "td", "label": "Temporal difference", "accent": "#f9e293" },
+    { "id": "merge", "label": "All three", "accent": "#d9ff62" }
+  ],
+  "events": [
+    {
+      "id": "rl-bain-1850",
+      "at": "1850",
+      "displayAt": "1850s",
+      "lane": "trial",
+      "weight": 0.42,
+      "title": "Bain: learning by “groping and experiment”",
+      "summary": "Woodworth traces the idea of trial-and-error learning back to Alexander Bain’s discussion in the 1850s.",
+      "media": { "type": "glyph", "glyph": "◌", "alt": "Trial-and-error thread" }
+    },
+    {
+      "id": "rl-morgan-1894",
+      "at": "1894",
+      "lane": "trial",
+      "weight": 0.48,
+      "title": "Lloyd Morgan names “trial and error”",
+      "summary": "The British ethologist uses the term explicitly to describe what he observes in animal behaviour.",
+      "media": { "type": "glyph", "glyph": "◌", "alt": "Trial-and-error thread" }
+    },
+    {
+      "id": "rl-thorndike-1911",
+      "at": "1911",
+      "lane": "trial",
+      "weight": 0.86,
+      "title": "Thorndike’s Law of Effect",
+      "summary": "Responses followed by satisfaction become more likely to recur; those followed by discomfort, less likely. This is the first succinct statement of the principle.",
+      "media": { "type": "glyph", "glyph": "◌", "alt": "Trial-and-error thread" }
+    },
+    {
+      "id": "rl-reinforcement-term-1927",
+      "at": "1927",
+      "lane": "trial",
+      "weight": 0.55,
+      "title": "“Reinforcement” enters the vocabulary",
+      "summary": "The word first appears in this context in the English translation of Pavlov’s monograph on conditioned reflexes.",
+      "media": { "type": "glyph", "glyph": "◌", "alt": "Trial-and-error thread" }
+    },
+    {
+      "id": "rl-ross-maze-1933",
+      "at": "1933",
+      "lane": "trial",
+      "weight": 0.58,
+      "title": "Ross builds a maze-learning machine",
+      "summary": "Possibly the earliest electro-mechanical learner: it finds its way through a simple maze and remembers the path in switch settings.",
+      "media": { "type": "glyph", "glyph": "◌", "alt": "Trial-and-error thread" }
+    },
+    {
+      "id": "rl-turing-pleasure-pain-1948",
+      "at": "1948",
+      "lane": "trial",
+      "weight": 0.64,
+      "title": "Turing’s “pleasure–pain system”",
+      "summary": "A report sketches a machine that makes random choices where action is undetermined, cancelling them on pain and fixing them on pleasure.",
+      "media": { "type": "glyph", "glyph": "◌", "alt": "Trial-and-error thread" }
+    },
+    {
+      "id": "rl-shannon-evaluation-1950",
+      "at": "1950",
+      "lane": "td",
+      "weight": 0.65,
+      "title": "Shannon: a program that improves its own evaluation",
+      "summary": "Shannon suggests a computer could play chess with an evaluation function and improve by modifying that function online—the seed of Samuel’s method.",
+      "media": { "type": "glyph", "glyph": "Δ", "alt": "Temporal-difference thread" }
+    },
+    {
+      "id": "rl-walter-shannon-1952",
+      "at": "1952",
+      "displayAt": "1951–52",
+      "lane": "trial",
+      "weight": 0.58,
+      "title": "Walter’s tortoise and Shannon’s Theseus",
+      "summary": "Grey Walter’s mechanical tortoise learns in a simple way; Shannon’s maze-running mouse finds its route by trial and error, with the maze itself remembering via magnets and relays.",
+      "media": { "type": "glyph", "glyph": "◌", "alt": "Trial-and-error thread" }
+    },
+    {
+      "id": "rl-snarcs-1954",
+      "at": "1954",
+      "lane": "trial",
+      "weight": 0.66,
+      "title": "Minsky’s SNARCs; Farley and Clark’s simulation",
+      "summary": "Minsky describes an analog machine of Stochastic Neural-Analog Reinforcement Calculators. Farley and Clark simulate a network that learns by trial and error, while Deutsch describes a maze solver with model-based traits.",
+      "media": { "type": "glyph", "glyph": "◌", "alt": "Trial-and-error thread" }
+    },
+    {
+      "id": "rl-minsky-secondary-reinforcement-1954",
+      "at": "1954",
+      "lane": "td",
+      "weight": 0.62,
+      "title": "Minsky links secondary reinforcement to machines",
+      "summary": "Minsky may have been the first to see that a stimulus paired with a primary reinforcer—the psychologist’s secondary reinforcer—matters for artificial learning systems.",
+      "media": { "type": "glyph", "glyph": "Δ", "alt": "Temporal-difference thread" }
+    },
+    {
+      "id": "rl-bellman-1957",
+      "at": "1957",
+      "displayAt": "1953–57",
+      "lane": "control",
+      "weight": 0.95,
+      "title": "Bellman: dynamic programming and MDPs",
+      "summary": "Extending Hamilton and Jacobi, Bellman defines the value function and Bellman equation, then introduces the discrete stochastic case—Markov decision processes.",
+      "media": { "type": "glyph", "glyph": "⌑", "alt": "Optimal-control thread" }
+    },
+    {
+      "id": "rl-samuel-checkers-1959",
+      "at": "1959",
+      "lane": "td",
+      "weight": 0.88,
+      "title": "Samuel’s checkers player",
+      "summary": "The first learning method to implement temporal-difference ideas, developed with no reference to Minsky or to animal learning.",
+      "media": { "type": "glyph", "glyph": "Δ", "alt": "Temporal-difference thread" }
+    },
+    {
+      "id": "rl-howard-policy-iteration-1960",
+      "at": "1960",
+      "lane": "control",
+      "weight": 0.78,
+      "title": "Howard’s policy iteration",
+      "summary": "A method for solving Markov decision processes that remains an essential element of modern reinforcement-learning theory.",
+      "media": { "type": "glyph", "glyph": "⌑", "alt": "Optimal-control thread" }
+    },
+    {
+      "id": "rl-minsky-credit-assignment-1961",
+      "at": "1961",
+      "lane": "trial",
+      "weight": 0.8,
+      "title": "Minsky’s “Steps Toward Artificial Intelligence”",
+      "summary": "Names the credit-assignment problem: how to distribute credit for success among the many decisions that produced it.",
+      "media": { "type": "glyph", "glyph": "◌", "alt": "Trial-and-error thread" }
+    },
+    {
+      "id": "rl-menace-stella-1963",
+      "at": "1963",
+      "lane": "trial",
+      "weight": 0.62,
+      "title": "MENACE and STeLLA",
+      "summary": "Michie’s matchbox engine learns tic-tac-toe with coloured beads. Andreae’s STeLLA learns by trial and error with an internal model of the world.",
+      "media": { "type": "glyph", "glyph": "◌", "alt": "Trial-and-error thread" }
+    },
+    {
+      "id": "rl-engineering-literature-1965",
+      "at": "1965",
+      "lane": "trial",
+      "weight": 0.5,
+      "title": "“Reinforcement learning” enters engineering",
+      "summary": "Waltz and Fu—followed by Mendel, Fu, and others—use the terms for engineering applications of trial-and-error learning.",
+      "media": { "type": "glyph", "glyph": "◌", "alt": "Trial-and-error thread" }
+    },
+    {
+      "id": "rl-boxes-1968",
+      "at": "1968",
+      "lane": "trial",
+      "weight": 0.78,
+      "title": "BOXES balances a pole",
+      "summary": "Michie and Chambers apply their controller to a pole hinged on a cart, learning from a failure signal alone—the best early example of an RL task under incomplete knowledge.",
+      "media": { "type": "glyph", "glyph": "◌", "alt": "Trial-and-error thread" }
+    },
+    {
+      "id": "rl-klopf-1972",
+      "at": "1972",
+      "lane": "trial",
+      "weight": 0.72,
+      "title": "Klopf revives the hedonic thread",
+      "summary": "Klopf argues that the drive to get a result from the environment was being lost as research turned to supervised learning. His generalized reinforcement also brushed against temporal-difference ideas.",
+      "media": { "type": "glyph", "glyph": "◌", "alt": "Trial-and-error thread" }
+    },
+    {
+      "id": "rl-critic-automata-1973",
+      "at": "1973",
+      "lane": "trial",
+      "weight": 0.67,
+      "title": "Learning with a critic; learning automata",
+      "summary": "Widrow, Gupta, and Maitra modify LMS to learn from success and failure instead of examples. Work on learning automata and the k-armed bandit joins the thread.",
+      "media": { "type": "glyph", "glyph": "◌", "alt": "Trial-and-error thread" }
+    },
+    {
+      "id": "rl-holland-1975",
+      "at": "1975",
+      "lane": "trial",
+      "weight": 0.7,
+      "title": "Holland’s adaptive systems and classifier systems",
+      "summary": "A general theory based on selectional principles later becomes classifier systems with a bucket-brigade credit-assignment algorithm close to temporal difference.",
+      "media": { "type": "glyph", "glyph": "◌", "alt": "Trial-and-error thread" }
+    },
+    {
+      "id": "rl-witten-td0-1977",
+      "at": "1977",
+      "lane": "td",
+      "weight": 0.86,
+      "title": "Witten publishes the first TD rule",
+      "summary": "What we now call tabular TD(0), inside an adaptive controller for MDPs. The paper spans trial-and-error learning and optimal control while contributing to the third thread.",
+      "media": { "type": "glyph", "glyph": "Δ", "alt": "Temporal-difference thread" }
+    },
+    {
+      "id": "rl-sutton-predictions-1978",
+      "at": "1978",
+      "lane": "td",
+      "weight": 0.84,
+      "title": "Sutton: learning driven by successive predictions",
+      "summary": "Sutton develops Klopf’s ideas into learning rules driven by changes in temporally successive predictions, with links to animal learning theory.",
+      "media": { "type": "glyph", "glyph": "Δ", "alt": "Temporal-difference thread" }
+    },
+    {
+      "id": "rl-conditioning-1981",
+      "at": "1981",
+      "lane": "td",
+      "weight": 0.74,
+      "title": "A TD model of classical conditioning",
+      "summary": "Sutton and Barto build a psychological model of classical conditioning on temporal-difference learning; other influential models follow through the decade.",
+      "media": { "type": "glyph", "glyph": "Δ", "alt": "Temporal-difference thread" }
+    },
+    {
+      "id": "rl-actor-critic-1983",
+      "at": "1983",
+      "lane": "td",
+      "weight": 0.91,
+      "title": "The actor–critic architecture",
+      "summary": "Barto, Sutton, and Anderson combine temporal-difference learning with trial-and-error learning and apply it to Michie and Chambers’ pole-balancing problem.",
+      "media": { "type": "glyph", "glyph": "Δ", "alt": "Temporal-difference thread" }
+    },
+    {
+      "id": "rl-werbos-1987",
+      "at": "1987",
+      "lane": "control",
+      "weight": 0.66,
+      "title": "Werbos argues for interrelating DP and learning",
+      "summary": "An explicit case for joining dynamic programming with learning methods, and for its relevance to neural and cognitive mechanisms.",
+      "media": { "type": "glyph", "glyph": "⌑", "alt": "Optimal-control thread" }
+    },
+    {
+      "id": "rl-td-lambda-1988",
+      "at": "1988",
+      "lane": "td",
+      "weight": 0.9,
+      "title": "TD(λ): prediction separated from control",
+      "summary": "Sutton treats temporal-difference learning as a general prediction method, introduces TD(λ), and proves some of its convergence properties.",
+      "media": { "type": "glyph", "glyph": "Δ", "alt": "Temporal-difference thread" }
+    },
+    {
+      "id": "rl-q-learning-1989",
+      "at": "1989",
+      "lane": "merge",
+      "weight": 1,
+      "title": "Watkins’s Q-learning unites the threads",
+      "summary": "Q-learning extends and integrates prior work in all three threads. Watkins’s treatment of reinforcement learning in the MDP formalism has been widely adopted since.",
+      "media": { "type": "glyph", "glyph": "⋈", "alt": "Three threads merging" }
+    },
+    {
+      "id": "rl-td-gammon-1992",
+      "at": "1992",
+      "lane": "merge",
+      "weight": 0.92,
+      "title": "TD-Gammon",
+      "summary": "Tesauro combines the tic-tac-toe algorithm with a neural network on backgammon’s 10²⁰ states, beating every previous program and eventually the best human players.",
+      "media": { "type": "glyph", "glyph": "⋈", "alt": "Three threads merged" }
+    },
+    {
+      "id": "rl-dopamine-1994",
+      "at": "1994",
+      "displayAt": "1994–97",
+      "lane": "merge",
+      "weight": 0.9,
+      "title": "Dopamine looks like a TD signal",
+      "summary": "Researchers converge on an uncanny similarity between temporal-difference algorithms and the activity of dopamine-producing neurons, opening a subfield of neuroscience.",
+      "media": { "type": "glyph", "glyph": "⋈", "alt": "Three threads merged" }
+    },
+    {
+      "id": "rl-neurodynamic-programming-1996",
+      "at": "1996",
+      "lane": "control",
+      "weight": 0.74,
+      "title": "Neurodynamic programming",
+      "summary": "Bertsekas and Tsitsiklis name the combination of dynamic programming and artificial neural networks, developing the relationship Watkins opened.",
+      "media": { "type": "glyph", "glyph": "⌑", "alt": "Optimal-control thread" }
+    }
+  ],
+  "source": {
+    "title": "Early History of Reinforcement Learning",
+    "citation": "Richard S. Sutton and Andrew G. Barto, Reinforcement Learning: An Introduction, 2nd edition, §1.7"
+  }
+}

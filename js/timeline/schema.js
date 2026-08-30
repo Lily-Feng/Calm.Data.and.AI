@@ -124,6 +124,7 @@ export function resolveTimeline(spec, { inheritedLanes = null } = {}) {
             return {
                 id: event.id || `event-${index}`,
                 at: { ...stamp, precision: event.precision || stamp.precision },
+                displayAt: event.displayAt || "",
                 lane,
                 weight,
                 tier: tierFor(weight),
