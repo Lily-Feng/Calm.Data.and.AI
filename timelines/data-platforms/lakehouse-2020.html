@@ -1,0 +1,55 @@
+<article class="guide-content">
+    <h2>The two-system problem</h2>
+    <p>
+        By the late 2010s a typical company ran a data lake (cheap, open, flexible, home to
+        data science) and a data warehouse (fast, governed, home to BI), and kept them in
+        sync with pipelines. Every copy cost money, went stale, and had its own access
+        rules. The lakehouse argument was that this duplication was an accident of
+        technology, not a requirement.
+    </p>
+
+    <h3>What a lakehouse actually is</h3>
+    <ol>
+        <li><strong>Open files</strong> (Parquet) in cheap object storage, readable by many engines.</li>
+        <li><strong>A transactional metadata layer</strong> over those files (Delta Lake, Iceberg, or Hudi), so that writes are atomic and readers see consistent snapshots.</li>
+        <li><strong>A fast engine and a governance layer</strong> on top: SQL performance close to a warehouse, and one place for permissions and lineage.</li>
+    </ol>
+
+    <h3>How the transaction log works</h3>
+    <p>
+        Parquet files are immutable. A Delta table is a directory of such files plus an
+        ordered log of JSON commits. Each commit records which files were added and which
+        were removed.
+    </p>
+    <pre><code>_delta_log/000...000.json   add part-0001.parquet, add part-0002.parquet
+_delta_log/000...001.json   remove part-0002.parquet, add part-0003.parquet  (an UPDATE)
+_delta_log/000...010.checkpoint.parquet   summary of the state so far</code></pre>
+    <p>
+        A reader replays the log to learn which files make up the table at a given version.
+        That one mechanism gives atomic commits (the commit file either exists or it does
+        not), snapshot isolation (readers pin a version), and time travel (read an older
+        version). Concurrent writers use optimistic concurrency: a writer that finds a
+        conflicting commit retries or fails.
+    </p>
+
+    <h3>The engine half: Photon</h3>
+    <p>
+        Warehouse-class speed needed a faster engine than Spark's JVM execution. Photon is
+        a vectorised C++ engine that processes data in batches of columns, keeps Spark's
+        APIs, and substitutes native code for the operators it supports. Anything it
+        cannot run falls back to the regular Spark engine.
+    </p>
+
+    <h3>Reading the claim critically</h3>
+    <ul>
+        <li>The lakehouse is a strong architecture, but the pitch is also marketing. Warehouses did not stand still; Snowflake's later Iceberg support narrows the same gap from the other side.</li>
+        <li>"Open" has layers: the file format, the table format, the catalog, and the engine can each be open or proprietary. Photon is proprietary; Delta and Parquet are open.</li>
+    </ul>
+
+    <h3>What to carry away</h3>
+    <ul>
+        <li>Lakehouse = open files + table-format transaction log + engine + catalog.</li>
+        <li>The log is the trick: it turns a directory into a table.</li>
+        <li>Photon is the performance half of the argument, and it is why the 2021 benchmark fight happened.</li>
+    </ul>
+</article>

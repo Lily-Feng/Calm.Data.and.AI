@@ -1,0 +1,48 @@
+<article class="guide-content">
+    <h2>Format, then catalog</h2>
+    <p>
+        The 2017-2023 argument was about <strong>table formats</strong>: Delta Lake, Apache
+        Iceberg, and Apache Hudi. They solve the same problem (a transaction log or manifest
+        tree over Parquet files) in different ways. By 2024 the formats had largely converged
+        on features, and tools such as Delta UniForm could expose one table under several
+        formats. The question then shifted one layer up.
+    </p>
+
+    <h3>What a catalog decides</h3>
+    <ul>
+        <li>Which tables exist, and where their metadata lives.</li>
+        <li>Who can read or write them: permissions, row filters, column masks.</li>
+        <li>Which engines may talk to them, and through what protocol (for Iceberg, the REST catalog specification).</li>
+        <li>Where lineage and audit history are recorded.</li>
+    </ul>
+    <p>
+        Control of the catalog is control of governance, and the shortest path from a table
+        to the compute that queries it.
+    </p>
+
+    <h3>June 2024</h3>
+    <p>
+        The two companies' annual conferences fell in the same week. Databricks announced
+        the acquisition of Tabular, the company founded by Iceberg's original creators, and
+        open-sourced Unity Catalog. Snowflake announced Polaris, an open catalog
+        implementing the Iceberg REST specification, and later donated it to the Apache
+        Software Foundation.
+    </p>
+
+    <h3>Formats and catalogs, side by side</h3>
+    <table>
+        <thead><tr><th></th><th>Databricks</th><th>Snowflake</th></tr></thead>
+        <tbody>
+            <tr><td>Home format</td><td>Delta Lake, with Iceberg reads and writes</td><td>Proprietary micro-partitions, plus Iceberg Tables</td></tr>
+            <tr><td>Catalog</td><td>Unity Catalog (open-sourced)</td><td>Horizon, and Polaris (Apache)</td></tr>
+            <tr><td>Interoperability move</td><td>UniForm; Tabular's Iceberg team</td><td>Iceberg Tables GA; Polaris as a neutral REST catalog</td></tr>
+        </tbody>
+    </table>
+
+    <h3>What to carry away</h3>
+    <ul>
+        <li>Storage format is now the less contested layer. Catalogs are where governance and lock-in live.</li>
+        <li>"Open" is only useful if an unrelated engine can actually read and write the table through a standard protocol. Test that, rather than trusting the announcement.</li>
+        <li>For a customer, the practical advice is to keep the data in an open table format and treat the catalog as a decision you may need to revisit.</li>
+    </ul>
+</article>

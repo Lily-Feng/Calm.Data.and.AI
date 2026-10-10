@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="1040" height="520" role="img" aria-label="Spark 4, 2025">
+<rect width="520" height="260" fill="#f4f2ec"/>
+<rect width="520" height="10" fill="#ffcbb2"/>
+<rect x="81" y="42" width="270" height="134" rx="2" fill="#f4f2ec" stroke="#15271f" stroke-width="2"/><rect x="102" y="60" width="228" height="99" rx="2" fill="#f4f2ec" stroke="#15271f" stroke-width="2"/><rect x="123" y="78" width="186" height="64" rx="2" fill="#f4f2ec" stroke="#15271f" stroke-width="2"/><rect x="144" y="96" width="144" height="29" rx="2" fill="#ffcbb2" stroke="#15271f" stroke-width="2"/><text x="216" y="113" fill="#15271f" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="26" text-anchor="middle">=</text><path d="M222 129 l10 10 22 -24" fill="none" stroke="#15271f" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><text x="383" y="110" fill="#15271f" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="32" text-anchor="middle">{ }</text><text x="383" y="135" fill="#15271f" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" text-anchor="middle">VARIANT</text>
+<text x="34" y="226" fill="#15271f" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" font-size="30">2025</text>
+<text x="146" y="215" fill="#15271f" font-family="Georgia, 'Times New Roman', serif" font-size="14">Spark 4</text>
+</svg>

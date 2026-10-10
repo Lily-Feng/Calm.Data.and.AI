@@ -31,6 +31,15 @@
       "note": "Watch the same pendulum swing four times: give up structure for scale, then spend a decade putting it back."
     },
     {
+      "id": "data-platforms",
+      "src": "data/timelines/data-platforms.json",
+      "label": "Platforms",
+      "symbol": "◈",
+      "eyebrow": "Data platforms",
+      "heading": "Hadoop to the lakehouse",
+      "note": "Spark and Snowflake started at opposite ends of the same problem. Two ⑂ branches follow Spark's releases and Snowflake's growth; a third follows Databricks' build-out."
+    },
+    {
       "id": "machine-learning",
       "src": "data/timelines/machine-learning.json",
       "label": "Learning",

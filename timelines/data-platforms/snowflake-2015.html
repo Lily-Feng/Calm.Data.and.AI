@@ -1,0 +1,43 @@
+<article class="guide-content">
+    <h2>The opposite bet</h2>
+    <p>
+        Spark is an open-source <em>engine</em> that you point at files you own. Snowflake
+        started from the other end: a closed, fully managed SQL <em>warehouse</em> built for
+        the cloud, where the user never sees a cluster, an index, or a file. Its three
+        founders brought the relevant history with them. Benoit Dageville and Thierry
+        Cruanes were Oracle architects; Marcin Żukowski co-created Vectorwise, a
+        vectorised, columnar engine descended from the MonetDB/X100 research at CWI.
+    </p>
+
+    <h3>Three layers</h3>
+    <table>
+        <thead><tr><th>Layer</th><th>What it does</th><th>Why it matters</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Storage</strong></td><td>Columnar, immutable micro-partitions in cloud object storage, with min/max metadata per column.</td><td>Queries skip partitions that cannot match (pruning). Immutability gives Time Travel and zero-copy cloning almost for free.</td></tr>
+            <tr><td><strong>Compute</strong></td><td>Independent virtual warehouses that scale up, scale out, or suspend.</td><td>Many teams query one dataset without contending for the same machines. You pay for compute only while it runs.</td></tr>
+            <tr><td><strong>Cloud services</strong></td><td>Optimiser, metadata, transactions, security, result cache.</td><td>The shared brain. It is also why a repeated query can return instantly without touching a warehouse.</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Why separating storage and compute mattered</h3>
+    <p>
+        Hadoop clusters and classic warehouses both bound storage and compute to the same
+        machines. To store more, you bought compute you did not need; to run more queries,
+        you bought storage you did not need. With object storage underneath and elastic
+        compute on top, each scales with its own driver: storage with the data, compute with
+        the questions being asked.
+    </p>
+
+    <h3>What it gave up</h3>
+    <ul>
+        <li><strong>Openness.</strong> The original storage format was proprietary, so other engines could not read the data directly. Most of Snowflake's later history (Snowpark, Iceberg Tables, Polaris, Snowpark Connect for Spark) is about reducing that gap.</li>
+        <li><strong>Control.</strong> There is little to tune. That is a feature until a workload needs something the service does not expose.</li>
+    </ul>
+
+    <h3>What to carry away</h3>
+    <ul>
+        <li>The three layers are the standard architecture answer. Be able to say what each does and give one consequence for each.</li>
+        <li>Snowpark looks like PySpark but compiles to SQL executed inside Snowflake. The API resemblance is real; the execution engine is not Spark.</li>
+        <li>Vectorised execution has been part of Snowflake's lineage from the start; Databricks reached the same idea later with Photon.</li>
+    </ul>
+</article>

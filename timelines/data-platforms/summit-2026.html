@@ -1,0 +1,48 @@
+<article class="guide-content">
+    <h2>Meeting in the middle</h2>
+    <p>
+        Databricks started from the open data lake and Spark, and moved up into warehousing.
+        Snowflake started from the managed warehouse and moved down into open formats and
+        Spark-style APIs. By 2026 they compete on almost every layer.
+    </p>
+
+    <table>
+        <thead><tr><th>Layer</th><th>Databricks (from Spark)</th><th>Snowflake (from the warehouse)</th></tr></thead>
+        <tbody>
+            <tr><td>Origin</td><td>Open-source engine on open files</td><td>Closed, managed cloud SQL warehouse</td></tr>
+            <tr><td>Moved toward</td><td>Warehouse: Databricks SQL, Photon, Reyden</td><td>Lake: Iceberg, Polaris, Snowpark, Spark Connect</td></tr>
+            <tr><td>Programming model</td><td>PySpark DataFrames and SQL</td><td>SQL first, then PySpark-like Snowpark</td></tr>
+            <tr><td>Open-format bet</td><td>Delta Lake, plus Iceberg via Tabular</td><td>Iceberg, Polaris</td></tr>
+            <tr><td>Catalog</td><td>Unity Catalog</td><td>Horizon, Polaris</td></tr>
+            <tr><td>Operational database</td><td>Lakebase (Neon)</td><td>Snowflake Postgres (Crunchy Data)</td></tr>
+            <tr><td>Real time</td><td>Lakehouse//RT on Reyden; Spark Real-Time Mode</td><td>Datastream, Hybrid Tables</td></tr>
+            <tr><td>AI layer</td><td>Genie, Agent Bricks, MosaicML</td><td>CoWork, CoCo, Cortex</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Other forces</h3>
+    <ul>
+        <li><strong>Native engines under Spark's API:</strong> Photon, plus open projects such as Apache Gluten with Velox, and Apache DataFusion Comet.</li>
+        <li><strong>Single-node engines</strong> such as DuckDB and Polars handle "medium data" without a cluster at all.</li>
+        <li><strong>Apache Flink</strong> remains the usual choice for low-latency streaming.</li>
+        <li><strong>Other platforms:</strong> BigQuery, Microsoft Fabric (which runs Spark), AWS EMR and Glue, and Trino/Presto.</li>
+    </ul>
+
+    <h3>Interview one-liners</h3>
+    <ul>
+        <li><strong>Spark in three shifts.</strong> Disk to memory (RDDs); imperative to declarative (DataFrames and Catalyst); batch cluster to unified platform (one API for batch, streaming, SQL, and ML, with open table formats turning lakes into lakehouses).</li>
+        <li><strong>Spark SQL vs Hive.</strong> Spark SQL grew out of running Hive queries faster. It is largely HiveQL-compatible and can share the Metastore, but it uses its own Catalyst optimiser and in-memory engine, not MapReduce.</li>
+        <li><strong>DataFrame vs SQL.</strong> Both compile to the same Catalyst plan and perform the same. The DataFrame API earns its place for programmatic or dynamic logic, Python UDFs, and streaming control. Most teams mix the two.</li>
+        <li><strong>Databricks vs Snowflake.</strong> Databricks came from open lakes and Spark and moved toward warehousing; Snowflake came from the managed warehouse and moved toward Iceberg and PySpark-style APIs. They now compete on formats, catalogs, Postgres, real-time serving, and AI agents.</li>
+        <li><strong>Engine lineage.</strong> MapReduce, then Spark on the JVM, then Tungsten code generation, then Photon (vectorised C++), then Reyden (millisecond serving). On the Snowflake side, vectorised C++ execution has been there from the start.</li>
+        <li><strong>Why Spark 4 matters in practice.</strong> ANSI mode is the default, so a bad cast throws instead of returning NULL. Use <code>try_cast</code> when null-on-failure is what you want.</li>
+    </ul>
+
+    <h3>A caution about the recent entries</h3>
+    <p>
+        Everything from 2025 onward comes from vendor announcements and press coverage, and
+        some of it was in preview when written. Product names and availability change
+        quickly; check the vendor's current documentation before depending on a detail
+        here.
+    </p>
+</article>

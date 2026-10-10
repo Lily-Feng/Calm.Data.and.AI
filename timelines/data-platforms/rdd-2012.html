@@ -1,0 +1,50 @@
+<article class="guide-content">
+    <h2>Why MapReduce was slow, and what Spark changed</h2>
+    <p>
+        A MapReduce job is a chain of stages, and each stage reads its input from disk and
+        writes its output back to disk. That is what makes it robust: if a machine dies,
+        the next stage simply reads the surviving output. It is also what makes it slow
+        for two kinds of work that became common after 2008.
+    </p>
+    <ul>
+        <li><strong>Iterative algorithms.</strong> Machine learning passes over the same data dozens of times. On Hadoop, every pass re-reads it from disk.</li>
+        <li><strong>Interactive queries.</strong> An analyst exploring data wants an answer in seconds, not after a job has been scheduled, launched, and written out.</li>
+    </ul>
+
+    <h3>The two ideas in the RDD paper</h3>
+    <ol>
+        <li><strong>Keep the working set in memory</strong> across steps, so the second pass over a dataset costs a memory read, not a disk read.</li>
+        <li><strong>Recover by lineage, not by replication.</strong> An RDD remembers the chain of transformations that produced each partition. When a machine is lost, Spark replays just that chain for just the lost partitions.</li>
+    </ol>
+    <p>
+        The second idea is the clever one. Replicating in-memory data across the network would
+        eat the speed advantage. Because the operations are deterministic and the inputs are
+        immutable, recomputing is a correct substitute for copying.
+    </p>
+
+    <h3>Lazy transformations and actions</h3>
+    <pre><code>lines  = sc.textFile("logs/")            # nothing runs yet
+errors = lines.filter(lambda l: "ERROR" in l)
+errors.cache()                           # keep it in memory once computed
+errors.count()                           # action: now the plan executes
+errors.filter(lambda l: "db" in l).count()   # reuses the cached partitions</code></pre>
+    <p>
+        Transformations only record lineage. An action triggers execution, and the scheduler
+        splits the lineage graph into stages at shuffle boundaries, the places where data must
+        move between machines.
+    </p>
+
+    <h3>Where Spark stands relative to Hive</h3>
+    <ul>
+        <li><strong>Shark</strong> was an early bridge: Hive's planner running on the Spark engine. It was retired in favour of Spark SQL.</li>
+        <li><strong>Spark SQL</strong> is largely HiveQL-compatible and can use the Hive Metastore (<code>enableHiveSupport()</code>), but it runs on its own Catalyst optimiser and engine, not MapReduce.</li>
+        <li><strong>Hive on Spark</strong> (Hive's planner using Spark as an execution engine) is a different thing again. The names are confusing; the distinction is worth stating in an interview.</li>
+    </ul>
+
+    <h3>What to carry away</h3>
+    <ul>
+        <li>Spark's story is three shifts: disk to memory (RDDs), imperative to declarative (DataFrames, Catalyst), and batch cluster to unified platform (SQL, streaming, ML on one API).</li>
+        <li>Caching is an optimisation, not a correctness feature. Lineage guarantees the answer; memory only decides how fast you get it.</li>
+        <li>The cost that remains is the shuffle. Most Spark performance work is deciding where data has to move.</li>
+    </ul>
+</article>

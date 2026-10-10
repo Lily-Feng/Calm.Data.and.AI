@@ -97,6 +97,7 @@ starts before its parent.
 | Ten papers that built computing | Turing to the Transformer, with sub-timelines on Codd, Berners-Lee, and Vaswani |
 | Tongues of the machine | Programming languages, Fortran to Rust |
 | Where the data sleeps | Storage and databases, RAMAC to open table formats |
+| Hadoop to the lakehouse | Hadoop, Hive, Spark, Databricks, and Snowflake, from MapReduce to their 2026 convergence; branches on Spark releases, Snowflake growth, and Databricks build-out |
 | Teaching machines to guess | Machine learning, McCulloch–Pitts to AlphaFold |
 | The machine room | Systems and infrastructure, System/360 to Lambda |
 

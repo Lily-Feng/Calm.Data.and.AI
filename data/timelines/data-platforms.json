@@ -1,0 +1,369 @@
+{
+  "id": "data-platforms",
+  "title": "Hadoop to the lakehouse",
+  "tagline": "Two companies started at opposite ends of the same problem — one from open files and an open engine, one from a closed managed warehouse — and spent a decade walking toward each other.",
+  "axis": { "scale": "ordinal", "precision": "year", "direction": "horizontal" },
+  "style": "polaroid",
+  "lanes": [
+    { "id": "hadoop", "label": "Hadoop & Hive", "accent": "#f9e293" },
+    { "id": "spark", "label": "Apache Spark", "accent": "#ffcbb2" },
+    { "id": "databricks", "label": "Databricks", "accent": "#ff9f8a" },
+    { "id": "snowflake", "label": "Snowflake", "accent": "#b8d9ff" },
+    { "id": "ecosystem", "label": "Formats & catalogs", "accent": "#d9cdfd" }
+  ],
+  "events": [
+    {
+      "id": "dp-mapreduce-2004",
+      "at": "2004",
+      "lane": "hadoop",
+      "weight": 0.9,
+      "title": "GFS and MapReduce",
+      "byline": "Dean & Ghemawat, Google",
+      "summary": "Two papers argue that a pile of cheap, unreliable machines can process a web's worth of data, as long as the framework absorbs the failures.",
+      "media": { "type": "image", "src": "public/timeline/data-platforms/dp-mapreduce-2004.svg", "alt": "Parallel map lanes converge on one reduce result, with a failed task replaced", "motion": "float" },
+      "keyPoints": [
+        "GFS (2003) splits files into large replicated blocks across commodity disks.",
+        "MapReduce (2004) gives the programmer two functions, map and reduce; the framework does the parallelism, scheduling, and retries.",
+        "Intermediate results are written to disk between stages, so a lost machine costs one task, not the job.",
+        "Move the computation to where the data already sits, rather than the data to the computation."
+      ],
+      "impact": "Made large-scale data processing something a company without Google's infrastructure team could imagine doing. The price was latency: every stage ends in a disk write, which is the gap Spark was built to close.",
+      "resources": [
+        { "type": "paper", "label": "MapReduce: Simplified Data Processing on Large Clusters", "href": "https://research.google/pubs/mapreduce-simplified-data-processing-on-large-clusters/", "note": "OSDI 2004" },
+        { "type": "paper", "label": "The Google File System", "href": "https://research.google/pubs/the-google-file-system/", "note": "SOSP 2003" }
+      ]
+    },
+    {
+      "id": "dp-hadoop-2006",
+      "at": "2006",
+      "lane": "hadoop",
+      "weight": 0.7,
+      "title": "Hadoop",
+      "byline": "Doug Cutting & Yahoo",
+      "summary": "The papers become open source: HDFS for storage and MapReduce for compute, running on racks of ordinary servers.",
+      "media": { "type": "image", "src": "public/timeline/data-platforms/dp-hadoop-2006.svg", "alt": "Four connected server racks each hold disks and a processor" },
+      "keyPoints": [
+        "Grew out of the Nutch web crawler; Yahoo's investment turned it into a platform.",
+        "HDFS for storage, MapReduce for compute, later YARN to schedule both.",
+        "Schema-on-read: land the data first, decide what it means later.",
+        "Storage and compute lived on the same machines, so growing one meant buying the other."
+      ],
+      "impact": "Set the shape of the big-data decade, including its habits: tightly coupled clusters, hand-written Java jobs, and lakes that quietly turned into swamps.",
+      "resources": [{ "type": "reference", "label": "Apache Hadoop", "href": "https://hadoop.apache.org/" }]
+    },
+    {
+      "id": "hive-2008",
+      "at": "2008",
+      "lane": "hadoop",
+      "weight": 0.8,
+      "title": "Hive and the Metastore",
+      "byline": "Facebook",
+      "summary": "Analysts write SQL; Hive compiles it into MapReduce jobs. The part that outlived the engine was the catalogue that remembered what the files meant.",
+      "media": { "type": "image", "src": "public/timeline/data-platforms/hive-2008.svg", "alt": "A table linked to a metastore card, with files suggested behind it" },
+      "keyPoints": [
+        "HiveQL: a SQL dialect that spares analysts from writing Java.",
+        "The Hive Metastore stores table names, schemas, partitions, and file locations.",
+        "Later added faster engines (Tez, LLAP), a cost-based optimiser, and ACID tables on ORC.",
+        "Spark SQL, Presto/Trino, and Athena all still read the Hive Metastore."
+      ],
+      "impact": "Showed that a declarative layer comes back to any new storage substrate within a few years. Hive's execution engine faded; its SQL dialect and its Metastore are still everywhere.",
+      "resources": [
+        { "type": "reference", "label": "Apache Hive", "href": "https://hive.apache.org/" },
+        { "type": "guide", "label": "Choosing a data platform by workload", "guide": "data-platform-selection" }
+      ]
+    },
+    {
+      "id": "rdd-2012",
+      "at": "2012",
+      "lane": "spark",
+      "weight": 0.95,
+      "title": "Spark and the RDD",
+      "byline": "Zaharia et al., UC Berkeley AMPLab",
+      "summary": "Keep the working set in memory between steps, and recover lost pieces by replaying how they were made instead of copying them to disk.",
+      "media": { "type": "image", "src": "public/timeline/data-platforms/rdd-2012.svg", "alt": "Partitioned stages in memory, with a lost tile recovered through lineage", "motion": "pulse" },
+      "keyPoints": [
+        "Started in 2009 at Berkeley and open-sourced in 2010, to speed up iterative and interactive jobs that MapReduce handled badly.",
+        "A Resilient Distributed Dataset is an immutable, partitioned collection plus the recipe that produced it.",
+        "Lineage replaces replication: a lost partition is recomputed from its parents.",
+        "Iterative jobs such as machine learning ran 10-100x faster than on Hadoop, as the paper reported."
+      ],
+      "impact": "Turned the disk-to-disk batch model into a memory-first one, and gave one engine room to grow into SQL, streaming, graphs, and ML. The branch below follows it from 2013 to 2023.",
+      "resources": [
+        { "type": "paper", "label": "Resilient Distributed Datasets", "href": "https://www.usenix.org/conference/nsdi12/technical-sessions/presentation/zaharia", "note": "NSDI 2012" },
+        { "type": "reference", "label": "Apache Spark news archive", "href": "https://spark.apache.org/news/" },
+        { "type": "guide", "label": "Performance reasoning for data workloads", "guide": "data-performance" }
+      ],
+      "bodyUrl": "timelines/data-platforms/rdd-2012.html",
+      "children": {
+        "id": "spark-release-train",
+        "axis": { "scale": "linear", "precision": "year", "direction": "horizontal" },
+        "style": "filmstrip",
+        "events": [
+          { "id": "dp-spark-apache-2014", "at": "2014-02", "lane": "spark", "weight": 0.6, "title": "Apache top-level project", "byline": "Donated June 2013", "summary": "Spark enters the Apache incubator in 2013 and graduates the following February.", "media": { "type": "glyph", "glyph": "✦", "alt": "Spark" } },
+          { "id": "dp-spark-1-0-2014", "at": "2014-05", "lane": "spark", "weight": 0.72, "title": "Spark 1.0 and Spark SQL", "byline": "May 2014", "summary": "The first stable API line. Spark SQL takes over from Shark, the earlier Hive-on-Spark.", "media": { "type": "glyph", "glyph": "1.0", "alt": "Version 1.0" } },
+          { "id": "dp-graysort-2014", "at": "2014-11", "lane": "spark", "weight": 0.5, "title": "GraySort record", "byline": "Databricks", "summary": "Sorts 100 TB roughly three times faster than the previous Hadoop record, on about a tenth of the machines.", "media": { "type": "glyph", "glyph": "⏱", "alt": "Stopwatch" } },
+          { "id": "dp-spark-2-0-2016", "at": "2016-07", "lane": "spark", "weight": 0.78, "title": "Spark 2.0", "byline": "SparkSession, whole-stage codegen", "summary": "One entry point, DataFrame and Dataset unified, and whole-stage code generation. Structured Streaming arrives as a preview.", "media": { "type": "glyph", "glyph": "2.0", "alt": "Version 2.0" } },
+          { "id": "dp-structured-streaming-2017", "at": "2017-07", "lane": "spark", "weight": 0.68, "title": "Structured Streaming is stable", "byline": "Spark 2.2", "summary": "A stream is an unbounded table queried with the same DataFrame API as a batch job.", "media": { "type": "glyph", "glyph": "≋", "alt": "Stream" } },
+          { "id": "dp-spark-2-3-2018", "at": "2018-02", "lane": "spark", "weight": 0.5, "title": "Kubernetes and pandas UDFs", "byline": "Spark 2.3", "summary": "Native Kubernetes scheduling, and Arrow-based vectorised pandas UDFs make Python a first-class citizen.", "media": { "type": "glyph", "glyph": "⎈", "alt": "Kubernetes" } },
+          { "id": "dp-spark-3-0-2020", "at": "2020-06", "lane": "spark", "weight": 0.78, "title": "Adaptive Query Execution", "byline": "Spark 3.0", "summary": "The plan is re-optimised at runtime using real shuffle statistics: coalesced partitions, skew-join handling, dynamic partition pruning.", "media": { "type": "glyph", "glyph": "3.0", "alt": "Version 3.0" } },
+          { "id": "dp-spark-connect-2023", "at": "2023-04", "lane": "spark", "weight": 0.66, "title": "Spark Connect", "byline": "Spark 3.4; 3.5 is the long-term-support line", "summary": "A thin gRPC protocol separates the client application from the driver, so Spark can be used like a service.", "media": { "type": "glyph", "glyph": "⇄", "alt": "Client and server" } }
+        ]
+      }
+    },
+    {
+      "id": "databricks-2013",
+      "at": "2013",
+      "lane": "databricks",
+      "weight": 0.7,
+      "title": "Databricks",
+      "byline": "Spark's creators, including Ghodsi, Zaharia, Stoica, and Xin",
+      "summary": "The people who built Spark start a company to run it for you as a managed cloud service.",
+      "media": { "type": "image", "src": "public/timeline/data-platforms/databricks-2013.svg", "alt": "A cloud cluster beside a runnable notebook" },
+      "keyPoints": [
+        "Open-source engine, commercial platform: notebooks, managed clusters, and a job scheduler on top of Spark.",
+        "Cloud-first from the start, so the cluster is something you rent, not something you own.",
+        "Broadened into machine learning with MLflow (2018), open-sourced for experiment tracking and a model registry.",
+        "Most of its later engine work (Photon, Delta, Unity Catalog) sits underneath Spark's own APIs."
+      ],
+      "impact": "Established the pattern of this whole rail: an open project, a company that makes it painless, and a slowly widening gap between what the open version does and what the platform does.",
+      "resources": [{ "type": "reference", "label": "Databricks blog", "href": "https://www.databricks.com/blog" }]
+    },
+    {
+      "id": "dataframes-2015",
+      "at": "2015-03",
+      "lane": "spark",
+      "weight": 0.85,
+      "title": "DataFrames and Catalyst",
+      "byline": "Armbrust et al.",
+      "summary": "Describe what you want, not how to compute it, and let an optimiser rewrite the plan. The RDD era's \"how\" becomes SQL's \"what\".",
+      "media": { "type": "image", "src": "public/timeline/data-platforms/dataframes-2015.svg", "alt": "A query plan is simplified by pushing a filter toward the table" },
+      "keyPoints": [
+        "Spark 1.3 (March 2015) introduces schema-aware DataFrames.",
+        "Catalyst rewrites logical plans with rules: predicate pushdown, column pruning, join reordering.",
+        "Project Tungsten adds off-heap binary rows and code generation to approach hardware limits.",
+        "DataFrame code and SQL compile to the same plan, so they perform the same."
+      ],
+      "impact": "The second of Spark's three big shifts (disk to memory, imperative to declarative, batch cluster to unified platform). It is why PySpark can be fast even though Python is not.",
+      "resources": [
+        { "type": "paper", "label": "Spark SQL: Relational Data Processing in Spark", "href": "https://dl.acm.org/doi/10.1145/2723372.2742797", "note": "SIGMOD 2015" }
+      ]
+    },
+    {
+      "id": "snowflake-2015",
+      "at": "2015-06",
+      "lane": "snowflake",
+      "weight": 0.92,
+      "title": "Snowflake",
+      "byline": "Dageville, Cruanes, Żukowski",
+      "summary": "The opposite bet: a closed, fully managed SQL warehouse designed for the cloud, with storage and compute separated and nothing to tune.",
+      "media": { "type": "image", "src": "public/timeline/data-platforms/snowflake-2015.svg", "alt": "Storage, independent compute boxes, and services in three layers", "motion": "float" },
+      "keyPoints": [
+        "Founded in 2012 by two ex-Oracle architects and the co-creator of the Vectorwise engine; out of stealth in late 2014, generally available in mid-2015.",
+        "Three layers: columnar micro-partitions in object storage, independent virtual warehouses, and a cloud-services brain for optimiser, metadata, and transactions.",
+        "Zero-copy cloning, Time Travel, and secure data sharing fall out of immutable micro-partitions.",
+        "Runs on AWS, Azure, and GCP."
+      ],
+      "impact": "Where Spark asked you to operate an engine, Snowflake asked you to write SQL. For a decade the choice between them was really a choice between control and convenience.",
+      "resources": [
+        { "type": "paper", "label": "The Snowflake Elastic Data Warehouse", "href": "https://doi.org/10.1145/2882903.2903741", "note": "SIGMOD 2016" },
+        { "type": "paper", "label": "MonetDB/X100: Hyper-Pipelining Query Execution", "href": "https://www.cidrdb.org/cidr2005/papers/P19.pdf", "note": "The vectorised-execution lineage" },
+        { "type": "guide", "label": "Choosing a data platform by workload", "guide": "data-platform-selection" }
+      ],
+      "bodyUrl": "timelines/data-platforms/snowflake-2015.html",
+      "children": {
+        "id": "snowflake-growth",
+        "axis": { "scale": "linear", "precision": "year", "direction": "horizontal" },
+        "style": "filmstrip",
+        "events": [
+          { "id": "dp-snow-slootman-2019", "at": "2019", "lane": "snowflake", "weight": 0.5, "title": "Slootman takes over", "byline": "Enterprise sales, at scale", "summary": "Frank Slootman becomes CEO and the company turns from a technology into a very large business.", "media": { "type": "glyph", "glyph": "◆", "alt": "Leadership" } },
+          { "id": "dp-snow-ipo-2020", "at": "2020-09", "lane": "snowflake", "weight": 0.8, "title": "IPO", "byline": "September 2020", "summary": "The largest software IPO to that date, and the point where the warehouse-versus-lakehouse rivalry became public and financial.", "media": { "type": "glyph", "glyph": "$", "alt": "Listing" } },
+          { "id": "dp-snowpark-2021", "at": "2021", "lane": "snowflake", "weight": 0.74, "title": "Snowpark", "byline": "DataFrames inside the warehouse", "summary": "A DataFrame API in Python, Java, and Scala that looks like PySpark but runs inside Snowflake.", "media": { "type": "glyph", "glyph": "{}", "alt": "Code" } },
+          { "id": "dp-snow-streamlit-2022", "at": "2022", "lane": "snowflake", "weight": 0.6, "title": "Streamlit, Unistore, Iceberg preview", "byline": "Apps, transactions, open tables", "summary": "Buys Streamlit, announces Hybrid Tables for transactional work, and previews Iceberg Tables.", "media": { "type": "glyph", "glyph": "▦", "alt": "Apps" } },
+          { "id": "dp-snow-ai-2024", "at": "2024-02", "lane": "snowflake", "weight": 0.66, "title": "Ramaswamy becomes CEO", "byline": "Cortex AI, Arctic", "summary": "Sridhar Ramaswamy takes over and the product turns toward AI: Cortex functions, the Arctic model, and later agents.", "media": { "type": "glyph", "glyph": "✺", "alt": "AI" } }
+        ]
+      }
+    },
+    {
+      "id": "delta-2019",
+      "at": "2019-04",
+      "lane": "databricks",
+      "weight": 0.88,
+      "title": "Delta Lake",
+      "byline": "Databricks, then the Linux Foundation",
+      "summary": "A transaction log placed beside the Parquet files, so a folder in object storage starts behaving like a table with commits.",
+      "media": { "type": "image", "src": "public/timeline/data-platforms/delta-2019.svg", "alt": "Data files beside a commit ledger showing an added and removed file", "motion": "pulse" },
+      "keyPoints": [
+        "ACID transactions over cloud object storage by appending to an ordered log of table changes.",
+        "Schema enforcement and evolution, time travel, and efficient upserts (MERGE).",
+        "Streaming and batch read and write the same table.",
+        "Open source from 2019, with the rest of the features opened up with Delta Lake 2.0 in 2022."
+      ],
+      "impact": "Removed the main reason a warehouse was necessary: reliable updates. It is the technical core of the lakehouse argument that came next.",
+      "resources": [
+        { "type": "paper", "label": "Delta Lake: High-Performance ACID Table Storage over Cloud Object Stores", "href": "https://www.vldb.org/pvldb/vol13/p3411-armbrust.pdf", "note": "VLDB 2020" },
+        { "type": "reference", "label": "Delta Lake", "href": "https://delta.io/" },
+        { "type": "guide", "label": "Incremental pipelines", "guide": "data-incremental-pipelines" }
+      ]
+    },
+    {
+      "id": "lakehouse-2020",
+      "at": "2020",
+      "lane": "databricks",
+      "weight": 0.86,
+      "title": "The lakehouse and Photon",
+      "byline": "Armbrust, Ghodsi, Xin, Zaharia",
+      "summary": "Databricks argues that open lake storage plus warehouse features can replace the two-system architecture, and builds a C++ engine to prove the performance claim.",
+      "media": { "type": "image", "src": "public/timeline/data-platforms/lakehouse-2020.svg", "alt": "A lake roof over data shelves beside a rising performance chart" },
+      "keyPoints": [
+        "Lakehouse: open file formats, a transactional metadata layer, and a fast SQL engine on one copy of the data.",
+        "Photon is a proprietary vectorised C++ engine that keeps Spark's APIs and replaces its execution.",
+        "Databricks SQL, Unity Catalog, and serverless warehouses follow to present a warehouse-shaped surface.",
+        "Spark's JVM execution has been moving toward native engines throughout (Photon, and open projects such as Velox-based Gluten)."
+      ],
+      "impact": "The first time the lake-side vendor moved up into warehousing, rather than the other way round. It also set up the benchmark fight in 2021.",
+      "resources": [
+        { "type": "paper", "label": "Lakehouse: A New Generation of Open Platforms", "href": "https://www.cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf", "note": "CIDR 2021" },
+        { "type": "paper", "label": "Photon: A Fast Query Engine for Lakehouse Systems", "href": "https://dl.acm.org/doi/10.1145/3514221.3526054", "note": "SIGMOD 2022" }
+      ],
+      "bodyUrl": "timelines/data-platforms/lakehouse-2020.html",
+      "children": {
+        "id": "databricks-buildout",
+        "axis": { "scale": "linear", "precision": "year", "direction": "horizontal" },
+        "style": "filmstrip",
+        "events": [
+          { "id": "dp-dbx-unity-2022", "at": "2022", "lane": "databricks", "weight": 0.74, "title": "Unity Catalog; Delta 2.0", "byline": "Governance joins the platform", "summary": "A single place for access control, lineage, and discovery across data and AI assets; the remaining Delta features are open-sourced.", "media": { "type": "glyph", "glyph": "⛨", "alt": "Governance" } },
+          { "id": "dp-dbx-mosaic-2023", "at": "2023-06", "lane": "databricks", "weight": 0.7, "title": "MosaicML", "byline": "Generative AI joins the platform", "summary": "Buys a model-training company and repositions itself from a lakehouse to a Data + AI platform.", "media": { "type": "glyph", "glyph": "✺", "alt": "AI" } },
+          { "id": "dp-dbx-pipelines-2025", "at": "2025", "lane": "databricks", "weight": 0.55, "title": "Declarative pipelines go upstream", "byline": "From Delta Live Tables to Apache Spark", "summary": "The core of Delta Live Tables is contributed to Apache Spark and lands as Spark Declarative Pipelines in 4.1.", "media": { "type": "glyph", "glyph": "⇢", "alt": "Pipeline" } }
+        ]
+      }
+    },
+    {
+      "id": "tpcds-2021",
+      "at": "2021-11",
+      "lane": "ecosystem",
+      "weight": 0.55,
+      "title": "The benchmark dispute",
+      "byline": "Databricks vs Snowflake",
+      "summary": "Databricks claims a warehouse benchmark record; Snowflake publicly disputes the comparison. The two companies are now plainly competitors.",
+      "media": { "type": "image", "src": "public/timeline/data-platforms/tpcds-2021.svg", "alt": "Two race bars approach a finish line under a disputed stopwatch" },
+      "keyPoints": [
+        "The benchmark was TPC-DS, the standard decision-support workload.",
+        "The argument was about methodology: what is compared, on what configuration, at what price.",
+        "Both sides published their own numbers, which is the lesson in itself.",
+        "Neither company's results should be taken from the vendor's own blog without reading the setup."
+      ],
+      "impact": "Marks the moment the two platforms stopped talking past each other. Treat vendor benchmarks as marketing until you have reproduced the setup on your own workload.",
+      "resources": [
+        { "type": "reference", "label": "TPC-DS specification", "href": "https://www.tpc.org/tpcds/" },
+        { "type": "guide", "label": "Performance reasoning for data workloads", "guide": "data-performance" }
+      ]
+    },
+    {
+      "id": "catalog-war-2024",
+      "at": "2024-06",
+      "lane": "ecosystem",
+      "weight": 0.9,
+      "title": "Open formats and the catalog war",
+      "byline": "Iceberg, Delta, Polaris, Unity Catalog",
+      "summary": "The fight moves from who owns the compute to who owns the catalog, the thing that decides which engines can see which tables.",
+      "media": { "type": "image", "src": "public/timeline/data-platforms/catalog-war-2024.svg", "alt": "An open card catalog connects through locks to four engines" },
+      "keyPoints": [
+        "Apache Iceberg (from Netflix) and Delta Lake compete as the open table format; Hudi (from Uber) is the third.",
+        "June 2024: Databricks buys Tabular, founded by Iceberg's creators, and open-sources Unity Catalog the same week as Snowflake's Summit.",
+        "Snowflake launches Polaris, an Iceberg REST catalog, and donates it to Apache.",
+        "Interoperability becomes the sales pitch: Delta UniForm, Iceberg REST, and engines reading each other's tables."
+      ],
+      "impact": "Customers stop being asked to pick a storage format and start being asked to pick a catalog. Whoever holds the catalog holds governance, lineage, and the default path to the compute.",
+      "resources": [
+        { "type": "reference", "label": "Apache Iceberg", "href": "https://iceberg.apache.org/" },
+        { "type": "reference", "label": "Apache Polaris", "href": "https://polaris.apache.org/" },
+        { "type": "reference", "label": "Unity Catalog (open source)", "href": "https://www.unitycatalog.io/" }
+      ],
+      "bodyUrl": "timelines/data-platforms/catalog-war-2024.html"
+    },
+    {
+      "id": "spark-4-2025",
+      "at": "2025-05",
+      "lane": "spark",
+      "weight": 0.72,
+      "title": "Spark 4",
+      "byline": "4.0 (May 2025), 4.1 (December 2025)",
+      "summary": "Spark settles into being a mature SQL engine: ANSI semantics by default, a semi-structured type, pipe syntax, declarative pipelines, and the first real-time mode.",
+      "media": { "type": "image", "src": "public/timeline/data-platforms/spark-4-2025.svg", "alt": "Nested blueprint squares with a check mark and semi-structured braces" },
+      "keyPoints": [
+        "ANSI SQL mode is on by default: an invalid cast now raises an error instead of quietly returning NULL (use try_cast to get the old behaviour).",
+        "A VARIANT type for semi-structured data, SQL pipe syntax, and a Python Data Source API.",
+        "4.1 adds Spark Declarative Pipelines and a first Real-Time Mode for Structured Streaming.",
+        "Spark Connect becomes a more mature default way to talk to a cluster."
+      ],
+      "impact": "Practical consequence for a working engineer: code that relied on silent NULLs will start failing after the upgrade, which is the point. Check the Spark news archive for the current support windows.",
+      "resources": [
+        { "type": "reference", "label": "Spark release notes", "href": "https://spark.apache.org/releases/" },
+        { "type": "reference", "label": "Spark news archive", "href": "https://spark.apache.org/news/" }
+      ]
+    },
+    {
+      "id": "postgres-2025",
+      "at": "2025-06",
+      "lane": "databricks",
+      "weight": 0.7,
+      "title": "Both buy Postgres",
+      "byline": "Neon (Databricks), Crunchy Data (Snowflake)",
+      "summary": "Each analytics platform adds an operational database, so the application and the analytics can sit next to each other.",
+      "media": { "type": "image", "src": "public/timeline/data-platforms/postgres-2025.svg", "alt": "Two Postgres databases, each attached to a separate analytics platform" },
+      "keyPoints": [
+        "Databricks acquires Neon, and it becomes Lakebase, a serverless Postgres inside the lakehouse.",
+        "Snowflake acquires Crunchy Data and ships Snowflake Postgres.",
+        "Earlier attempts at this problem were Hybrid Tables and Unistore on the Snowflake side.",
+        "The aim is fewer copies and fewer pipelines between where data is written and where it is analysed."
+      ],
+      "impact": "OLTP was the last piece neither platform owned. Buying the same open-source database within weeks of each other shows how closely they now watch one another.",
+      "resources": [
+        { "type": "reference", "label": "Databricks blog", "href": "https://www.databricks.com/blog" },
+        { "type": "reference", "label": "Snowflake blog", "href": "https://www.snowflake.com/en/blog/" }
+      ]
+    },
+    {
+      "id": "reyden-2026",
+      "at": "2026-06-15",
+      "precision": "month",
+      "lane": "databricks",
+      "weight": 0.75,
+      "title": "Reyden and Lakehouse//RT",
+      "byline": "Databricks, Data + AI Summit 2026 (beta)",
+      "summary": "A new engine aims to serve millisecond queries directly from Delta and Iceberg tables, without a separate real-time copy.",
+      "media": { "type": "image", "src": "public/timeline/data-platforms/reyden-2026.svg", "alt": "Many packets pass through a narrow channel into dashboard tiles" },
+      "keyPoints": [
+        "Named after Reynold Xin (\"Reynold's Dream Engine\").",
+        "Targets real-time dashboards, applications, and high-concurrency AI agents.",
+        "Databricks reports roughly 10 ms on small data and under 100 ms at about 12,000 queries per second.",
+        "Lineage: MapReduce, Spark on the JVM, Tungsten, Photon, then Reyden."
+      ],
+      "impact": "Moves the lakehouse into serving workloads that used to need a separate store. These figures are the vendor's own and the product was in beta when this was written; check the current status before relying on them.",
+      "resources": [{ "type": "reference", "label": "Databricks blog", "href": "https://www.databricks.com/blog" }]
+    },
+    {
+      "id": "summit-2026",
+      "at": "2026-06-01",
+      "precision": "month",
+      "lane": "snowflake",
+      "weight": 0.65,
+      "title": "Where they meet",
+      "byline": "Snowflake Summit 2026, and the state of play",
+      "summary": "Snowflake answers with agents, built-in streaming, adaptive compute, and Iceberg v3. By now the two platforms compete on almost every layer.",
+      "media": { "type": "image", "src": "public/timeline/data-platforms/summit-2026.svg", "alt": "Coral and blue platform layers connect through a dense network" },
+      "keyPoints": [
+        "June 1-4, 2026: more than twenty-five announcements around an \"agentic enterprise\".",
+        "Snowflake Intelligence becomes CoWork, a personal agent, and Cortex Code becomes CoCo, a coding agent.",
+        "Datastream adds streaming ingestion, Adaptive Compute reduces manual warehouse sizing, and Iceberg v3 is supported.",
+        "Open this entry for the side-by-side comparison and the interview one-liners."
+      ],
+      "impact": "Databricks moved down from the lake to the warehouse; Snowflake moved up from the warehouse to the lake. The interesting question for a practitioner is no longer which one, but which trade-offs you are accepting.",
+      "resources": [
+        { "type": "reference", "label": "Snowflake blog", "href": "https://www.snowflake.com/en/blog/" },
+        { "type": "guide", "label": "Choosing a data platform by workload", "guide": "data-platform-selection" }
+      ],
+      "bodyUrl": "timelines/data-platforms/summit-2026.html"
+    }
+  ]
+}
