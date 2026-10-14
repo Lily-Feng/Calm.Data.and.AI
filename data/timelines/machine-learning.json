@@ -19,7 +19,7 @@
       "title": "A Logical Calculus of Nervous Activity",
       "byline": "Warren McCulloch & Walter Pitts",
       "summary": "Models a neuron as a threshold gate, and shows that a network of them can compute any logical proposition.",
-      "media": { "type": "image", "src": "public/timeline/machine-learning/mcculloch-pitts-1943.svg", "alt": "Layered network motif", "motion": "pulse" },
+      "media": { "type": "image", "src": "public/timeline/machine-learning/mcculloch-pitts-1943.webp", "alt": "Layered network motif", "motion": "pulse" },
       "keyPoints": [
         "The neuron is reduced to weighted inputs and a firing threshold.",
         "Networks of these units are shown to be computationally universal.",

@@ -20,7 +20,7 @@
       "title": "GFS and MapReduce",
       "byline": "Dean & Ghemawat, Google",
       "summary": "Two papers argue that a pile of cheap, unreliable machines can process a web's worth of data, as long as the framework absorbs the failures.",
-      "media": { "type": "image", "src": "public/timeline/data-platforms/dp-mapreduce-2004.svg", "alt": "Parallel map lanes converge on one reduce result, with a failed task replaced", "motion": "float" },
+      "media": { "type": "image", "src": "public/timeline/data-platforms/dp-mapreduce-2004.webp", "alt": "Parallel map lanes converge on one reduce result, with a failed task replaced", "motion": "float" },
       "keyPoints": [
         "GFS (2003) splits files into large replicated blocks across commodity disks.",
         "MapReduce (2004) gives the programmer two functions, map and reduce; the framework does the parallelism, scheduling, and retries.",
@@ -213,7 +213,7 @@
       "title": "The lakehouse and Photon",
       "byline": "Armbrust, Ghodsi, Xin, Zaharia",
       "summary": "Databricks argues that open lake storage plus warehouse features can replace the two-system architecture, and builds a C++ engine to prove the performance claim.",
-      "media": { "type": "image", "src": "public/timeline/data-platforms/lakehouse-2020.svg", "alt": "A lake roof over data shelves beside a rising performance chart" },
+      "media": { "type": "image", "src": "public/timeline/data-platforms/lakehouse-2020.webp", "alt": "A lake roof over data shelves beside a rising performance chart" },
       "keyPoints": [
         "Lakehouse: open file formats, a transactional metadata layer, and a fast SQL engine on one copy of the data.",
         "Photon is a proprietary vectorised C++ engine that keeps Spark's APIs and replaces its execution.",

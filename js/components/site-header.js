@@ -1,4 +1,5 @@
-const LOGO_URL = "public/calm.png";
+const LOGO_URL = "public/apple-touch-icon.png";
+const FAVICON_URL = "public/favicon-32.png";
 
 function escapeHtml(value = "") {
     return String(value)
@@ -18,7 +19,7 @@ function ensureFavicon() {
         icon.dataset.siteFavicon = "";
         document.head.append(icon);
     }
-    icon.href = LOGO_URL;
+    icon.href = FAVICON_URL;
 }
 
 class SiteHeader extends HTMLElement {

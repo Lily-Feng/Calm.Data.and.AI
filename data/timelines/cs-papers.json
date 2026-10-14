@@ -20,7 +20,7 @@
       "title": "On Computable Numbers",
       "byline": "Alan M. Turing",
       "summary": "Defines a machine simple enough to reason about and general enough to compute anything computable — then shows what it still cannot do.",
-      "media": { "type": "image", "src": "public/timeline/cs-papers/turing-1936.svg", "alt": "Punched-tape motif for Turing's 1936 paper", "motion": "float" },
+      "media": { "type": "image", "src": "public/timeline/cs-papers/turing-1936.webp", "alt": "Punched-tape motif for Turing's 1936 paper", "motion": "float" },
       "keyPoints": [
         "A machine is a finite state table, a head, and an unbounded tape — nothing else is needed.",
         "A universal machine can simulate any other machine given its description, which is the idea of software.",
@@ -42,7 +42,7 @@
       "title": "A Mathematical Theory of Communication",
       "byline": "Claude E. Shannon",
       "summary": "Separates the meaning of a message from the problem of moving it, and gives the second one an exact mathematics.",
-      "media": { "type": "image", "src": "public/timeline/cs-papers/shannon-1948.svg", "alt": "Signal-against-noise motif for Shannon's 1948 paper", "motion": "drift" },
+      "media": { "type": "image", "src": "public/timeline/cs-papers/shannon-1948.webp", "alt": "Signal-against-noise motif for Shannon's 1948 paper", "motion": "drift" },
       "keyPoints": [
         "Information is measured as reduction in uncertainty — the entropy of the source, in bits.",
         "Every noisy channel has a capacity, and below it arbitrarily reliable transmission is possible.",
@@ -63,7 +63,7 @@
       "title": "Three Models for the Description of Language",
       "byline": "Noam Chomsky",
       "summary": "Ranks grammars by the machinery they need, producing the hierarchy that still decides how every parser is built.",
-      "media": { "type": "image", "src": "public/timeline/cs-papers/chomsky-1956.svg", "alt": "Parse-tree motif for Chomsky's 1956 paper" },
+      "media": { "type": "image", "src": "public/timeline/cs-papers/chomsky-1956.webp", "alt": "Parse-tree motif for Chomsky's 1956 paper" },
       "keyPoints": [
         "Finite-state models cannot capture nested structure; context-free grammars can.",
         "Grammar classes form a strict hierarchy, each requiring strictly more machine.",

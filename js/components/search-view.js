@@ -15,7 +15,7 @@ class SearchView extends HTMLElement {
 
                 <div class="home-content">
                     <figure class="timeline-feature" id="home-feature">
-                        <img src="public/calm-data-and-ai.webp" alt="A paper collage connecting cloud systems, data platforms, programming, and practical AI">
+                        <img src="public/calm-data-and-ai.webp?v=20261014" alt="A paper collage connecting cloud systems, data platforms, programming, and practical AI">
                         <figcaption><strong>Calm Data and AI</strong></figcaption>
                     </figure>
 

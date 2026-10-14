@@ -16,7 +16,7 @@ class TimelineView extends HTMLElement {
                 <section class="timeline-home" data-timeline-home aria-labelledby="timeline-home-title">
                     <h1 class="sr-only" id="timeline-home-title">Taste of the Past</h1>
                     <figure class="timeline-landing-image">
-                        <img src="public/taste-of-the-past.webp" alt="A paper collage tracing computing from punch cards and mainframes to personal computers and connected systems">
+                        <img src="public/taste-of-the-past.webp?v=20261014" alt="A paper collage tracing computing from punch cards and mainframes to personal computers and connected systems">
                         <figcaption><strong>Taste of the Past</strong></figcaption>
                     </figure>
                 </section>

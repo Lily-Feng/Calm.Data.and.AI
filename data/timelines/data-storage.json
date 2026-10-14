@@ -20,7 +20,7 @@
       "title": "IBM 350 RAMAC",
       "byline": "IBM, San Jose",
       "summary": "Five megabytes on fifty spinning platters — and the first time a computer could reach a record without winding through the ones before it.",
-      "media": { "type": "image", "src": "public/timeline/data-storage/ramac-1956.svg", "alt": "Disk platter motif for the RAMAC", "motion": "pulse" },
+      "media": { "type": "image", "src": "public/timeline/data-storage/ramac-1956.webp", "alt": "Disk platter motif for the RAMAC", "motion": "pulse" },
       "keyPoints": [
         "Random access, as opposed to tape's strictly sequential reading.",
         "About one ton, five megabytes, and rented rather than sold.",

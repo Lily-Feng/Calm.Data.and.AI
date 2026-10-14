@@ -73,7 +73,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible, a:focus-vis
 }
 .brand-row { display: flex; align-items: center; justify-content: space-between; }
 .brand { display: flex; align-items: center; gap: 11px; padding: 0; border: 0; color: var(--white); text-align: left; text-decoration: none; background: transparent; cursor: pointer; }
-.brand-mark { display: block; width: 43px; height: 43px; flex: 0 0 43px; border-radius: 12px 12px 12px 3px; object-fit: cover; }
+.brand-mark { display: block; width: 43px; height: 43px; flex: 0 0 43px; border-radius: 11px; object-fit: contain; }
 .brand > span { min-width: 0; }
 .brand strong, .brand small { display: block; }
 .brand strong { font-size: 15px; letter-spacing: .01em; }

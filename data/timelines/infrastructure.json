@@ -20,7 +20,7 @@
       "title": "IBM System/360",
       "byline": "Gene Amdahl, Fred Brooks & team, IBM",
       "summary": "One instruction set across a whole family of machines, so a customer could buy a bigger computer without rewriting their software.",
-      "media": { "type": "image", "src": "public/timeline/infrastructure/system360-1964.svg", "alt": "Family-of-models motif for System/360" },
+      "media": { "type": "image", "src": "public/timeline/infrastructure/system360-1964.webp", "alt": "Family-of-models motif for System/360" },
       "keyPoints": [
         "Architecture is separated from implementation — the first time that split is made a product.",
         "Backward compatibility becomes a commercial promise rather than an accident.",
