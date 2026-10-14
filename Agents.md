@@ -115,7 +115,7 @@ Rules for changing the component:
   `site-header`, `side-navigation`, `search-view`, and `timeline-view`.
   Components own reusable markup and small UI state; page entry points still
   own data loading, routing, and domain behavior.
-- `css/styles.css` owns the responsive visual system, including baseline typography for `.guide-content` fragments.
+- `css/styles.css` owns the responsive visual system for field notes and the timeline page, including baseline typography for `.guide-content` fragments. All pages share one dark palette: the `:root` tokens in `css/styles.css` mirror `css/knowledge-atlas.css`, so change both together. In `styles.css`, `--ink` is text colour only — use `--fill-strong`/`--on-fill` for solid emphasis fills, `--line-strong` for emphasis borders, `--on-accent` for text on acid or pastel accents, and tint per-domain/lane colours with `color-mix()` rather than using them as full backgrounds.
 - `js/app.js` renders the field-notes overview graph, domain graphs, concept inspector, and search from `js/manifest.js` + `js/atlas.js`, and fetches/injects the matching `guides/<id>.html` fragment when a guide opens. It also preloads every fragment once at startup (`Promise.allSettled`, cached) to build the full-text search index — a fragment that fails to load degrades to metadata-only search for that guide rather than breaking the page.
 - There are no external assets and no build step — fetch-based fragment loading works directly against the static file server / GitHub Pages. The one runtime library is the vendored Three.js used by the homepage scene; do not load it (or anything else) from a CDN.
 
