@@ -1,0 +1,1526 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Analytics Systems Map</title>
+<meta name="description" content="Interactive 3D map of analytics-system responsibilities, from the MicroStrategy stack to the modern data stack.">
+<style>
+  :root {
+    --bg: #060a14;
+    --panel: rgba(11, 17, 32, 0.68);
+    --panel-solid: #0b1120;
+    --line: rgba(150, 175, 230, 0.14);
+    --line-strong: rgba(150, 175, 230, 0.28);
+    --text: #e7edff;
+    --muted: #8c99bb;
+    --faint: #5d6a8c;
+    --accent: #7aa2ff;
+    --mstr: #ff5470;
+    --modern: #5ee6c8;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --r: 14px;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--text);
+    font: 14px/1.45 var(--sans); -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none; touch-action: none;
+  }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
+  button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  a { color: #9db8ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  #stage { position: fixed; inset: 0; }
+  #stage canvas { display: block; touch-action: none; }
+  .label-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .vignette { position: fixed; inset: 0; pointer-events: none;
+    background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(3, 5, 12, 0.75) 100%); }
+
+  .panel {
+    position: fixed; z-index: 5; background: var(--panel); border: 1px solid var(--line);
+    border-radius: var(--r); backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+  }
+  .eyebrow { font: 600 10.5px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+
+  /* ---------- header ---------- */
+  #brand { position: fixed; z-index: 6; top: 18px; left: 20px; width: 270px; }
+  #brand h1 { margin: 6px 0 4px; font-size: 19px; font-weight: 650; letter-spacing: -0.01em; }
+  #brand p { margin: 0; color: var(--muted); font-size: 12.5px; }
+  #brand .row { display: flex; align-items: center; gap: 8px; }
+  #brand .pip { width: 8px; height: 8px; border-radius: 50%; background: linear-gradient(135deg, var(--mstr), var(--modern)); box-shadow: 0 0 12px var(--modern); }
+  #reset { margin-left: auto; font: 600 10.5px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+    border: 1px solid var(--line); border-radius: 999px; padding: 6px 9px; }
+  #reset:hover { color: var(--text); border-color: var(--line-strong); }
+
+  /* ---------- layer rail ---------- */
+  #rail { top: 150px; left: 16px; width: 280px; bottom: 148px; padding: 10px; overflow-y: auto; scrollbar-width: thin; }
+  #rail .eyebrow { padding: 6px 8px 10px; display: flex; justify-content: space-between; }
+  #rail ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column-reverse; gap: 2px; }
+  .layer-btn { width: 100%; display: grid; grid-template-columns: 28px 1fr; align-items: start; gap: 8px; padding: 8px; border-radius: 10px; text-align: left; position: relative; }
+  .layer-btn::before { content: ""; position: absolute; left: 0; top: 9px; bottom: 9px; width: 2px; border-radius: 2px; background: var(--c); opacity: 0.35; transition: opacity .2s; }
+  .layer-btn:hover { background: rgba(255, 255, 255, 0.04); }
+  .layer-btn .num { font: 600 11px/1.5 var(--mono); color: var(--c); }
+  .layer-btn .nm { font-weight: 600; font-size: 13.5px; }
+  .layer-btn .q { display: block; color: var(--muted); font-size: 12px; font-weight: 400; margin-top: 2px; max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+  li.open .layer-btn { background: rgba(255, 255, 255, 0.055); }
+  li.open .layer-btn::before { opacity: 1; box-shadow: 0 0 10px var(--c); }
+  li.open .layer-btn .q { max-height: 60px; }
+  .caps { display: none; flex-direction: column; gap: 1px; padding: 4px 0 8px 36px; }
+  li.open .caps { display: flex; }
+  .cap-btn { text-align: left; padding: 5px 8px; border-radius: 7px; font-size: 12.5px; color: #c9d3ef; display: flex; gap: 8px; align-items: baseline; }
+  .cap-btn::before { content: ""; flex: none; width: 5px; height: 5px; border-radius: 1px; background: var(--c); transform: translateY(-1px); }
+  .cap-btn.new::before { border-radius: 50%; background: transparent; box-shadow: inset 0 0 0 1.5px var(--c); }
+  .cap-btn:hover, .cap-btn.sel { background: rgba(255, 255, 255, 0.06); color: var(--text); }
+  .cap-btn[aria-disabled="true"] { opacity: 0.4; }
+
+  /* ---------- inspector ---------- */
+  #inspector { top: 16px; right: 16px; width: 360px; bottom: 148px; padding: 18px 18px 16px; overflow-y: auto; scrollbar-width: thin; }
+  #inspector h2 { margin: 8px 0 6px; font-size: 20px; line-height: 1.25; font-weight: 650; letter-spacing: -0.01em; }
+  #inspector p { margin: 0 0 12px; color: #c4cde6; }
+  #inspector .q { font-size: 15px; color: var(--text); font-style: italic; }
+  #inspector .sub { color: var(--muted); font-size: 12.5px; }
+  #inspector .close { position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; border-radius: 8px; color: var(--muted); display: none; }
+  #inspector .close:hover { color: var(--text); background: rgba(255,255,255,.06); }
+  .crumb { display: inline-flex; align-items: center; gap: 6px; }
+  .crumb i { width: 8px; height: 8px; border-radius: 2px; background: var(--c); box-shadow: 0 0 8px var(--c); }
+  .crumb:hover { color: var(--text); }
+  .lens-cards { display: grid; gap: 8px; margin: 14px 0; }
+  .lens-card { border: 1px solid var(--line); border-radius: 11px; padding: 10px 12px; position: relative; transition: border-color .3s, background .3s, opacity .3s; opacity: 0.62; }
+  .lens-card .eyebrow { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .lens-card .eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--k); }
+  .lens-card b { display: block; font-size: 13.5px; margin-bottom: 3px; }
+  .lens-card span { color: #b9c3df; font-size: 12.8px; }
+  .lens-card.on { opacity: 1; border-color: color-mix(in srgb, var(--k) 55%, transparent); background: color-mix(in srgb, var(--k) 8%, transparent); }
+  .lens-card.mstr { --k: var(--mstr); } .lens-card.modern { --k: var(--modern); }
+  .why { border-left: 2px solid var(--c, var(--accent)); padding: 2px 0 2px 12px; margin: 12px 0; color: #d6def5; font-size: 13.3px; }
+  .lesson { margin: 14px 0; padding: 12px 14px; border-radius: 11px; background: rgba(255,255,255,.035); font-size: 13.3px; color: #d6def5; }
+  .lesson .eyebrow { display: block; margin-bottom: 6px; }
+  h4 { margin: 18px 0 8px; font: 600 10.5px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .cap-table { display: grid; gap: 2px; }
+  .cap-row { display: grid; grid-template-columns: 1fr 14px 1fr; gap: 6px; align-items: center; text-align: left; padding: 7px 8px; border-radius: 8px; font-size: 12.3px; }
+  .cap-row:hover { background: rgba(255,255,255,.05); }
+  .cap-row .a { color: #f3b3c0; } .cap-row .b { color: #a9f0df; } .cap-row .arr { color: var(--faint); text-align: center; }
+  .cap-row .a.none { color: var(--faint); font-style: italic; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px 4px 8px; font-size: 12px; color: #cdd6f0; }
+  .chip i { width: 6px; height: 6px; border-radius: 2px; background: var(--c); }
+  .chip:hover { border-color: var(--line-strong); color: var(--text); }
+  .ms { display: grid; grid-template-columns: 44px 1fr; gap: 2px 10px; padding: 8px 0; border-top: 1px solid var(--line); font-size: 12.5px; }
+  .ms .y { font: 600 12px/1.5 var(--mono); color: var(--modern); }
+  .ms .w { grid-column: 2; color: var(--muted); }
+  .qs { display: grid; gap: 8px; margin: 14px 0; }
+  .q-btn { display: grid; grid-template-columns: 22px 1fr; gap: 10px; text-align: left; border: 1px solid var(--line); border-radius: 11px; padding: 10px 12px; }
+  .q-btn:hover { border-color: var(--line-strong); background: rgba(255,255,255,.035); }
+  .q-btn .n { font: 600 12px/1.5 var(--mono); color: var(--accent); }
+  .q-btn b { display: block; font-size: 13.5px; }
+  .q-btn span { color: var(--muted); font-size: 12px; }
+  .keys { display: grid; grid-template-columns: auto 1fr; gap: 5px 10px; font-size: 12px; color: var(--muted); margin-top: 6px; }
+  kbd { font: 600 10.5px/1 var(--mono); color: #cdd6f0; border: 1px solid var(--line-strong); border-bottom-width: 2px; border-radius: 5px; padding: 3px 6px; display: inline-block; min-width: 20px; text-align: center; }
+
+  /* ---------- dock ---------- */
+  #dock { left: 16px; right: 16px; bottom: 16px; padding: 12px 14px; display: grid; grid-template-columns: auto auto 1fr; gap: 10px 22px; align-items: center; }
+  .dock-group { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .dock-label { font: 600 10px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); white-space: nowrap; }
+  .seg { position: relative; display: grid; grid-template-columns: 1fr 1fr; background: rgba(0,0,0,.3); border: 1px solid var(--line); border-radius: 999px; padding: 3px; min-width: 290px; }
+  .seg button { position: relative; z-index: 1; padding: 7px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 600; color: var(--muted); transition: color .25s; white-space: nowrap; }
+  .seg button[aria-pressed="true"] { color: #fff; }
+  .seg-thumb { position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); border-radius: 999px; transition: transform .45s cubic-bezier(.65,0,.35,1), background .45s, box-shadow .45s;
+    background: linear-gradient(135deg, rgba(255,84,112,.38), rgba(255,84,112,.16)); box-shadow: 0 0 18px rgba(255,84,112,.35), inset 0 0 0 1px rgba(255,84,112,.55); }
+  .seg[data-v="1"] .seg-thumb { transform: translateX(100%);
+    background: linear-gradient(135deg, rgba(94,230,200,.32), rgba(94,230,200,.12)); box-shadow: 0 0 18px rgba(94,230,200,.3), inset 0 0 0 1px rgba(94,230,200,.5); }
+  .traces { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+  .tr-btn { white-space: nowrap; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 12.3px; color: #c9d3ef; display: inline-flex; align-items: center; gap: 7px; }
+  .tr-btn::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--t); box-shadow: 0 0 8px var(--t); }
+  .tr-btn:hover { border-color: var(--line-strong); color: var(--text); }
+  .tr-btn[aria-pressed="true"] { border-color: var(--t); color: #fff; background: color-mix(in srgb, var(--t) 14%, transparent); }
+
+  .timeline { grid-column: 1 / -1; display: grid; grid-template-columns: auto 1fr minmax(240px, 34%); gap: 14px; align-items: center; padding-top: 10px; border-top: 1px solid var(--line); }
+  #yearPlay { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line-strong); display: grid; place-items: center; color: var(--modern); }
+  #yearPlay:hover { background: rgba(94,230,200,.1); }
+  .tl-track { position: relative; height: 34px; }
+  .tl-ticks { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+  .tick { position: absolute; top: 0; transform: translateX(-50%); font: 600 9.5px/1 var(--mono); color: var(--faint); pointer-events: auto; padding: 2px; }
+  .tick::after { content: ""; display: block; margin: 5px auto 0; width: 6px; height: 6px; border-radius: 50%; background: var(--faint); transition: background .2s, box-shadow .2s; }
+  .tick.past { color: #9aa8c9; } .tick.past::after { background: var(--modern); }
+  .tick.now { color: #fff; } .tick.now::after { background: #fff; box-shadow: 0 0 10px var(--modern); }
+  .tick:nth-child(even) { top: auto; bottom: -3px; display: flex; flex-direction: column-reverse; }
+  .tick:nth-child(even)::after { margin: 0 auto 5px; }
+  #year { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); width: 100%; margin: 0; -webkit-appearance: none; appearance: none; background: transparent; height: 18px; cursor: pointer; }
+  #year::-webkit-slider-runnable-track { height: 2px; background: linear-gradient(90deg, var(--modern) var(--p, 100%), rgba(150,175,230,.18) var(--p, 100%)); border-radius: 2px; }
+  #year::-moz-range-track { height: 2px; background: rgba(150,175,230,.18); }
+  #year::-moz-range-progress { height: 2px; background: var(--modern); }
+  #year::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; margin-top: -6px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px rgba(94,230,200,.25), 0 0 14px var(--modern); }
+  #year::-moz-range-thumb { width: 14px; height: 14px; border: 0; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px rgba(94,230,200,.25); }
+  .tl-cap { font-size: 12.3px; color: #c4cde6; min-height: 34px; display: flex; align-items: center; gap: 10px; }
+  .tl-cap .yr { font: 650 20px/1 var(--mono); color: #fff; letter-spacing: -0.02em; white-space: nowrap; }
+  .tl-cap .tx { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .tl-cap .tx b { color: var(--text); }
+  body[data-lens="0"] .timeline { opacity: .55; }
+  body[data-lens="0"] .timeline:hover { opacity: .85; }
+
+  /* ---------- trace caption ---------- */
+  #caption { top: 16px; width: min(470px, calc(100vw - 32px)); transform: translateX(-50%); padding: 14px 16px 12px; border-color: color-mix(in srgb, var(--t, var(--accent)) 40%, transparent); }
+  #caption[hidden] { display: none; }
+  .cap-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .cap-head .eyebrow { color: var(--t); }
+  #capQ { margin: 6px 0 8px; font-size: 12px; color: var(--muted); font-style: italic; }
+  #capStep { margin: 0 0 4px; font-size: 15px; font-weight: 650; display: flex; align-items: center; gap: 8px; }
+  #capStep i { width: 8px; height: 8px; border-radius: 2px; background: var(--c); box-shadow: 0 0 8px var(--c); flex: none; }
+  #capText { margin: 0; color: #d0d8f0; font-size: 13.3px; min-height: 38px; }
+  .cap-ctrl { display: flex; gap: 6px; align-items: center; margin-top: 10px; }
+  .cap-ctrl button { border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; font-size: 12px; color: #c9d3ef; }
+  .cap-ctrl button:hover { border-color: var(--line-strong); color: #fff; }
+  .cap-ctrl .sp { flex: 1; }
+  .cap-dots { display: flex; gap: 4px; }
+  .cap-dots span { width: 14px; height: 3px; border-radius: 2px; background: rgba(150,175,230,.2); transition: background .3s; }
+  .cap-dots span.on { background: var(--t); }
+
+  /* ---------- 3D labels ---------- */
+  .nl-wrap, .ll-wrap, .ml-wrap { pointer-events: none; }
+  .nl { transform: translateY(-24px); display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px 3px 6px; border-radius: 7px; white-space: nowrap;
+    font: 550 11px/1.3 var(--sans); color: #e3eaff; background: rgba(7, 11, 22, 0.78);
+    border: 1px solid color-mix(in srgb, var(--c) 40%, transparent); pointer-events: auto; cursor: pointer; transition: border-color .2s, background .2s; will-change: opacity; }
+  .nl i { width: 6px; height: 6px; border-radius: 2px; background: var(--c); flex: none; }
+  .nl.new i { border-radius: 50%; }
+  .nl:hover, .nl.hot { background: rgba(14, 22, 42, 0.95); border-color: var(--c); }
+  .nl.cur { box-shadow: 0 0 0 1px var(--c), 0 0 16px color-mix(in srgb, var(--c) 60%, transparent); }
+  .ll { display: inline-flex; align-items: baseline; gap: 7px; transform: translateX(-50%); white-space: nowrap; pointer-events: auto; cursor: pointer;
+    font: 600 11.5px/1 var(--sans); color: #cfd8f3; padding: 5px 9px; border-radius: 7px; transition: background .2s, color .2s; }
+  .ll b { font: 650 10.5px/1 var(--mono); color: var(--c); }
+  .ll:hover, .ll.on { color: #fff; background: rgba(255,255,255,.06); }
+  .ml { text-align: center; white-space: nowrap; transform: translateY(-10px); }
+  .ml .k { font: 650 10px/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--mstr); text-shadow: 0 0 12px rgba(255,84,112,.6); }
+  .ml .s { margin-top: 5px; font-size: 11.5px; color: #e9c7cf; }
+  .ml.modern .k { color: var(--modern); text-shadow: 0 0 12px rgba(94,230,200,.6); }
+  .ml.modern .s { color: #bfeee2; }
+  .note { font-size: 11px; color: #9ba8c8; white-space: nowrap; border: 1px dashed rgba(150,175,230,.3); padding: 4px 8px; border-radius: 7px; background: rgba(6,10,20,.6); }
+
+  #tooltip { position: fixed; left: 0; top: 0; z-index: 20; pointer-events: none; padding: 9px 11px; border-radius: 10px; background: rgba(8, 12, 24, 0.95); border: 1px solid var(--line-strong);
+    font-size: 12px; max-width: 280px; opacity: 0; transition: opacity .15s; box-shadow: 0 8px 30px rgba(0,0,0,.5); }
+  #tooltip.on { opacity: 1; }
+  #tooltip .t { font-weight: 650; margin-bottom: 5px; font-size: 12.5px; }
+  #tooltip .r { display: grid; grid-template-columns: 62px 1fr; gap: 6px; color: #c4cde6; }
+  #tooltip .r em { font: 600 9.5px/1.6 var(--mono); letter-spacing: .08em; text-transform: uppercase; font-style: normal; }
+  #tooltip .r.m em { color: var(--mstr); } #tooltip .r.n em { color: var(--modern); }
+
+  #fallback { position: fixed; inset: 0; display: none; place-items: center; text-align: center; padding: 24px; color: var(--muted); }
+
+  /* ---------- compact layout ---------- */
+  @media (max-width: 980px) {
+    #brand { width: auto; right: 16px; top: 12px; left: 16px; }
+    #brand h1 { font-size: 16px; margin: 4px 0 0; } #brand p { display: none; }
+    #rail { top: 66px; left: 0; right: 0; bottom: auto; width: auto; padding: 0 12px; background: none; border: 0; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; overflow: visible; }
+    #rail > .eyebrow { display: none; }
+    #rail ol { flex-direction: row; overflow-x: auto; scrollbar-width: none; gap: 6px; padding-bottom: 2px; }
+    #rail li { flex: none; }
+    .layer-btn { display: inline-flex; width: auto; gap: 6px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); backdrop-filter: blur(10px); }
+    .layer-btn::before, .layer-btn .q, .caps, li.open .caps { display: none; }
+    .layer-btn .nm { font-size: 12px; }
+    .layer-btn .nm .full { display: none; }
+    li.open .layer-btn { border-color: var(--c); }
+    #inspector { top: auto; left: 8px; right: 8px; width: auto; max-height: 46vh; bottom: calc(var(--dock-h, 170px) + 22px); display: none; padding-top: 16px; }
+    #inspector.has-content { display: block; }
+    #inspector .close { display: grid; place-items: center; }
+    #dock { grid-template-columns: 1fr; left: 8px; right: 8px; bottom: 8px; padding: 10px; gap: 8px; }
+    .seg { min-width: 0; width: 100%; }
+    .dock-group { justify-content: space-between; }
+    .dock-label { display: none; }
+    .timeline { grid-template-columns: auto 1fr; }
+    .tl-cap { grid-column: 1 / -1; min-height: 0; }
+    .tl-cap .yr { font-size: 15px; }
+    #caption { top: 108px; padding: 12px; }
+    .ll { display: none; }
+    #capText { min-height: 0; font-size: 12.8px; }
+  }
+  @media (min-width: 981px) { .layer-btn .nm .short { display: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: 0.01ms !important; }
+  }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body data-lens="0">
+<div id="stage" aria-hidden="true"></div>
+<div class="vignette"></div>
+
+<header id="brand">
+  <div class="row"><span class="pip"></span><span class="eyebrow">Analytics systems map</span></div>
+  <h1>Where does each responsibility live?</h1>
+  <p>Seven layers of an analytics system, seen through the MicroStrategy stack and the modern data stack.</p>
+</header>
+
+<nav id="rail" class="panel" aria-label="Layers">
+  <div class="eyebrow"><span>Layers</span><button id="reset" type="button" title="Reset view (0)">Reset</button></div>
+  <ol id="layerList"></ol>
+</nav>
+
+<aside id="inspector" class="panel" aria-live="polite"></aside>
+
+<div id="caption" class="panel" hidden role="region" aria-label="Trace">
+  <div class="cap-head"><span class="eyebrow" id="capTitle"></span><div class="cap-dots" id="capDots"></div></div>
+  <p id="capQ"></p>
+  <h3 id="capStep"></h3>
+  <p id="capText"></p>
+  <div class="cap-ctrl">
+    <button id="capPrev" type="button" aria-label="Previous step">←</button>
+    <button id="capPlay" type="button">Pause</button>
+    <button id="capNext" type="button" aria-label="Next step">→</button>
+    <span class="sp"></span>
+    <button id="capClose" type="button">Close</button>
+  </div>
+</div>
+
+<footer id="dock" class="panel">
+  <div class="dock-group">
+    <span class="dock-label">Lens</span>
+    <div class="seg" id="lensSeg" data-v="0" role="group" aria-label="Lens">
+      <span class="seg-thumb"></span>
+      <button type="button" data-lens="0" aria-pressed="true">MicroStrategy stack</button>
+      <button type="button" data-lens="1" aria-pressed="false">Modern stack</button>
+    </div>
+  </div>
+  <div class="dock-group">
+    <span class="dock-label">Trace</span>
+    <div class="traces" id="traceBtns"></div>
+  </div>
+  <div></div>
+  <div class="timeline">
+    <button id="yearPlay" type="button" aria-label="Play the modern stack timeline">▶</button>
+    <div class="tl-track">
+      <div class="tl-ticks" id="ticks"></div>
+      <input id="year" type="range" min="2004" max="2023" step="1" value="2023" aria-label="Year the modern stack is shown as of">
+    </div>
+    <div class="tl-cap" id="yearCap"></div>
+  </div>
+</footer>
+
+<div id="tooltip" role="tooltip"></div>
+<div id="fallback"><div><h2>WebGL is unavailable</h2><p>This map needs a browser with WebGL enabled.</p></div></div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+/* =====================================================================
+   Content — from Analytics_Systems_Knowledge_Map.md
+   ===================================================================== */
+
+const LAYERS = [
+  { name: 'Data foundations', short: 'Foundations', color: '#4f8cff',
+    q: 'How is data ingested, stored, and prepared?',
+    today: 'Ingestion, transformation, storage, and query engines',
+    mstr: 'MicroStrategy usually sat above a customer’s warehouse and upstream ETL. Essential to every deployment — but not MicroStrategy capabilities.',
+    modern: 'Cloud warehouses and lakehouses combine object storage, open table formats, and multiple compute engines; ingestion and transformation become explicit parts of the stack.',
+    lesson: 'A semantic model cannot compensate indefinitely for unclear grain, unstable source data, or a poor physical design.' },
+  { name: 'Metadata & change', short: 'Metadata', color: '#3fc1c9',
+    q: 'How are objects defined, governed, moved, and traced?',
+    today: 'Catalogs, version control, deployment pipelines, and lineage systems',
+    mstr: 'One metadata repository made a large analytics estate feel like one connected object system.',
+    modern: 'Physical metadata, business definitions, deployment history, and lineage are often separated across several systems.',
+    lesson: 'Can I trace a changed column or metric all the way to the people, reports, APIs, and decisions it affects?' },
+  { name: 'Business semantics', short: 'Semantics', color: '#8b7cff',
+    q: 'How do tables become consistent dimensions, facts, and metrics?',
+    today: 'Semantic layers, metric definitions, and BI models',
+    mstr: 'Attributes, facts, metrics, filters, hierarchies, and prompts were not isolated features — together they formed a language for asking business questions.',
+    modern: 'Modern semantic layers solve parts of the same problem, often with different modeling assumptions.',
+    lesson: 'The hardest cases are where a metric changes meaning with its grain, filter context, or join path. Judge a semantic layer by the questions it can express and explain, not by the number of object types it lists.' },
+  { name: 'Query planning', short: 'Planning', color: '#c77dff',
+    q: 'How does a business request become executable SQL?',
+    today: 'Semantic compilers, BI query generators, and database optimizers',
+    mstr: 'The SQL Engine made the translation visible: join selection, fact selection, multi-pass SQL, and database-specific tuning.',
+    modern: 'The same responsibility now appears in semantic compilers, BI query generators, transformation systems, and database optimizers.',
+    lesson: 'Learn to recognize when an apparently simple semantic definition hides a difficult query-planning problem.' },
+  { name: 'Execution & acceleration', short: 'Execution', color: '#ff8a5b',
+    q: 'Where does computation happen, and what is reused?',
+    today: 'Warehouses, federated engines, materialized views, caches, and serving stores',
+    mstr: 'Warehouse queries combined with in-memory processing, Intelligent Cubes, caches, and MultiSource.',
+    modern: 'Those jobs spread across several execution layers: elastic compute, federated engines, materialized results, and serving stores.',
+    lesson: 'The decision is not “warehouse or cube.” It is which work to compute on demand, which to precompute, and how to keep the two answers consistent.' },
+  { name: 'Platform operations', short: 'Operations', color: '#ffc857',
+    q: 'Who can access what, and how does the system stay reliable?',
+    today: 'Data-platform policies, identity systems, workload controls, and observability',
+    mstr: 'Access, workload, usage, and testing controls lived within its own server and metadata boundary.',
+    modern: 'Controls move closer to the data platform so that more consumers share the same rules.',
+    lesson: 'Moving a policy closer to the data broadens its coverage — and creates a coordination problem: definitions, access rules, and deployment practices must agree across tools.' },
+  { name: 'Consumption', short: 'Consumption', color: '#5ee6a8',
+    q: 'How do people and applications use the result?',
+    today: 'BI tools, embedded analytics, APIs, alerts, and AI interfaces',
+    mstr: 'Reports and dashboards were the primary destination for the semantic model.',
+    modern: 'The same definitions now need to reach applications, APIs, alerts, and AI-assisted interfaces.',
+    lesson: 'The interface changes; the trust question does not. Can a consumer tell what a number means, where it came from, and whether it fits the decision at hand?' },
+];
+
+const PLAN_M = 'MicroStrategy’s SQL Engine made this step visible in the generated SQL.';
+const PLAN_N = 'Semantic compilers, BI query generators, transformation systems, and database optimizers now share this step.';
+
+// L = layer index (0 = bottom). `born` marks capabilities that only exist in the modern view.
+const NODES = [
+  // 1 · Data foundations
+  { id: 'source', L: 0, cap: 'Source & warehouse data', m: 'Teradata · Oracle · Netezza', n: 'Lakehouse on object storage',
+    mL: 'Enterprise warehouses such as Teradata, Oracle, and Netezza supplied the data.',
+    nL: 'Cloud warehouses and lakehouses combine object storage, table formats, and multiple compute engines.' },
+  { id: 'cdc', L: 0, cap: 'Change data capture', n: 'CDC connector (Debezium)', modernOnly: true,
+    mL: 'Outside the BI platform: typically repeated full extracts or timestamp polling in upstream ETL — which miss deletes, add load, or leave long delays.',
+    nL: 'Database log changes become events. CDC is capture at the source — not processing.' },
+  { id: 'kafka', L: 0, cap: 'Event log', n: 'Event log (Kafka)', modernOnly: true,
+    nL: 'A durable log that producers and several consumers can use independently.' },
+  { id: 'ingest', L: 0, cap: 'Ingestion & transformation', m: 'External ETL (Informatica · DataStage)', n: 'Ingestion + orchestrated SQL',
+    mL: 'ETL commonly happened outside the BI platform, using tools such as Informatica or DataStage.',
+    nL: 'Ingestion, SQL transformation, and orchestration are usually explicit parts of the stack.' },
+  { id: 'logical', L: 0, cap: 'Logical data structures', m: 'Warehouse & logical views', n: 'SQL models · data products (dbt)',
+    mL: 'Warehouse views and logical views helped shape the data available to analytics.',
+    nL: 'SQL models and data products make those transformations easier to version, test, and deploy.' },
+  { id: 'physical', L: 0, cap: 'Physical layout', m: 'Partitioning & warehouse design', n: 'Open table formats (Parquet · Iceberg · Delta)',
+    mL: 'Partitioning and warehouse design influenced query performance.',
+    nL: 'Table formats and query engines take on more of the partitioning, pruning, and optimization work.' },
+  { id: 'cdf', L: 0, cap: 'Table change feed', n: 'Change data feed', modernOnly: true,
+    nL: 'Publishes row-level changes made to the analytical table — a different boundary from source CDC. Consumers query changes without comparing whole snapshots.' },
+
+  // 2 · Metadata & change
+  { id: 'identity', L: 1, cap: 'Object identity & organization', m: 'Metadata repository · object IDs', n: 'Catalog (e.g. Unity Catalog)',
+    mL: 'Projects, metadata objects, and IDs connected reports to their definitions.',
+    nL: 'Catalogs describe data assets; version-controlled files often hold transformation and semantic definitions.' },
+  { id: 'promotion', L: 1, cap: 'Promotion between environments', m: 'Object Manager', n: 'Git · pull requests · CI/CD',
+    mL: 'Object Manager moved selected objects and their dependencies.',
+    nL: 'Git, pull requests, CI, and deployment pipelines promote code and configuration.' },
+  { id: 'lineage', L: 1, cap: 'Dependency & impact analysis', m: 'Object dependency graph', n: 'Lineage systems',
+    mL: 'The object graph made many report-to-metric relationships inspectable.',
+    nL: 'Lineage systems can cross more tools, but their coverage depends on what each tool emits.' },
+  { id: 'orchestration', L: 1, cap: 'Orchestration', n: 'Orchestrator (Airflow)', modernOnly: true,
+    nL: 'Multi-step pipelines need explicit dependencies, scheduling, retries, and a visible run history.' },
+
+  // 3 · Business semantics
+  { id: 'entity', L: 2, cap: 'What is an entity?', m: 'Attributes · forms · hierarchies', n: 'Dimensions · entities · joins',
+    mL: 'Attributes, forms, lookup tables, and relationships defined business entities and drill paths.',
+    nL: 'Dimensions, entities, joins, and explores define how data can be combined.' },
+  { id: 'measure', L: 2, cap: 'What is being measured?', m: 'Facts & metrics', n: 'Metric definitions (semantic layer)',
+    mL: 'Facts and metrics separated source values from business calculations.',
+    nL: 'Measures and metrics provide reusable definitions, sometimes shared across tools.' },
+  { id: 'grain', L: 2, cap: 'At what grain?', m: 'Level metrics · dimensionality', n: 'Grain-aware measures',
+    mL: 'Level metrics and dimensionality controlled aggregation independently of a report’s display grain.',
+    nL: 'Some semantic layers, BI expressions, and SQL patterns cover this; complex nested aggregation still needs careful modeling.' },
+  { id: 'time', L: 2, cap: 'Compared with when?', m: 'Transformations (PY · MTD)', n: 'Time dims · offsets · windows',
+    mL: 'Transformations expressed comparisons such as prior year or month to date.',
+    nL: 'Time dimensions, offsets, and rolling-window definitions handle common cases.' },
+  { id: 'scope', L: 2, cap: 'Under which conditions?', m: 'Filters · prompts · custom groups', n: 'Parameters · saved filters · BI controls',
+    mL: 'Filters, prompts, custom groups, and consolidations changed the scope of a question.',
+    nL: 'Parameters, saved filters, semantic queries, and BI controls divide that responsibility.' },
+
+  // 4 · Query planning
+  { id: 'joinpath', L: 3, cap: 'Join path & grain', m: 'Join & fact selection', n: 'Semantic compiler join graph', mL: PLAN_M, nL: PLAN_N,
+    why: 'The planner must avoid duplication and choose relationships that preserve the intended meaning.' },
+  { id: 'aggchoice', L: 3, cap: 'Aggregate choice', m: 'Aggregate table selection', n: 'Aggregate awareness', mL: PLAN_M, nL: PLAN_N,
+    why: 'It must decide whether a summary table or materialized result can answer the request correctly.' },
+  { id: 'multipass', L: 3, cap: 'Multi-stage calculation', m: 'Multi-pass SQL', n: 'CTE chains · multi-query plans', mL: PLAN_M, nL: PLAN_N,
+    why: 'Ratios, distinct counts, nested aggregates, and non-additive metrics may require more than one SQL pass.' },
+  { id: 'dialect', L: 3, cap: 'SQL dialect & pushdown', m: 'Database-specific SQL tuning', n: 'Pushdown + optimizer (Catalyst · AQE)', mL: PLAN_M, nL: PLAN_N,
+    why: 'A logical request still has to become efficient SQL for a particular engine.' },
+  { id: 'inspect', L: 3, cap: 'Inspectability', m: 'Visible generated SQL', n: 'Compiled SQL · query profiles', mL: PLAN_M, nL: PLAN_N,
+    why: 'People need to see the generated query and understand why it produced a result.' },
+
+  // 5 · Execution & acceleration
+  { id: 'compute', L: 4, cap: 'Elastic compute', n: 'Independent compute pools', modernOnly: true,
+    mL: 'Compute was tied to the warehouse’s own capacity; MicroStrategy added in-memory processing on its own servers.',
+    nL: 'Storage and compute scale separately, and different workloads use different compute pools over shared data.' },
+  { id: 'postcalc', L: 4, cap: 'Post-query calculation', m: 'Analytical Engine', n: 'SQL engine + client runtime',
+    mL: 'The Analytical Engine handled operations such as subtotals, ranking, and cross-tabs.',
+    nL: 'More calculation is pushed into SQL engines; some remains in client or application runtimes.' },
+  { id: 'reuse', L: 4, cap: 'Reuse of precomputed results', m: 'Intelligent Cubes · Dynamic Sourcing', n: 'Materialized views · pre-aggregations',
+    mL: 'Intelligent Cubes and Dynamic Sourcing accelerated eligible reports.',
+    nL: 'Materialized views, aggregate awareness, pre-aggregations, and query rewrite reuse prepared results.' },
+  { id: 'federation', L: 4, cap: 'Cross-source access', m: 'MultiSource', n: 'Federated query engines',
+    mL: 'MultiSource could combine data from different systems.',
+    nL: 'Federated query engines connect sources, while a semantic layer still has to define what their combination means.' },
+  { id: 'serving', L: 4, cap: 'High-concurrency serving', m: 'Cubes & caches', n: 'Serving stores & caches',
+    mL: 'Cubes and caches supported repeated analytical access.',
+    nL: 'Specialized analytical stores, caches, and serving engines support low-latency workloads.' },
+  { id: 'stream', L: 4, cap: 'Stream processing', n: 'Structured Streaming', modernOnly: true,
+    nL: 'Unbounded events are processed with the same DataFrame model as batch; foreachBatch hands each micro-batch to custom sink logic such as a MERGE.' },
+
+  // 6 · Platform operations
+  { id: 'access', L: 5, cap: 'Access control', m: 'Roles · ACLs · security filters', n: 'Catalog policies · row filters · masks',
+    mL: 'Roles, ACLs, and security filters governed BI objects and results.',
+    nL: 'Identity, catalog policies, row filters, and column masks can apply across multiple consumers.' },
+  { id: 'workload', L: 5, cap: 'Workload management', m: 'Clustering & governors', n: 'Concurrency · resource groups · cost',
+    mL: 'Server clustering and governors controlled analytics demand.',
+    nL: 'Compute platforms and query engines manage concurrency, resource groups, and cost.' },
+  { id: 'usage', L: 5, cap: 'Usage & health', m: 'Platform Analytics', n: 'Query history · billing · logs',
+    mL: 'Platform analytics exposed adoption and performance.',
+    nL: 'Query history, billing data, logs, lineage, and BI usage data have to be assembled into one operational picture.' },
+  { id: 'regression', L: 5, cap: 'Regression testing', m: 'Report comparison', n: 'Data tests · diffs · dashboard checks',
+    mL: 'Report comparison helped catch changes in output.',
+    nL: 'Data tests, data diffs, semantic validation, and dashboard checks cover different parts of the risk.' },
+
+  // 7 · Consumption
+  { id: 'human', L: 6, cap: 'Human analysis', m: 'Reports · documents · dossiers', n: 'Dashboards · notebooks · embedded',
+    mL: 'Reports, documents, dossiers, and mobile experiences.',
+    nL: 'BI dashboards, notebooks, self-service analysis, and embedded views.' },
+  { id: 'scheduled', L: 6, cap: 'Scheduled action', m: 'Subscriptions · bursting', n: 'Alerts · operational workflows',
+    mL: 'Subscriptions, bursting, and distribution.',
+    nL: 'Scheduled delivery, alerts, and operational workflows.' },
+  { id: 'app', L: 6, cap: 'Application access', m: 'REST API · embedding', n: 'Semantic APIs · SQL endpoints',
+    mL: 'REST APIs and embedding.',
+    nL: 'Semantic APIs, SQL endpoints, and embedded analytics.' },
+  { id: 'nlq', L: 6, cap: 'Natural-language access', m: 'NLQ · contextual', n: 'AI assistants on governed metrics',
+    mL: 'Natural-language query and contextual experiences.',
+    nL: 'AI assistants that need governed metrics, clear context, and explainable queries.' },
+];
+
+const EDGES = [
+  ['source', 'cdc'], ['cdc', 'kafka'], ['kafka', 'stream'], ['stream', 'physical'], ['physical', 'cdf'], ['cdf', 'scheduled'],
+  ['source', 'ingest'], ['ingest', 'physical'], ['physical', 'logical'], ['orchestration', 'ingest'],
+  ['logical', 'identity'], ['lineage', 'identity'], ['promotion', 'measure'], ['logical', 'entity'], ['logical', 'measure'],
+  ['entity', 'joinpath'], ['scope', 'joinpath'], ['measure', 'aggchoice'], ['measure', 'multipass'], ['grain', 'multipass'], ['time', 'multipass'],
+  ['joinpath', 'dialect'], ['multipass', 'dialect'], ['dialect', 'inspect'], ['aggchoice', 'reuse'],
+  ['dialect', 'compute'], ['dialect', 'postcalc'], ['dialect', 'federation'], ['compute', 'reuse'], ['reuse', 'serving'],
+  ['workload', 'compute'], ['access', 'human'], ['access', 'app'], ['access', 'nlq'],
+  ['postcalc', 'human'], ['serving', 'human'], ['serving', 'app'], ['compute', 'scheduled'],
+  ['measure', 'nlq'], ['inspect', 'nlq'], ['usage', 'regression'], ['source', 'dialect'],
+];
+
+const MILESTONES = [
+  { y: 2004, name: 'MapReduce', why: 'Fault-tolerant parallel batch work: a framework could partition data, schedule tasks, and retry failures across ordinary machines.', nodes: ['compute'], url: 'https://research.google/pubs/mapreduce-simplified-data-processing-on-large-clusters/' },
+  { y: 2006, name: 'Amazon S3 launched', why: 'Durable storage became an on-demand service rather than capacity tied to a particular compute cluster.', nodes: ['source'], url: 'https://aws.amazon.com/about-aws/whats-new/2006/03/13/announcing-amazon-s3---simple-storage-service/' },
+  { y: 2010, name: 'Spark open-sourced', why: 'Iterative and interactive jobs could avoid writing every intermediate step to disk.', nodes: ['compute'], url: 'https://spark.apache.org/history' },
+  { y: 2011, name: 'Kafka open-sourced', why: 'High-volume events got a durable log that producers and several consumers could use independently.', nodes: ['kafka'], url: 'https://www.linkedin.com/blog/engineering/open-source/project-kafka-distributed-publish-subscribe-messaging-system-reaches-v06' },
+  { y: 2013, name: 'Parquet', why: 'Analytical scans got compact columnar files that skip irrelevant columns and are readable by different engines.', nodes: ['physical'], url: 'https://parquet.apache.org/docs/learning-resources/presentations/strata-2013/' },
+  { y: 2014, name: 'Snowflake virtual warehouses', why: 'Storage and compute could scale separately; workloads could use different compute pools over shared data.', nodes: ['compute', 'source'], url: 'https://www.snowflake.com/en/blog/behind-snowflakes-name/' },
+  { y: 2015, name: 'Airflow', why: 'Multi-step pipelines got explicit dependencies, scheduling, retries, and a visible run history.', nodes: ['orchestration'], url: 'https://airflow.apache.org/docs/apache-airflow/1.10.11/project.html' },
+  { y: 2015, name: 'Spark SQL & DataFrames', why: 'Describe what to compute while the Catalyst optimizer chooses and revises the plan.', nodes: ['dialect'], url: 'https://people.csail.mit.edu/matei/papers/2015/sigmod_spark_sql.pdf' },
+  { y: 2016, name: 'Debezium', why: 'An open connector path for log-based CDC: database log changes become events.', nodes: ['cdc'], url: 'https://debezium.io/archives/' },
+  { y: 2016, name: 'dbt', why: 'Warehouse SQL became modular, tested, versioned models with reviewable changes.', nodes: ['logical', 'promotion'], url: 'https://www.getdbt.com/blog/dbt-core-v1-is-here' },
+  { y: 2016, name: 'Structured Streaming', why: 'Unbounded events processed with the same DataFrame model used for batch data.', nodes: ['stream'], url: 'https://spark.apache.org/releases/spark-release-2-0-0.html' },
+  { y: 2018, name: 'Spark foreachBatch', why: 'Each micro-batch handed to custom sink logic — a bridge from change events to upserts.', nodes: ['stream'], url: 'https://spark.apache.org/releases/spark-release-2-4-0.html' },
+  { y: 2018, name: 'Iceberg (Apache incubation)', why: 'A table abstraction over files so engines share schemas and snapshots without trusting directory listings.', nodes: ['physical', 'identity'], url: 'https://incubator.apache.org/projects/iceberg.html' },
+  { y: 2019, name: 'Delta Lake open-sourced', why: 'A transaction log on lake files: reliable updates and deletes for incremental pipelines.', nodes: ['physical'], url: 'https://delta.io/blog/2019-04-22-delta-lake-0-1-0-released/' },
+  { y: 2020, name: 'Adaptive query execution', why: 'Runtime statistics revise a plan whose pre-execution estimates were wrong.', nodes: ['dialect'], url: 'https://spark.apache.org/releases/spark-release-3-0-0.html' },
+  { y: 2022, name: 'Unity Catalog preview', why: 'More engines, workspaces, and asset types needed shared permissions, lineage, and auditability.', nodes: ['identity', 'access', 'lineage'], url: 'https://www.databricks.com/blog/2022/04/20/announcing-gated-public-preview-of-unity-catalog-on-aws-and-azure.html' },
+  { y: 2023, name: 'Delta change data feed in SQL', why: 'Downstream consumers query row-level table changes without comparing whole snapshots.', nodes: ['cdf'], url: 'https://delta.io/blog/2023-05-02-delta-lake-2-3-0-released/' },
+  { y: 2023, name: 'dbt Semantic Layer GA', why: 'Metrics defined in transformation code served consistently to multiple consumers.', nodes: ['measure'], url: 'https://docs.getdbt.com/blog/product-analytics-pipeline-with-dbt-semantic-layer' },
+];
+
+// A step's node may differ by lens: { m: 'source', n: 'compute' }.
+const TRACES = {
+  request: {
+    title: 'Follow a request', color: '#7aa2ff', q: 'Where does each computation run?',
+    steps: [
+      { node: 'human', m: 'A user opens a dossier or report. The request starts inside MicroStrategy.', n: 'A user opens a dashboard, notebook, or embedded view in a BI tool or app.' },
+      { node: 'scope', m: 'Prompts, filters, and custom groups set the scope of the question.', n: 'Parameters, saved filters, and BI controls set the scope — often split between the tool and the semantic layer.' },
+      { node: 'access', m: 'Security filters attach to the user inside the server’s metadata boundary.', n: 'Identity and catalog policies — row filters, column masks — apply closer to the data, for every consumer.' },
+      { node: 'measure', m: 'Metrics resolve to facts and attributes from the same metadata repository.', n: 'Metric definitions resolve in a semantic layer, a BI model, or transformation code.' },
+      { node: 'joinpath', m: 'The SQL Engine picks join paths and the fact table that preserves grain.', n: 'A semantic compiler or BI query generator chooses joins and grain.' },
+      { node: 'aggchoice', m: 'Can an aggregate table or a cube answer this correctly instead?', n: 'Aggregate awareness or query rewrite checks for a materialized result that is still correct.' },
+      { node: 'multipass', m: 'Non-additive metrics and ratios become multi-pass SQL.', n: 'Ratios, distinct counts, and nested aggregates become CTE chains or several queries.' },
+      { node: 'dialect', m: 'Database-specific settings shape the SQL for Teradata, Oracle, or Netezza.', n: 'SQL is pushed down; the engine’s optimizer — and adaptive execution at runtime — revises the plan.' },
+      { node: { m: 'source', n: 'compute' }, m: 'The warehouse executes — the one step that runs outside MicroStrategy.', n: 'An elastic compute pool executes over shared storage, sized for this workload.' },
+      { node: 'postcalc', m: 'The Analytical Engine finishes subtotals, ranking, and cross-tabs in memory.', n: 'Most calculation was pushed into SQL; the remainder runs in the client or app runtime.' },
+      { node: 'human', m: 'Rendered. The request crossed two systems: the warehouse and one server.', n: 'Rendered. Count the systems the request crossed — each is a place a definition could drift.' },
+    ],
+  },
+  change: {
+    title: 'Trace a change', color: '#ffb057', q: 'What happens when something changes?',
+    steps: [
+      { node: 'source', m: 'A warehouse column changes upstream — owned by the ETL team, outside MicroStrategy.', n: 'A source column changes — perhaps arriving as a CDC event or a new file schema.' },
+      { node: 'logical', m: 'Warehouse and logical views absorb the change or pass it on.', n: 'SQL models are versioned; the change shows up as a reviewable pull request.' },
+      { node: 'promotion', m: 'Object Manager moves the fix and its dependencies between environments.', n: 'Git, CI, and deployment pipelines promote the change, running tests on the way.' },
+      { node: 'lineage', m: 'The metadata object graph shows which metrics and reports depend on it.', n: 'Lineage crosses more tools — but only as far as each tool emits lineage.' },
+      { node: 'measure', m: 'Affected metrics are inspectable in the same metadata.', n: 'Metric definitions in the semantic layer, and any copies in BI models, need revalidation.' },
+      { node: 'reuse', m: 'Intelligent Cubes must be republished or they serve the old answer.', n: 'Materialized views and pre-aggregations must refresh to stay consistent with on-demand results.' },
+      { node: 'regression', m: 'Report comparison catches changed output.', n: 'Data tests, diffs, semantic validation, and dashboard checks each cover part of the risk.' },
+      { node: { m: 'scheduled', n: 'nlq' }, m: 'Reports, subscriptions, and APIs downstream all inherit the change.', n: 'Dashboards, APIs, alerts, and AI assistants inherit it. Can you trace it to every one of them?' },
+    ],
+  },
+  owners: {
+    title: 'Who owns definitions', color: '#d58cff', q: 'Who owns each definition?',
+    steps: [
+      { node: 'logical', title: 'Data structure', m: 'The warehouse and ETL team — outside MicroStrategy.', n: 'Transformation code: SQL models in version control.' },
+      { node: 'measure', title: 'Business meaning', m: 'MicroStrategy metadata: attributes, facts, metrics.', n: 'A semantic layer, a BI model, or both — decide which is the system of record.' },
+      { node: 'access', title: 'Policy', m: 'MicroStrategy roles, ACLs, and security filters.', n: 'Identity and catalog policies shared by every consumer.' },
+      { node: 'human', title: 'Presentation', m: 'Reports, documents, and dossiers.', n: 'BI tools, notebooks, applications, and AI interfaces.' },
+      { node: null, title: 'The trade', m: 'Three of the four definitions lived inside one metadata boundary — coherent, but closed.', n: 'Each definition can live in a different system. The connections between them become the design problem.' },
+    ],
+  },
+  cdc: {
+    title: 'CDC thread', color: '#4fd1ff', q: 'Capture at the source, process the stream, publish table changes.', modernOnly: true,
+    steps: [
+      { node: 'source', n: 'The source database’s transaction log — the system that owns the truth.' },
+      { node: 'cdc', n: 'A CDC connector (e.g. Debezium) captures inserts, updates, and deletes at the source. Capture, not processing.' },
+      { node: 'kafka', n: 'An event log (e.g. Kafka) keeps the change events durable for several independent consumers.' },
+      { node: 'stream', n: 'Spark Structured Streaming processes and deduplicates changes; foreachBatch hands each micro-batch to MERGE logic.' },
+      { node: 'physical', n: 'A transactional lake table applies the inserts, updates, and deletes.' },
+      { node: 'cdf', n: 'The table’s change data feed publishes changes made to the analytical table — a separate boundary from source CDC.' },
+      { node: 'scheduled', n: 'Downstream jobs read the current table or its change feed. Keep the boundaries straight to reason about ordering, retries, deletes, and schema changes.' },
+    ],
+  },
+};
+
+/* =====================================================================
+   Scene constants & state
+   ===================================================================== */
+
+const GAP = 1.6, SLAB_W = 17, SLAB_D = 5.4, MONO_W = 8.4, MONO_D = 2.8, N_SEG = 30;
+const layerY = (i) => i * GAP;
+const YEAR_MIN = 2004, YEAR_MAX = 2023;
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const byId = new Map(NODES.map((n) => [n.id, n]));
+for (const n of NODES) {
+  const ms = MILESTONES.filter((m) => m.nodes.includes(n.id));
+  n.milestones = ms;
+  n.born = n.modernOnly && ms.length ? Math.min(...ms.map((m) => m.y)) : null;
+}
+const neighbors = new Map(NODES.map((n) => [n.id, new Set()]));
+for (const [a, b] of EDGES) { neighbors.get(a).add(b); neighbors.get(b).add(a); }
+
+const state = {
+  lens: 0,         // target lens: 0 MicroStrategy, 1 modern
+  t: 0,            // animated lens 0..1
+  focus: null,     // layer index
+  hoverLayer: null,
+  selected: null,  // node id
+  hover: null,     // node id
+  trace: null,     // { key, i, playing }
+  year: YEAR_MAX,
+};
+
+const $ = (s) => document.querySelector(s);
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+const smooth = (t) => { t = clamp(t); return t * t * (3 - 2 * t); };
+const pad2 = (i) => String(i + 1).padStart(2, '0');
+const label = (n, lens = state.lens) => (lens === 0 && !n.modernOnly ? n.m : n.n);
+const stepNode = (step, lens = state.lens) => (step.node && typeof step.node === 'object' ? (lens ? step.node.n : step.node.m) : step.node);
+
+/* =====================================================================
+   Renderer
+   ===================================================================== */
+
+const stage = $('#stage');
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+} catch (err) {
+  $('#fallback').style.display = 'grid';
+  throw err;
+}
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+stage.appendChild(renderer.domElement);
+
+const labelRenderer = new CSS2DRenderer();
+labelRenderer.domElement.className = 'label-layer';
+stage.appendChild(labelRenderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x060a14);
+scene.fog = new THREE.FogExp2(0x060a14, 0.016);
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+
+const camera = new THREE.PerspectiveCamera(38, innerWidth / innerHeight, 0.1, 400);
+const HOME = { pos: new THREE.Vector3(15.5, 11.5, 17.5), target: new THREE.Vector3(0, 4.6, 0) };
+// The modern stack is wider than the monolith, so it is framed from further back.
+function homePos(lens) {
+  const d = (lens ? 34 : 24.5) * (innerWidth <= 980 ? 1.25 : 1);
+  return HOME.pos.clone().sub(HOME.target).setLength(d).add(HOME.target);
+}
+camera.position.copy(homePos(0));
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.copy(HOME.target);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.minDistance = 7;
+controls.maxDistance = 42;
+controls.maxPolarAngle = Math.PI * 0.49;
+controls.screenSpacePanning = true;
+controls.rotateSpeed = 0.7;
+
+scene.add(new THREE.HemisphereLight(0x9bb7ff, 0x0a0f1e, 0.7));
+const key = new THREE.DirectionalLight(0xffffff, 1.4);
+key.position.set(8, 22, 12);
+scene.add(key);
+
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.75, 0.55, 0.22);
+composer.addPass(bloom);
+composer.addPass(new OutputPass());
+
+/* ---------- textures ---------- */
+function dotTexture() {
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const g = c.getContext('2d');
+  const grd = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  grd.addColorStop(0, 'rgba(255,255,255,1)');
+  grd.addColorStop(0.22, 'rgba(255,255,255,0.85)');
+  grd.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = grd; g.fillRect(0, 0, 64, 64);
+  return new THREE.CanvasTexture(c);
+}
+function gridTexture() {
+  const w = 1024, h = Math.round((1024 * SLAB_D) / SLAB_W);
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d');
+  const step = w / (SLAB_W * 2);
+  g.strokeStyle = 'rgba(255,255,255,0.22)'; g.lineWidth = 1;
+  for (let x = step; x < w; x += step) { g.beginPath(); g.moveTo(x + 0.5, 0); g.lineTo(x + 0.5, h); g.stroke(); }
+  for (let y = step; y < h; y += step) { g.beginPath(); g.moveTo(0, y + 0.5); g.lineTo(w, y + 0.5); g.stroke(); }
+  g.fillStyle = 'rgba(255,255,255,0.55)';
+  for (let x = step * 4; x < w; x += step * 4) for (let y = step * 4; y < h; y += step * 4) g.fillRect(x - 1.5, y - 1.5, 3, 3);
+  const t = new THREE.CanvasTexture(c); t.anisotropy = 4; return t;
+}
+const DOT = dotTexture();
+const GRID = gridTexture();
+
+/* ---------- ground & atmosphere ---------- */
+const grid = new THREE.GridHelper(120, 80, 0x1b2a4a, 0x111a30);
+grid.position.y = -1.3; grid.material.transparent = true; grid.material.opacity = 0.55;
+scene.add(grid);
+{
+  const c = document.createElement('canvas'); c.width = c.height = 256;
+  const g = c.getContext('2d');
+  const grd = g.createRadialGradient(128, 128, 0, 128, 128, 128);
+  grd.addColorStop(0, 'rgba(90,140,255,0.45)'); grd.addColorStop(0.5, 'rgba(60,90,200,0.12)'); grd.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = grd; g.fillRect(0, 0, 256, 256);
+  const glow = new THREE.Mesh(new THREE.PlaneGeometry(34, 22), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+  glow.rotation.x = -Math.PI / 2; glow.position.y = -1.25; scene.add(glow);
+}
+const dust = (() => {
+  const n = 700, pos = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) {
+    pos[i * 3] = (Math.random() - 0.5) * 90;
+    pos[i * 3 + 1] = Math.random() * 40 - 6;
+    pos[i * 3 + 2] = (Math.random() - 0.5) * 90;
+  }
+  const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const p = new THREE.Points(geo, new THREE.PointsMaterial({ size: 0.09, map: DOT, color: 0x6f8fd8, transparent: true, opacity: 0.5, depthWrite: false, blending: THREE.AdditiveBlending }));
+  scene.add(p); return p;
+})();
+
+/* =====================================================================
+   Layers (slabs)
+   ===================================================================== */
+
+const slabGeo = new THREE.BoxGeometry(SLAB_W, 0.05, SLAB_D);
+const slabEdgeGeo = new THREE.EdgesGeometry(slabGeo);
+const slabs = LAYERS.map((L, i) => {
+  const color = new THREE.Color(L.color);
+  const g = new THREE.Group();
+  g.position.y = layerY(i) - 0.2;
+  const body = new THREE.Mesh(slabGeo, new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.12, transparent: true, opacity: 0.07, roughness: 0.25, metalness: 0.1, depthWrite: false }));
+  const edges = new THREE.LineSegments(slabEdgeGeo, new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.6 }));
+  const gridMesh = new THREE.Mesh(new THREE.PlaneGeometry(SLAB_W, SLAB_D), new THREE.MeshBasicMaterial({ map: GRID, color, transparent: true, opacity: 0.22, depthWrite: false, blending: THREE.AdditiveBlending }));
+  gridMesh.rotation.x = -Math.PI / 2; gridMesh.position.y = 0.03;
+  body.renderOrder = 1; gridMesh.renderOrder = 2;
+  g.add(body, edges, gridMesh);
+  scene.add(g);
+
+  const wrap = document.createElement('div'); wrap.className = 'll-wrap';
+  const btn = document.createElement('button');
+  btn.className = 'll'; btn.type = 'button'; btn.style.setProperty('--c', L.color);
+  btn.innerHTML = `<b>${pad2(i)}</b>${L.name}`;
+  btn.addEventListener('click', () => focusLayer(state.focus === i ? null : i));
+  btn.addEventListener('pointerenter', () => { state.hoverLayer = i; });
+  btn.addEventListener('pointerleave', () => { state.hoverLayer = null; });
+  wrap.appendChild(btn);
+  const obj = new CSS2DObject(wrap);
+  scene.add(obj);
+  return { g, body, edges, gridMesh, obj, btn, alpha: 1 };
+});
+
+/* =====================================================================
+   MicroStrategy monolith
+   ===================================================================== */
+
+const mono = (() => {
+  const y0 = layerY(1) - 0.75, y1 = layerY(6) + 0.6, h = y1 - y0;
+  const g = new THREE.Group(); g.position.y = y0 + h / 2;
+  const geo = new THREE.BoxGeometry(MONO_W, h, MONO_D);
+  const red = new THREE.Color('#ff5470');
+  const body = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: red, emissive: red, emissiveIntensity: 0.12, transparent: true, opacity: 0.08, depthWrite: false, roughness: 0.15 }));
+  body.renderOrder = 3;
+  const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: 0xff6b85, transparent: true, opacity: 0.9 }));
+  const scan = new THREE.Mesh(new THREE.PlaneGeometry(MONO_W - 0.1, MONO_D - 0.1), new THREE.MeshBasicMaterial({ color: red, transparent: true, opacity: 0.18, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide }));
+  scan.rotation.x = -Math.PI / 2;
+  g.add(body, edges, scan);
+  scene.add(g);
+
+  const top = document.createElement('div'); top.className = 'ml-wrap';
+  top.innerHTML = '<div class="ml"><div class="k">MicroStrategy</div><div class="s">one server · one metadata repository</div></div>';
+  const topObj = new CSS2DObject(top); topObj.position.set(0, y1 + 0.55, 0); scene.add(topObj);
+
+  const note = document.createElement('div'); note.className = 'ml-wrap';
+  note.innerHTML = '<div class="note">↓ Customer warehouse &amp; upstream ETL — essential, but outside MicroStrategy</div>';
+  const noteObj = new CSS2DObject(note); noteObj.position.set(SLAB_W / 2 - 3.2, layerY(0) + 0.75, SLAB_D / 2 + 0.2); scene.add(noteObj);
+  return { g, body, edges, scan, h, y0, top, topObj, note, noteObj };
+})();
+
+const modernTitle = (() => {
+  const el = document.createElement('div'); el.className = 'ml-wrap';
+  el.innerHTML = '<div class="ml modern"><div class="k">Modern data stack</div><div class="s">platforms · services · code</div></div>';
+  const obj = new CSS2DObject(el); obj.position.set(0, layerY(6) + 1.15, 0); scene.add(obj);
+  return { el, obj };
+})();
+
+/* =====================================================================
+   Nodes
+   ===================================================================== */
+
+const bodyGeo = new RoundedBoxGeometry(0.95, 0.34, 0.95, 4, 0.09);
+const topGeo = new THREE.PlaneGeometry(0.64, 0.64);
+const ringGeo = new THREE.RingGeometry(0.74, 0.82, 56);
+
+function layoutModern(layer) {
+  const list = NODES.filter((n) => n.L === layer);
+  const k = list.length, span = Math.min(14.2, 2.4 * (k - 1));
+  list.forEach((n, i) => {
+    const x = k === 1 ? 0 : -span / 2 + (span * i) / (k - 1);
+    const z = (i % 2 === 0 ? -1 : 1) * (k > 4 ? 1.15 : 0.7);
+    n.posNew = new THREE.Vector3(x, layerY(layer), z);
+  });
+}
+function layoutOld(layer) {
+  const list = NODES.filter((n) => n.L === layer && !n.modernOnly);
+  const sp = layer === 0 ? 3.0 : 1.55, k = list.length;
+  list.forEach((n, i) => {
+    const x = -((k - 1) * sp) / 2 + i * sp;
+    const z = layer === 0 ? 0.3 : (i % 2 === 0 ? -0.42 : 0.42);
+    n.posOld = new THREE.Vector3(x, layerY(layer), z);
+  });
+  NODES.filter((n) => n.L === layer && n.modernOnly).forEach((n) => { n.posOld = n.posNew.clone(); });
+}
+for (let i = 0; i < LAYERS.length; i++) { layoutModern(i); layoutOld(i); }
+
+const pickables = [];
+for (const n of NODES) {
+  const color = new THREE.Color(LAYERS[n.L].color);
+  n.color = color;
+  n.cur = n.posOld.clone();
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(bodyGeo, new THREE.MeshStandardMaterial({ color: 0x0f1930, metalness: 0.55, roughness: 0.3, emissive: color, emissiveIntensity: 0.2, transparent: true }));
+  const top = new THREE.Mesh(topGeo, new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.9 }));
+  top.rotation.x = -Math.PI / 2; top.position.y = 0.176;
+  const ring = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide }));
+  ring.rotation.x = -Math.PI / 2; ring.position.y = -0.14;
+  g.add(body, top, ring);
+  body.userData.id = n.id;
+  scene.add(g);
+  pickables.push(body);
+
+  const wrap = document.createElement('div'); wrap.className = 'nl-wrap';
+  const el = document.createElement('div');
+  el.className = 'nl' + (n.modernOnly ? ' new' : '');
+  el.style.setProperty('--c', LAYERS[n.L].color);
+  el.innerHTML = '<i></i><span></span>';
+  el.addEventListener('pointerenter', () => setHover(n.id));
+  el.addEventListener('pointerleave', () => setHover(null));
+  el.addEventListener('click', () => selectNode(state.selected === n.id ? null : n.id));
+  wrap.appendChild(el);
+  const obj = new CSS2DObject(wrap);
+  scene.add(obj);
+
+  Object.assign(n, { g, body, top, ring, el, textEl: el.lastChild, obj, alpha: 1, hoverK: 0, flash: 0, shownLens: -1, w: 0, h: 0, clutter: false, labelA: 1 });
+}
+
+/* =====================================================================
+   Edges, flow particles, trace trail
+   ===================================================================== */
+
+const tmpA = new THREE.Vector3(), tmpB = new THREE.Vector3();
+function curveInto(a, b, out) {
+  const dy = b.y - a.y;
+  const p0 = tmpA.copy(a), p3 = tmpB.copy(b);
+  let c1, c2;
+  if (Math.abs(dy) < 0.01) {
+    const lift = 0.45 + a.distanceTo(b) * 0.09;
+    p0.y += 0.17; p3.y += 0.17;
+    c1 = new THREE.Vector3(p0.x, p0.y + lift, p0.z);
+    c2 = new THREE.Vector3(p3.x, p3.y + lift, p3.z);
+  } else {
+    const s = Math.sign(dy);
+    p0.y += 0.17 * s; p3.y -= 0.17 * s;
+    const k = (p3.y - p0.y) * 0.55;
+    c1 = new THREE.Vector3(p0.x, p0.y + k, p0.z);
+    c2 = new THREE.Vector3(p3.x, p3.y - k, p3.z);
+  }
+  for (let i = 0; i < out.length; i++) {
+    const t = i / (out.length - 1), u = 1 - t;
+    out[i].set(
+      u * u * u * p0.x + 3 * u * u * t * c1.x + 3 * u * t * t * c2.x + t * t * t * p3.x,
+      u * u * u * p0.y + 3 * u * u * t * c1.y + 3 * u * t * t * c2.y + t * t * t * p3.y,
+      u * u * u * p0.z + 3 * u * u * t * c1.z + 3 * u * t * t * c2.z + t * t * t * p3.z,
+    );
+  }
+}
+function sample(pts, u, out) {
+  const f = clamp(u) * (pts.length - 1), i = Math.min(pts.length - 2, Math.floor(f));
+  return out.lerpVectors(pts[i], pts[i + 1], f - i);
+}
+
+const edges = EDGES.map(([a, b]) => {
+  const A = byId.get(a), B = byId.get(b);
+  const pts = Array.from({ length: N_SEG }, () => new THREE.Vector3());
+  const geo = new THREE.BufferGeometry();
+  const pos = new Float32Array(N_SEG * 3), col = new Float32Array(N_SEG * 3);
+  for (let i = 0; i < N_SEG; i++) {
+    const c = A.color.clone().lerp(B.color, i / (N_SEG - 1));
+    col.set([c.r, c.g, c.b], i * 3);
+  }
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const line = new THREE.Line(geo, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.4, depthWrite: false, blending: THREE.AdditiveBlending }));
+  line.frustumCulled = false;
+  scene.add(line);
+  return { A, B, pts, line, pos, alpha: 0.4, phase: Math.random() };
+});
+
+const PER_EDGE = 2;
+const flow = (() => {
+  const n = edges.length * PER_EDGE;
+  const geo = new THREE.BufferGeometry();
+  const pos = new Float32Array(n * 3), col = new Float32Array(n * 3);
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const pts = new THREE.Points(geo, new THREE.PointsMaterial({ size: 0.22, map: DOT, vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+  pts.frustumCulled = false;
+  scene.add(pts);
+  return { geo, pos, col };
+})();
+
+const TRAIL_MAX = 16 * N_SEG;
+const trail = (() => {
+  const geo = new THREE.BufferGeometry();
+  const pos = new Float32Array(TRAIL_MAX * 3);
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setDrawRange(0, 0);
+  const line = new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.95, depthWrite: false, blending: THREE.AdditiveBlending }));
+  line.frustumCulled = false;
+  scene.add(line);
+  const beads = new THREE.Points(geo, new THREE.PointsMaterial({ size: 0.13, map: DOT, color: 0xffffff, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+  beads.frustumCulled = false;
+  scene.add(beads);
+  const pulse = new THREE.Sprite(new THREE.SpriteMaterial({ map: DOT, color: 0xffffff, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+  pulse.scale.setScalar(1.1); pulse.visible = false;
+  scene.add(pulse);
+  return { geo, pos, line, beads, pulse, seg: Array.from({ length: N_SEG }, () => new THREE.Vector3()), anim: null };
+})();
+
+/* =====================================================================
+   UI: rail, inspector, dock, caption
+   ===================================================================== */
+
+const layerList = $('#layerList');
+function renderRail() {
+  layerList.innerHTML = LAYERS.map((L, i) => {
+    const caps = NODES.filter((n) => n.L === i).map((n) => {
+      const off = n.modernOnly && state.lens === 0;
+      return `<button type="button" class="cap-btn${n.modernOnly ? ' new' : ''}${state.selected === n.id ? ' sel' : ''}" data-node="${n.id}" style="--c:${L.color}"${off ? ' aria-disabled="true" title="Modern-stack capability"' : ''}>${label(n)}</button>`;
+    }).join('');
+    return `<li class="${state.focus === i ? 'open' : ''}">
+      <button type="button" class="layer-btn" data-layer="${i}" style="--c:${L.color}" aria-expanded="${state.focus === i}">
+        <span class="num">${pad2(i)}</span>
+        <span class="nm"><span class="full">${L.name}</span><span class="short">${L.short}</span><span class="q">${L.q}</span></span>
+      </button>
+      <div class="caps">${caps}</div></li>`;
+  }).join('');
+}
+layerList.addEventListener('click', (e) => {
+  const lb = e.target.closest('[data-layer]');
+  if (lb) { const i = +lb.dataset.layer; focusLayer(state.focus === i ? null : i); return; }
+  const cb = e.target.closest('[data-node]');
+  if (cb) selectNode(cb.dataset.node);
+});
+layerList.addEventListener('pointerover', (e) => { const lb = e.target.closest('[data-layer]'); state.hoverLayer = lb ? +lb.dataset.layer : null; });
+layerList.addEventListener('pointerleave', () => { state.hoverLayer = null; });
+
+const inspector = $('#inspector');
+function lensCards(mTitle, mText, nTitle, nText) {
+  return `<div class="lens-cards">
+    <div class="lens-card mstr${state.lens === 0 ? ' on' : ''}"><div class="eyebrow">MicroStrategy lens</div>${mTitle ? `<b>${mTitle}</b>` : ''}<span>${mText}</span></div>
+    <div class="lens-card modern${state.lens === 1 ? ' on' : ''}"><div class="eyebrow">Modern-stack lens</div>${nTitle ? `<b>${nTitle}</b>` : ''}<span>${nText}</span></div>
+  </div>`;
+}
+function renderInspector() {
+  const closeBtn = '<button type="button" class="close" data-act="close" aria-label="Close">✕</button>';
+  let html = '';
+  let id = state.selected;
+  if (state.trace) {
+    const s = TRACES[state.trace.key].steps[state.trace.i];
+    id = stepNode(s) || id;
+  }
+  if (id) {
+    const n = byId.get(id), L = LAYERS[n.L];
+    const nb = [...neighbors.get(id)].map((x) => byId.get(x));
+    html = `${closeBtn}
+      <button type="button" class="eyebrow crumb" data-layer="${n.L}" style="--c:${L.color}"><i></i>Layer ${pad2(n.L)} · ${L.name}</button>
+      <h2>${n.cap}</h2>
+      ${n.why ? `<p class="why" style="--c:${L.color}">${n.why}</p>` : ''}
+      ${lensCards(n.modernOnly ? '' : n.m, n.mL || '<em>No counterpart inside the BI platform in this map.</em>', n.n, n.nL)}
+      ${n.modernOnly ? `<p class="sub">◌ A capability that became an explicit part of the modern stack${n.born ? ` — visible from ${n.born} on the timeline` : ''}.</p>` : ''}
+      ${nb.length ? `<h4>Connected</h4><div class="chips">${nb.map((x) => `<button type="button" class="chip" data-node="${x.id}" style="--c:${LAYERS[x.L].color}"><i></i>${x.cap}</button>`).join('')}</div>` : ''}
+      ${n.milestones.length ? `<h4>When it took shape</h4>${n.milestones.map((m) => `<div class="ms"><span class="y">${m.y}</span><a href="${m.url}" target="_blank" rel="noopener">${m.name} ↗</a><span class="w">${m.why}</span></div>`).join('')}` : ''}`;
+  } else if (state.focus !== null) {
+    const i = state.focus, L = LAYERS[i];
+    const rows = NODES.filter((n) => n.L === i).map((n) => `<button type="button" class="cap-row" data-node="${n.id}">
+        <span class="a${n.modernOnly ? ' none' : ''}">${n.modernOnly ? '—' : n.m}</span><span class="arr">→</span><span class="b">${n.n}</span></button>`).join('');
+    html = `${closeBtn}
+      <span class="eyebrow crumb" style="--c:${L.color}"><i></i>Layer ${pad2(i)}</span>
+      <h2>${L.name}</h2>
+      <p class="q">${L.q}</p>
+      <p class="sub">Where the responsibility often lives today: ${L.today}.</p>
+      ${lensCards('', L.mstr, '', L.modern)}
+      <div class="lesson"><span class="eyebrow">What this layer taught me</span>${L.lesson}</div>
+      <h4>Capabilities · MicroStrategy → modern</h4>
+      <div class="cap-table">${rows}</div>`;
+  } else {
+    html = `<span class="eyebrow">How to read this map</span>
+      <h2>A map of capabilities and decisions</h2>
+      <p>Not a claim that MicroStrategy contained the entire data platform, or that each feature has a direct replacement. The useful question is <b>where each responsibility lives, and what gets easier or harder when it moves</b>.</p>
+      <p class="sub">Flip the lens below: the single MicroStrategy boundary opens into platforms, services, and code. Scrub the timeline to watch the modern stack take shape.</p>
+      <h4>Three questions to ask an architecture</h4>
+      <div class="qs">
+        <button type="button" class="q-btn" data-trace="owners"><span class="n">1</span><span><b>Who owns each definition?</b><span>Data structure, business meaning, policy, presentation.</span></span></button>
+        <button type="button" class="q-btn" data-trace="request"><span class="n">2</span><span><b>Where does each computation run?</b><span>Follow a request from intent to result.</span></span></button>
+        <button type="button" class="q-btn" data-trace="change"><span class="n">3</span><span><b>What happens when something changes?</b><span>Trace a changed column across the whole path.</span></span></button>
+      </div>
+      <h4>Controls</h4>
+      <div class="keys">
+        <kbd>drag</kbd><span>Orbit · right-drag to pan · scroll to zoom</span>
+        <kbd>1–7</kbd><span>Focus a layer</span>
+        <kbd>L</kbd><span>Switch lens</span>
+        <kbd>← →</kbd><span>Step a trace, or move the year</span>
+        <kbd>Esc</kbd><span>Back out · <kbd>0</kbd> reset view</span>
+      </div>`;
+  }
+  inspector.innerHTML = html;
+  inspector.classList.toggle('has-content', !!id || state.focus !== null);
+  inspector.scrollTop = 0;
+}
+inspector.addEventListener('click', (e) => {
+  const t = e.target.closest('[data-node],[data-layer],[data-trace],[data-act]');
+  if (!t) return;
+  if (t.dataset.node) selectNode(t.dataset.node);
+  else if (t.dataset.layer) { selectNode(null); focusLayer(+t.dataset.layer); }
+  else if (t.dataset.trace) startTrace(t.dataset.trace);
+  else if (t.dataset.act === 'close') { if (state.trace) stopTrace(); else if (state.selected) selectNode(null); else focusLayer(null); }
+});
+
+/* ---------- lens ---------- */
+const lensSeg = $('#lensSeg');
+let lensTween = null;
+function setLens(v, { instant = false } = {}) {
+  if (v === state.lens && !instant) return;
+  state.lens = v;
+  document.body.dataset.lens = v;
+  lensSeg.dataset.v = v;
+  lensSeg.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.lens === v)));
+  lensTween = (instant || reduced) ? null : { from: state.t, to: v, start: performance.now(), dur: 1700 };
+  if (!lensTween) state.t = v;
+  if (!instant && state.focus === null) {
+    const dir = camera.position.clone().sub(controls.target);
+    tweenCamera(dir.setLength(homePos(v).distanceTo(HOME.target)).add(HOME.target), HOME.target, 1700);
+  }
+  if (v === 0 && state.selected && byId.get(state.selected).modernOnly && !state.trace) state.selected = null;
+  renderRail(); renderInspector(); renderCaption(); buildTrail(true);
+}
+lensSeg.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-lens]');
+  if (!b) return;
+  const v = +b.dataset.lens;
+  if (v === 0 && state.trace && TRACES[state.trace.key].modernOnly) stopTrace();
+  setLens(v);
+});
+
+/* ---------- focus & selection ---------- */
+let camTween = null;
+function tweenCamera(pos, target, dur = 1100) {
+  if (reduced) { camera.position.copy(pos); controls.target.copy(target); return; }
+  camTween = { p0: camera.position.clone(), t0: controls.target.clone(), p1: pos.clone(), t1: target.clone(), start: performance.now(), dur };
+}
+function focusLayer(i, { moveCamera = true } = {}) {
+  state.focus = i;
+  if (i !== null && state.selected && byId.get(state.selected).L !== i) state.selected = null;
+  if (moveCamera) {
+    if (i === null) tweenCamera(homePos(state.lens), HOME.target);
+    else {
+      const target = new THREE.Vector3(0, layerY(i), 0);
+      const dir = camera.position.clone().sub(controls.target); dir.y = 0;
+      if (dir.lengthSq() < 0.01) dir.set(1, 0, 1);
+      dir.normalize();
+      const dist = (state.lens ? 21 : 15.5) * (innerWidth <= 980 ? 1.3 : 1);
+      const pos = target.clone().add(dir.multiplyScalar(dist * Math.cos(0.55))).add(new THREE.Vector3(0, dist * Math.sin(0.55), 0));
+      tweenCamera(pos, target);
+    }
+  }
+  slabs.forEach((s, k) => s.btn.classList.toggle('on', k === i));
+  renderRail(); renderInspector();
+}
+function selectNode(id) {
+  if (id && state.lens === 0 && byId.get(id).modernOnly) setLens(1);
+  if (state.trace && id) stopTrace({ keepSelection: true });
+  state.selected = id;
+  if (id && state.focus !== null && byId.get(id).L !== state.focus) focusLayer(byId.get(id).L);
+  else { renderRail(); renderInspector(); }
+}
+function setHover(id) {
+  state.hover = id;
+  renderer.domElement.style.cursor = id ? 'pointer' : '';
+  const tip = $('#tooltip');
+  if (!id) { tip.classList.remove('on'); return; }
+  const n = byId.get(id);
+  tip.innerHTML = `<div class="t">${n.cap}</div>
+    <div class="r m"><em>MSTR</em><span>${n.modernOnly ? '—' : n.m}</span></div>
+    <div class="r n"><em>Modern</em><span>${n.n}</span></div>`;
+  tip.classList.add('on');
+}
+addEventListener('pointermove', (e) => {
+  const tip = $('#tooltip');
+  const x = Math.min(e.clientX + 16, innerWidth - 296), y = Math.min(e.clientY + 18, innerHeight - 110);
+  tip.style.transform = `translate(${x}px, ${y}px)`;
+});
+
+/* ---------- traces ---------- */
+const traceBtns = $('#traceBtns');
+traceBtns.innerHTML = Object.entries(TRACES).map(([k, t]) => `<button type="button" class="tr-btn" data-trace="${k}" style="--t:${t.color}" aria-pressed="false">${t.title}</button>`).join('');
+traceBtns.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-trace]');
+  if (!b) return;
+  if (state.trace && state.trace.key === b.dataset.trace) stopTrace(); else startTrace(b.dataset.trace);
+});
+
+let traceTimer = null;
+const STEP_MS = 4200;
+function startTrace(key) {
+  const T = TRACES[key];
+  if (T.modernOnly && state.lens === 0) setLens(1);
+  if (T.modernOnly && state.year < YEAR_MAX) setYear(YEAR_MAX);
+  state.selected = null;
+  state.trace = { key, i: 0, playing: !reduced };
+  if (state.focus !== null) focusLayer(null);
+  traceBtns.querySelectorAll('[data-trace]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.trace === key)));
+  goStep(0);
+}
+function stopTrace({ keepSelection = false } = {}) {
+  if (!state.trace) return;
+  if (!keepSelection) state.selected = null;
+  state.trace = null;
+  clearTimeout(traceTimer);
+  traceBtns.querySelectorAll('[data-trace]').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+  $('#caption').hidden = true;
+  trail.geo.setDrawRange(0, 0); trail.pulse.visible = false; trail.anim = null;
+  renderRail(); renderInspector();
+}
+function goStep(i) {
+  const tr = state.trace; if (!tr) return;
+  const steps = TRACES[tr.key].steps;
+  const prev = tr.i;
+  tr.i = clamp(i, 0, steps.length - 1);
+  clearTimeout(traceTimer);
+  if (tr.playing && tr.i < steps.length - 1) traceTimer = setTimeout(() => goStep(tr.i + 1), STEP_MS);
+  else if (tr.i === steps.length - 1) tr.playing = false;
+  const from = stepNode(steps[Math.max(0, tr.i - 1)]), to = stepNode(steps[tr.i]);
+  trail.anim = (to && from && tr.i > 0 && tr.i === prev + 1) ? { from, to, start: performance.now(), dur: reduced ? 1 : 900 } : null;
+  buildTrail(!trail.anim);
+  renderCaption(); renderInspector();
+}
+function traceVisited() {
+  const tr = state.trace; if (!tr) return new Set();
+  return new Set(TRACES[tr.key].steps.slice(0, tr.i + 1).map((s) => stepNode(s)).filter(Boolean));
+}
+function buildTrail(includeCurrent) {
+  const tr = state.trace;
+  if (!tr) { trail.geo.setDrawRange(0, 0); return; }
+  const steps = TRACES[tr.key].steps;
+  const ids = steps.slice(0, tr.i + (includeCurrent ? 1 : 0)).map((s) => stepNode(s)).filter(Boolean);
+  let k = 0;
+  for (let j = 1; j < ids.length; j++) {
+    if (ids[j] === ids[j - 1]) continue;
+    curveInto(byId.get(ids[j - 1]).cur, byId.get(ids[j]).cur, trail.seg);
+    for (const p of trail.seg) { if (k >= TRAIL_MAX) break; trail.pos.set([p.x, p.y, p.z], k * 3); k++; }
+  }
+  trail.geo.attributes.position.needsUpdate = true;
+  trail.geo.setDrawRange(0, k);
+  trail.line.material.color.set(TRACES[tr.key].color);
+  trail.beads.material.color.set(TRACES[tr.key].color);
+  trail.pulse.material.color.set(TRACES[tr.key].color);
+}
+function renderCaption() {
+  const cap = $('#caption'), tr = state.trace;
+  if (!tr) { cap.hidden = true; return; }
+  const T = TRACES[tr.key], s = T.steps[tr.i], id = stepNode(s);
+  cap.hidden = false;
+  cap.style.setProperty('--t', T.color);
+  $('#capTitle').textContent = `${T.title} · ${tr.i + 1} / ${T.steps.length}`;
+  $('#capQ').textContent = T.q;
+  const n = id && byId.get(id);
+  const c = n ? LAYERS[n.L].color : T.color;
+  const head = s.title ? (n ? `${s.title} · ${label(n)}` : s.title) : (n ? `${LAYERS[n.L].short} · ${label(n)}` : '');
+  $('#capStep').innerHTML = `<i style="--c:${c}"></i>${head}`;
+  $('#capText').textContent = (state.lens === 0 ? s.m : s.n) || s.n;
+  $('#capDots').innerHTML = T.steps.map((_, k) => `<span class="${k <= tr.i ? 'on' : ''}"></span>`).join('');
+  $('#capPlay').textContent = tr.playing ? 'Pause' : (tr.i === T.steps.length - 1 ? 'Replay' : 'Play');
+  $('#capPrev').disabled = tr.i === 0;
+}
+$('#capPrev').addEventListener('click', () => { if (state.trace) { state.trace.playing = false; goStep(state.trace.i - 1); } });
+$('#capNext').addEventListener('click', () => { if (state.trace) { state.trace.playing = false; goStep(state.trace.i + 1); } });
+$('#capClose').addEventListener('click', () => stopTrace());
+$('#capPlay').addEventListener('click', () => {
+  const tr = state.trace; if (!tr) return;
+  const last = TRACES[tr.key].steps.length - 1;
+  if (tr.i === last) { tr.playing = true; goStep(0); return; }
+  tr.playing = !tr.playing;
+  if (tr.playing) goStep(tr.i + 1); else { clearTimeout(traceTimer); renderCaption(); }
+});
+
+/* ---------- timeline ---------- */
+const yearInput = $('#year');
+const years = [...new Set(MILESTONES.map((m) => m.y))];
+$('#ticks').innerHTML = years.map((y) => {
+  const p = (y - YEAR_MIN) / (YEAR_MAX - YEAR_MIN);
+  return `<button type="button" class="tick" data-year="${y}" style="left: calc(7px + (100% - 14px) * ${p})">${String(y).slice(2)}</button>`;
+}).join('');
+$('#ticks').addEventListener('click', (e) => { const b = e.target.closest('[data-year]'); if (b) { stopYearPlay(); setYear(+b.dataset.year); } });
+yearInput.addEventListener('input', () => { stopYearPlay(); setYear(+yearInput.value); });
+
+function setYear(y, { user = true } = {}) {
+  state.year = y;
+  yearInput.value = y;
+  yearInput.style.setProperty('--p', `${((y - YEAR_MIN) / (YEAR_MAX - YEAR_MIN)) * 100}%`);
+  if (user && state.lens === 0) setLens(1);
+  document.querySelectorAll('.tick').forEach((t) => { const ty = +t.dataset.year; t.classList.toggle('past', ty < y); t.classList.toggle('now', ty === y); });
+  const now = MILESTONES.filter((m) => m.y === y);
+  const landed = MILESTONES.filter((m) => m.y <= y).length;
+  const tx = now.length
+    ? now.map((m) => `<b>${m.name}</b> — ${m.why}`).join(' ')
+    : `${landed} of ${MILESTONES.length} shifts have landed. Dashed capabilities are still to come.`;
+  $('#yearCap').innerHTML = `<span class="yr">${y}</span><span class="tx">${tx}</span>`;
+  if (!user) return;
+  const t = performance.now() / 1000;
+  for (const m of now) for (const id of m.nodes) byId.get(id).flash = t + 2.6;
+}
+let yearPlay = null;
+function stopYearPlay() { clearInterval(yearPlay); yearPlay = null; $('#yearPlay').textContent = '▶'; }
+$('#yearPlay').addEventListener('click', () => {
+  if (yearPlay) { stopYearPlay(); return; }
+  if (state.trace) stopTrace();
+  let y = state.year >= YEAR_MAX ? YEAR_MIN : state.year;
+  setYear(y);
+  $('#yearPlay').textContent = '❚❚';
+  yearPlay = setInterval(() => {
+    y += 1; setYear(y);
+    if (y >= YEAR_MAX) stopYearPlay();
+  }, 750);
+});
+function initYearCaption() {
+  setYear(YEAR_MAX, { user: false });
+  $('#yearCap').innerHTML = `<span class="yr">${YEAR_MAX}</span><span class="tx">How the modern stack took shape — public papers and releases, not the invention of every idea. Press ▶ or drag.</span>`;
+}
+
+/* ---------- reset & keyboard ---------- */
+function resetAll() {
+  stopTrace(); stopYearPlay();
+  state.selected = null;
+  focusLayer(null);
+}
+$('#reset').addEventListener('click', resetAll);
+addEventListener('keydown', (e) => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const tag = document.activeElement && document.activeElement.tagName;
+  if (e.key >= '1' && e.key <= '7') { selectNode(null); focusLayer(+e.key - 1); }
+  else if (e.key === '0') resetAll();
+  else if (e.key === 'l' || e.key === 'L') { if (state.trace && TRACES[state.trace.key].modernOnly) stopTrace(); setLens(state.lens ? 0 : 1); }
+  else if (e.key === 'Escape') {
+    if (state.trace) stopTrace(); else if (state.selected) selectNode(null); else if (state.focus !== null) focusLayer(null);
+  } else if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft') && tag !== 'INPUT') {
+    const d = e.key === 'ArrowRight' ? 1 : -1;
+    if (state.trace) { state.trace.playing = false; goStep(state.trace.i + d); }
+    else { stopYearPlay(); setYear(clamp(state.year + d, YEAR_MIN, YEAR_MAX)); }
+    e.preventDefault();
+  }
+});
+// "No scaling": keep the page fixed — gestures zoom the scene, never the document.
+['gesturestart', 'gesturechange'].forEach((ev) => document.addEventListener(ev, (e) => e.preventDefault()));
+addEventListener('wheel', (e) => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
+
+/* ---------- picking ---------- */
+const raycaster = new THREE.Raycaster();
+const ndc = new THREE.Vector2();
+let down = null;
+function pick(e) {
+  const r = renderer.domElement.getBoundingClientRect();
+  ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  raycaster.setFromCamera(ndc, camera);
+  const hit = raycaster.intersectObjects(pickables.filter((b) => b.parent.visible), false)[0];
+  return hit ? hit.object.userData.id : null;
+}
+renderer.domElement.addEventListener('pointerdown', (e) => { down = { x: e.clientX, y: e.clientY }; });
+renderer.domElement.addEventListener('pointermove', (e) => {
+  if (e.buttons) return;
+  const id = pick(e);
+  if (id !== state.hover) setHover(id);
+});
+renderer.domElement.addEventListener('pointerleave', () => setHover(null));
+renderer.domElement.addEventListener('pointerup', (e) => {
+  if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) return;
+  const id = pick(e);
+  if (id) selectNode(state.selected === id ? null : id);
+  else if (state.selected && !state.trace) selectNode(null);
+});
+
+/* =====================================================================
+   Layout: keep the scene centred in the space the panels leave free
+   ===================================================================== */
+
+let viewW = 0, viewH = 0, freeBox = { l: 0, r: 0, t: 0, b: 0 };
+function layout() {
+  viewW = innerWidth; viewH = innerHeight;
+  renderer.setSize(viewW, viewH);
+  composer.setSize(viewW, viewH);
+  bloom.setSize(viewW, viewH);
+  labelRenderer.setSize(viewW, viewH);
+  const compact = viewW <= 980;
+  const dock = $('#dock').getBoundingClientRect();
+  document.documentElement.style.setProperty('--dock-h', `${Math.round(dock.height)}px`);
+  const l = compact ? 0 : $('#rail').getBoundingClientRect().right;
+  const r = compact ? 0 : viewW - $('#inspector').getBoundingClientRect().left;
+  const t = compact ? $('#rail').getBoundingClientRect().bottom : 0;
+  const b = viewH - dock.top;
+  freeBox = { l, r, t, b };
+  camera.aspect = viewW / viewH;
+  camera.fov = compact ? 46 : 38;
+  const sx = (l - r) / 2, sy = (t - b) / 2;
+  camera.setViewOffset(viewW, viewH, -sx, -sy, viewW, viewH);
+  camera.updateProjectionMatrix();
+  $('#caption').style.left = `${l + (viewW - l - r) / 2}px`;
+  if (compact) $('#caption').style.top = `${t + 8}px`; else $('#caption').style.top = '16px';
+}
+addEventListener('resize', layout);
+
+/* =====================================================================
+   Frame loop
+   ===================================================================== */
+
+const v3 = new THREE.Vector3(), v3b = new THREE.Vector3();
+let last = performance.now(), frameNo = 0, lastE = -1;
+
+function nodeTargetAlpha(n, e, visited) {
+  let a = 1;
+  if (n.modernOnly && n.born && n.born > state.year && e > 0.5) a = 0.14;
+  if (state.focus !== null && n.L !== state.focus) a *= 0.2;
+  if (state.trace) a = visited.has(n.id) ? Math.max(a, 1) : a * 0.22;
+  else if (state.selected) {
+    if (n.id !== state.selected && !neighbors.get(state.selected).has(n.id)) a *= 0.32;
+  }
+  return a;
+}
+
+function declutter() {
+  const placed = [];
+  for (const s of slabs) {
+    if (s.obj.element.style.display === 'none') continue;
+    const r = s.btn.getBoundingClientRect();
+    if (r.width) placed.push({ x0: r.left, x1: r.right, y0: r.top, y1: r.bottom });
+  }
+  const visited = traceVisited();
+  const cur = state.trace ? stepNode(TRACES[state.trace.key].steps[state.trace.i]) : null;
+  const cand = [];
+  for (const n of NODES) {
+    if (!n.g.visible || n.alpha < 0.12) { n.clutter = true; continue; }
+    if (!n.w) { n.w = n.el.offsetWidth; n.h = n.el.offsetHeight; }
+    v3.copy(n.obj.position).project(camera);
+    const x = (v3.x + 1) / 2 * viewW, y = (1 - v3.y) / 2 * viewH - 24;
+    const pri = (n.id === state.selected ? 1000 : 0) + (n.id === state.hover ? 900 : 0) + (n.id === cur ? 800 : 0)
+      + (visited.has(n.id) ? 400 : 0) + (state.focus === n.L ? 300 : 0)
+      + (state.selected && neighbors.get(state.selected).has(n.id) ? 250 : 0) + n.alpha * 100 - v3.z * 50;
+    cand.push({ n, pri, x0: x - n.w / 2 - 2, x1: x + n.w / 2 + 2, y0: y - n.h / 2 - 1, y1: y + n.h / 2 + 1 });
+  }
+  cand.sort((a, b) => b.pri - a.pri);
+  for (const c of cand) {
+    const hit = placed.some((p) => c.x0 < p.x1 && c.x1 > p.x0 && c.y0 < p.y1 && c.y1 > p.y0);
+    c.n.clutter = hit && c.pri < 800;
+    if (!c.n.clutter) placed.push(c);
+  }
+}
+
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  const time = now / 1000;
+  frameNo++;
+
+  if (lensTween) {
+    const k = clamp((now - lensTween.start) / lensTween.dur);
+    state.t = lerp(lensTween.from, lensTween.to, k);
+    if (k >= 1) lensTween = null;
+  }
+  const e = ease(state.t);
+
+  if (camTween) {
+    const k = ease(clamp((now - camTween.start) / camTween.dur));
+    camera.position.lerpVectors(camTween.p0, camTween.p1, k);
+    controls.target.lerpVectors(camTween.t0, camTween.t1, k);
+    if (k >= 1) camTween = null;
+  }
+  controls.update();
+
+  /* slabs: layers 2–7 contract into the monolith footprint under the MicroStrategy lens */
+  slabs.forEach((s, i) => {
+    const sx = i === 0 ? 1 : lerp((MONO_W - 0.35) / SLAB_W, 1, e);
+    const sz = i === 0 ? 1 : lerp((MONO_D - 0.3) / SLAB_D, 1, e);
+    s.g.scale.set(sx, 1, sz);
+    const target = (state.focus === null || state.focus === i ? 1 : 0.25) * (state.hoverLayer === i ? 1.6 : 1);
+    s.alpha += (target - s.alpha) * Math.min(1, dt * 7);
+    s.edges.material.opacity = 0.5 * s.alpha;
+    s.gridMesh.material.opacity = 0.2 * s.alpha;
+    s.body.material.opacity = 0.06 * s.alpha;
+    s.obj.position.set(-(SLAB_W * sx) / 2 - 0.3, layerY(i) - 0.2, (SLAB_D * sz) / 2);
+    s.btn.style.opacity = state.focus === null || state.focus === i ? 1 : 0.45;
+  });
+
+  /* monolith */
+  const mA = 1 - smooth(e * 1.6);
+  mono.g.visible = mA > 0.01;
+  mono.body.material.opacity = 0.08 * mA;
+  mono.edges.material.opacity = 0.9 * mA;
+  mono.scan.material.opacity = 0.2 * mA;
+  mono.scan.position.y = Math.sin(time * 0.7) * (mono.h / 2 - 0.2);
+  mono.g.scale.set(1 + e * 0.6, 1 + e * 0.05, 1 + e * 0.6);
+  mono.topObj.visible = mono.noteObj.visible = mA > 0.05;
+  mono.top.style.opacity = mono.note.style.opacity = mA;
+  const nA = smooth((e - 0.5) * 2);
+  modernTitle.obj.visible = nA > 0.05;
+  modernTitle.el.style.opacity = nA;
+
+  /* nodes */
+  const visited = traceVisited();
+  const cur = state.trace ? stepNode(TRACES[state.trace.key].steps[state.trace.i]) : null;
+  const lensShown = state.t < 0.5 ? 0 : 1;
+  for (const n of NODES) {
+    n.cur.lerpVectors(n.posOld, n.posNew, e);
+    const pres = n.modernOnly ? smooth((e - 0.35) / 0.55) : 1;
+    n.g.visible = pres > 0.01;
+    n.g.position.copy(n.cur);
+    n.g.position.y += Math.sin(time * 1.1 + n.cur.x * 0.7 + n.L) * 0.025;
+    const target = nodeTargetAlpha(n, e, visited);
+    n.alpha += (target - n.alpha) * Math.min(1, dt * 7);
+    const hot = n.id === state.hover || n.id === state.selected || n.id === cur;
+    n.hoverK += ((hot ? 1 : 0) - n.hoverK) * Math.min(1, dt * 10);
+    const k = pres * (1 + 0.14 * n.hoverK);
+    n.g.scale.set(lerp(0.8, 1, e) * k, lerp(0.42, 1, e) * k, lerp(0.8, 1, e) * k);
+    n.body.material.opacity = n.alpha;
+    n.body.material.depthWrite = n.alpha > 0.9;
+    n.body.material.emissiveIntensity = 0.16 + 0.55 * n.hoverK + (visited.has(n.id) ? 0.25 : 0);
+    n.top.material.opacity = 0.9 * n.alpha;
+    const ghost = n.modernOnly && n.born && n.born > state.year;
+    n.body.material.wireframe = ghost && e > 0.5;
+    const flashing = n.flash > time;
+    const ringOn = n.id === state.selected || n.id === cur || flashing;
+    n.ring.material.opacity = ringOn ? (0.55 + 0.4 * Math.sin(time * 5)) * Math.max(n.alpha, 0.6) : 0;
+    n.ring.material.color.set(n.id === cur && state.trace ? TRACES[state.trace.key].color : flashing ? '#5ee6c8' : '#ffffff');
+    n.ring.scale.setScalar(1 + (flashing ? 0.25 * Math.sin(time * 6) ** 2 : 0));
+
+    /* labels */
+    if (n.shownLens !== lensShown) {
+      n.textEl.textContent = label(n, lensShown);
+      n.shownLens = lensShown; n.w = 0;
+    }
+    n.obj.position.set(n.g.position.x, n.g.position.y + 0.22, n.g.position.z);
+    const la = (n.clutter ? 0 : 1) * clamp(n.alpha * 1.15) * (pres > 0.6 ? 1 : 0);
+    n.labelA += (la - n.labelA) * Math.min(1, dt * 12);
+    n.obj.visible = n.labelA > 0.03;
+    const op = n.labelA.toFixed(2);
+    if (n.el.style.opacity !== op) n.el.style.opacity = op;
+    n.el.classList.toggle('cur', n.id === cur || n.id === state.selected);
+    n.el.classList.toggle('hot', n.id === state.hover);
+  }
+
+  /* edges */
+  const moved = Math.abs(e - lastE) > 1e-4;
+  for (const ed of edges) {
+    if (moved) {
+      curveInto(ed.A.cur, ed.B.cur, ed.pts);
+      for (let i = 0; i < N_SEG; i++) ed.pos.set([ed.pts[i].x, ed.pts[i].y, ed.pts[i].z], i * 3);
+      ed.line.geometry.attributes.position.needsUpdate = true;
+    }
+    const presA = ed.A.modernOnly ? smooth((e - 0.35) / 0.55) : 1, presB = ed.B.modernOnly ? smooth((e - 0.35) / 0.55) : 1;
+    let a = Math.min(ed.A.alpha, ed.B.alpha) * Math.min(presA, presB);
+    if (state.trace) a *= visited.has(ed.A.id) && visited.has(ed.B.id) ? 0.9 : 0.4;
+    if (state.selected && (ed.A.id === state.selected || ed.B.id === state.selected)) a = Math.max(a, 1.4);
+    ed.alpha += (a - ed.alpha) * Math.min(1, dt * 7);
+    ed.line.material.opacity = 0.42 * ed.alpha;
+    ed.line.visible = ed.alpha > 0.01;
+  }
+  if (moved) { if (state.trace) buildTrail(!trail.anim); lastE = e; }
+
+  /* flow particles */
+  const speed = reduced ? 0 : 0.22;
+  edges.forEach((ed, i) => {
+    for (let j = 0; j < PER_EDGE; j++) {
+      const idx = i * PER_EDGE + j;
+      const u = (time * speed + ed.phase + j / PER_EDGE) % 1;
+      sample(ed.pts, u, v3b);
+      flow.pos.set([v3b.x, v3b.y, v3b.z], idx * 3);
+      const c = ed.A.color, b = ed.alpha * 1.25 * Math.sin(u * Math.PI);
+      flow.col.set([c.r * b, c.g * b, c.b * b], idx * 3);
+    }
+  });
+  flow.geo.attributes.position.needsUpdate = true;
+  flow.geo.attributes.color.needsUpdate = true;
+
+  /* trace pulse */
+  if (state.trace) {
+    if (trail.anim) {
+      const k = clamp((now - trail.anim.start) / trail.anim.dur);
+      curveInto(byId.get(trail.anim.from).cur, byId.get(trail.anim.to).cur, trail.seg);
+      sample(trail.seg, ease(k), v3b);
+      trail.pulse.position.copy(v3b);
+      if (k >= 1) { trail.anim = null; buildTrail(true); }
+    } else if (cur) {
+      trail.pulse.position.copy(byId.get(cur).g.position).add(v3b.set(0, 0.32, 0));
+    }
+    trail.pulse.visible = !!cur || !!trail.anim;
+    trail.pulse.scale.setScalar(1 + 0.15 * Math.sin(time * 4));
+    trail.line.material.opacity = 0.75 + 0.2 * Math.sin(time * 3);
+  }
+
+  dust.rotation.y += dt * 0.006;
+
+  if (frameNo % 3 === 0) declutter();
+  composer.render();
+  labelRenderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+
+/* =====================================================================
+   Boot
+   ===================================================================== */
+
+renderRail();
+renderInspector();
+initYearCaption();
+setLens(0, { instant: true });
+layout();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
