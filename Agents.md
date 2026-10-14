@@ -20,7 +20,8 @@ Do not add completion states, streaks, review queues, mastery scores, or other l
 
 The taxonomy, guide metadata, and guide content are three separate layers:
 
-- `data-ai-knowledge-graph.yaml` is the source of truth for the broad seven-layer field atlas shown on the homepage. `js/data-ai-knowledge-graph.js` is its dependency-free browser export; keep the two synchronized.
+- `data-ai-knowledge-graph.yaml` is the source of truth for the broad seven-layer field atlas shown on the homepage, including its optional MicroStrategy lens (`mstr` on layers, sub-domains, concerns and topics — see `schema.lenses`). `data-ai-knowledge-graph.json` and `js/data-ai-knowledge-graph.js` are derived exports: regenerate both with `python3 scripts/export-knowledge-graph.py` (it also validates ids, edges and lens values) rather than editing them by hand.
+- `js/knowledge-atlas-content.js` holds homepage editorial content that is not taxonomy: role trails, guided questions, the 2004–2023 modern-stack milestones and editorial notes. Every reference is a topic id; unknown ids are dropped with a console warning.
 - `js/atlas.js` defines domains, clusters, concepts, and graph-to-guide connections.
 - `js/manifest.js` holds `TRACKS` and guide metadata only (`id`, `track`, `type`, `title`, `difficulty`, `minutes`, `summary`, `tags`, `bodyUrl`) — no guide body content.
 - `guides/<id>.html` holds each guide's actual body as a freeform HTML fragment, authored directly rather than as JS object fields. `guides/README.md` is the authoring contract (one `<article class="guide-content">` wrapper, no `<script>`/inline handlers/full document, asset paths relative to `index.html`, repo-owned content only).
@@ -90,9 +91,24 @@ Rules for changing the component:
 ## UI architecture
 
 - `index.html` is the broad Data & AI Field Atlas homepage;
-  `knowledge-atlas.html` is its direct preview alias. Both use
-  `css/knowledge-atlas.css`, `js/data-ai-knowledge-graph.js`, and
-  `js/knowledge-atlas.js`.
+  `knowledge-atlas.html` is its direct preview alias (keep the two identical
+  apart from canonical/og URLs and the brand link). It is one fixed viewport:
+  a 3D layer stack fills the window and three floating panels — the layer
+  rail, the details inspector and the control dock — sit above it. Each panel
+  can be minimized; on compact screens the rail becomes a chip row/drawer and
+  the inspector a bottom sheet.
+  - `js/knowledge-atlas.js` (classic script) owns data indexing, panels,
+    routing (`#topic=`, `#group=`, `#concern=`, `#layer=` and `?lens=mstr`),
+    search and filters, trails, the timeline and every piece of text.
+  - `js/atlas-scene.js` (ES module, Three.js) is a component like
+    `js/timeline/`: it renders from a spec, takes `update(view)` and reports
+    through `onSelect`/`onHover`. It must not read the graph, the URL or the
+    panels. Keep the label declutter pass and the reduced-motion path.
+  - The page works without the scene: without WebGL, without module support
+    or from `file://`, a 2D layer stack fills the stage and every topic stays
+    reachable from the rail and inspector.
+  - Three.js r160 is vendored under `vendor/three/` (MIT, only the files the
+    scene imports) and mapped by the import map in both HTML files.
 - `field-notes.html` preserves the detailed domain-map and guide experience
   previously hosted at `index.html`. `timeline.html` remains the timeline page.
   Shared light-DOM Web Components live in `js/components/`:
@@ -101,7 +117,7 @@ Rules for changing the component:
   own data loading, routing, and domain behavior.
 - `css/styles.css` owns the responsive visual system, including baseline typography for `.guide-content` fragments.
 - `js/app.js` renders the field-notes overview graph, domain graphs, concept inspector, and search from `js/manifest.js` + `js/atlas.js`, and fetches/injects the matching `guides/<id>.html` fragment when a guide opens. It also preloads every fragment once at startup (`Promise.allSettled`, cached) to build the full-text search index — a fragment that fails to load degrades to metadata-only search for that guide rather than breaking the page.
-- There are no runtime dependencies or external assets, and no build step — fetch-based fragment loading works directly against the static file server / GitHub Pages.
+- There are no external assets and no build step — fetch-based fragment loading works directly against the static file server / GitHub Pages. The one runtime library is the vendored Three.js used by the homepage scene; do not load it (or anything else) from a CDN.
 
 When changing the application, preserve keyboard access, mobile navigation, dialog close behavior, empty states, and deep links for guides and graph concepts. `openGuide()` guards against stale fetches with a monotonic token — if you touch it, keep that guard so rapidly opening guide A then B can't let A's late response overwrite B's content.
 
@@ -115,6 +131,8 @@ node --check js/atlas.js
 node --check js/app.js
 for f in js/timeline-page.js js/timeline/*.js js/timeline/styles/*.js; do node --check "$f"; done
 node scripts/check-timelines.mjs
+node --check js/knowledge-atlas.js && node --check js/knowledge-atlas-content.js && node --check js/atlas-scene.js
+python3 scripts/export-knowledge-graph.py --check   # graph exports match the YAML
 node scripts/make-covers.mjs   # deterministic; leaves the tree clean if art is current
 python3 -m http.server 8080
 ```

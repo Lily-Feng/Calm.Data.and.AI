@@ -1,6 +1,6 @@
-version: 0.2
+version: 0.3
 name: Data and AI knowledge graph
-reviewed_at: "2026-08-26"
+reviewed_at: "2026-10-13"
 description: >
   Spine-first knowledge graph covering data and AI from hardware to presentation.
   The spine is a strict three-level hierarchy: layer -> sub_domain -> topic.
@@ -46,6 +46,16 @@ schema:
       - scientist
     maturity: [stable, evolving, emerging]
 
+  lenses:
+    mstr: >
+      Optional MicroStrategy lens, read against the modern spine. A layer may carry
+      `mstr: {summary}`. A sub_domain or concern may carry `mstr: {where, name, note}`,
+      where `where` is `inside` (a capability of the MicroStrategy platform itself),
+      `beside` (the customer stack MicroStrategy sat on) or `none` (no counterpart;
+      the default). A topic may carry a short `mstr` label naming its closest
+      MicroStrategy object. The lens maps responsibilities; it does not claim that
+      MicroStrategy contained the platform or that each feature has a replacement.
+
   edge_types:
     requires: A cannot be understood or used without B.
     part_of: A is a component of B across the spine, not under it.
@@ -61,6 +71,8 @@ layers:
   - id: infrastructure
     name: Infrastructure and hardware
     summary: The physical and platform substrate everything else runs on.
+    mstr:
+      summary: "MicroStrategy ran on servers the customer provisioned and sized. Hardware, networking and runtime decisions were made outside the BI platform."
     sub_domains:
 
       - id: compute-hardware
@@ -94,6 +106,7 @@ layers:
       - id: datacenter-and-capacity
         name: Datacenter and capacity
         facets: {layer: infrastructure, stage: design, role: platform, maturity: stable}
+        mstr: {where: beside, name: "Intelligence Server sizing", note: "Memory for cubes and caches, and the number of clustered nodes, were recurring capacity decisions made on customer-run servers."}
         topics:
           - {id: power-and-cooling, name: Power and cooling constraints}
           - {id: colocation-vs-cloud, name: Colocation versus cloud versus on-premise}
@@ -133,6 +146,8 @@ layers:
   - id: storage
     name: Storage and persistence
     summary: How bytes are laid out, described and durably kept.
+    mstr:
+      summary: "MicroStrategy sat on top of the customer's warehouse — Teradata, Oracle, Netezza and others — and kept its own metadata in a relational repository. Inside the server it held Intelligent Cubes and result caches."
     sub_domains:
 
       - id: file-formats
@@ -166,6 +181,7 @@ layers:
       - id: transactional-databases
         name: Transactional databases
         facets: {layer: storage, stage: build, role: data_engineer, maturity: stable}
+        mstr: {where: beside, name: "Metadata and statistics repositories", note: "MicroStrategy's metadata repository and statistics tables lived in a relational database the customer operated."}
         topics:
           - {id: relational-model, name: Relational model and SQL semantics}
           - {id: acid-and-isolation, name: ACID and isolation levels}
@@ -176,11 +192,12 @@ layers:
       - id: analytical-stores
         name: Analytical stores
         facets: {layer: storage, stage: build, role: data_engineer, maturity: stable}
+        mstr: {where: beside, name: "Enterprise warehouse (Teradata · Oracle · Netezza)", note: "The warehouse supplied the data and executed the generated SQL. Partitioning, aggregate tables and physical design shaped report performance — essential to every deployment, but not MicroStrategy capabilities. A semantic model cannot compensate indefinitely for unclear grain, unstable source data or a poor physical design."}
         topics:
-          - {id: columnar-warehouses, name: Columnar warehouse internals}
+          - {id: columnar-warehouses, name: Columnar warehouse internals, mstr: "Teradata, Oracle and Netezza warehouses"}
           - {id: mpp-execution, name: MPP execution and distribution}
-          - {id: clustering-and-sort-keys, name: "Clustering, sort and partition keys"}
-          - {id: materialized-views, name: Materialized views and result reuse}
+          - {id: clustering-and-sort-keys, name: "Clustering, sort and partition keys", mstr: "Warehouse partitioning and partition mapping"}
+          - {id: materialized-views, name: Materialized views and result reuse, mstr: "Aggregate tables chosen by the SQL Engine"}
 
       - id: specialized-stores
         name: Specialized stores
@@ -204,11 +221,13 @@ layers:
       - id: caching-layers
         name: Caching layers
         facets: {layer: storage, stage: operate, role: platform, maturity: stable}
+        mstr: {where: inside, name: "Intelligent Cubes and result caches", note: "Intelligent Cubes held prepared data in Intelligence Server memory, and Dynamic Sourcing let eligible reports answer from a cube instead of the warehouse. The design question is not “warehouse or cube” but which work to compute on demand, which to precompute, and how to keep the two answers consistent."}
         topics:
           - {id: cache-topologies, name: Cache topologies and placement}
           - {id: eviction-policies, name: Eviction policies}
-          - {id: cache-invalidation, name: Cache invalidation strategies}
-          - {id: result-caching, name: Query and result caching}
+          - {id: cache-invalidation, name: Cache invalidation strategies, mstr: "Cache expiry and cube republishing"}
+          - {id: result-caching, name: Query and result caching, mstr: "Report and document caches"}
+          - {id: in-memory-cubes, name: In-memory cubes and dynamic sourcing, mstr: "Intelligent Cubes and Dynamic Sourcing"}
 
 # ---------------------------------------------------------------------------
 # LAYER 3
@@ -216,13 +235,16 @@ layers:
   - id: processing
     name: Processing and movement
     summary: Getting data in, moving it, and reshaping it at scale.
+    mstr:
+      summary: "Data arrived through ETL the customer ran. Inside MicroStrategy, the SQL Engine turned report definitions into warehouse SQL, MultiSource reached across databases, and the Analytical Engine finished calculations in memory."
     sub_domains:
 
       - id: ingestion
         name: Ingestion
         facets: {layer: processing, stage: build, role: data_engineer, maturity: stable}
+        mstr: {where: beside, name: "External ETL (Informatica · DataStage)", note: "ETL commonly happened outside the BI platform, often as repeated full extracts or timestamp-based loads. Modern stacks make ingestion, transformation and orchestration explicit parts of the platform."}
         topics:
-          - {id: batch-ingestion, name: Batch ingestion patterns}
+          - {id: batch-ingestion, name: Batch ingestion patterns, mstr: "Informatica and DataStage loads"}
           - {id: api-and-saas-connectors, name: API and SaaS connectors}
           - {id: file-and-log-ingestion, name: File and log ingestion}
           - {id: schema-drift-handling, name: Schema drift handling}
@@ -268,18 +290,22 @@ layers:
       - id: query-engines
         name: Query engines
         facets: {layer: processing, stage: operate, role: data_engineer, maturity: stable}
+        mstr: {where: inside, name: "SQL Engine · Analytical Engine · MultiSource", note: "Between a business question and a result is a planner. The SQL Engine chose join paths and fact tables, wrote multi-pass SQL for non-additive metrics and tuned SQL per database; the Analytical Engine finished subtotals, ranking and cross-tabs; MultiSource combined databases. The same responsibility now spreads across semantic compilers, BI query generators and database optimizers."}
         topics:
-          - {id: query-planning, name: Query planning and optimization}
+          - {id: query-planning, name: Query planning and optimization, mstr: "SQL Engine and database-specific (VLDB) settings"}
           - {id: vectorized-execution, name: Vectorized execution}
-          - {id: federated-query, name: Federated and cross-source query}
+          - {id: federated-query, name: Federated and cross-source query, mstr: "MultiSource"}
+          - {id: semantic-sql-generation, name: Semantic SQL generation and multi-pass queries, mstr: "Multi-pass SQL from the SQL Engine"}
+          - {id: post-query-calculation, name: Post-query calculation, mstr: "Analytical Engine"}
           - {id: single-node-engines, name: Single-node and embedded engines}
 
       - id: transformation-frameworks
         name: Transformation frameworks
         facets: {layer: processing, stage: build, role: analytics_engineer, maturity: stable}
+        mstr: {where: beside, name: "Warehouse views and logical views", note: "Warehouse views and logical views shaped the data available to analytics. SQL models and data products make those transformations easier to version, test and deploy."}
         topics:
           - {id: elt-vs-etl, name: ELT versus ETL}
-          - {id: sql-transformation-modeling, name: SQL transformation modeling}
+          - {id: sql-transformation-modeling, name: SQL transformation modeling, mstr: "Warehouse and logical views"}
           - {id: incremental-models, name: Incremental and snapshot models}
           - {id: transformation-testing, name: Testing transformations}
           - {id: macro-and-reuse-patterns, name: Macros and reuse patterns}
@@ -299,26 +325,33 @@ layers:
   - id: semantics
     name: Semantics and features
     summary: Where raw data acquires agreed meaning and becomes model input.
+    mstr:
+      summary: "The part of MicroStrategy that most strongly shapes the mental model: attributes, facts, metrics, filters, hierarchies and prompts formed one language for asking business questions, stored as objects in one metadata repository."
     sub_domains:
 
       - id: data-modeling
         name: Data modeling
         facets: {layer: semantics, stage: design, role: analytics_engineer, maturity: stable}
+        mstr: {where: inside, name: "Attributes, facts and the logical data model", note: "Attributes, forms, lookup tables and relationships defined business entities and drill paths; facts separated source values from business calculations."}
         topics:
           - {id: normalization, name: Normalization and normal forms}
-          - {id: dimensional-modeling, name: Dimensional modeling}
+          - {id: dimensional-modeling, name: Dimensional modeling, mstr: "Attributes, facts and lookup tables"}
           - {id: data-vault, name: Data Vault modeling}
           - {id: slowly-changing-dimensions, name: Slowly changing dimensions}
-          - {id: grain-and-key-design, name: Grain and key design}
+          - {id: grain-and-key-design, name: Grain and key design, mstr: "Attribute relationships and fact levels"}
 
       - id: semantic-layer
         name: Semantic and metric layer
         facets: {layer: semantics, stage: design, role: analytics_engineer, maturity: evolving}
+        mstr: {where: inside, name: "Metrics, filters, prompts and hierarchies", note: "Metrics, level metrics, transformations, filters, prompts, custom groups and hierarchies were reusable objects in one repository. The hardest cases are where a metric changes meaning with its grain, filter context or join path — judge a semantic layer by the questions it can express and explain."}
         topics:
-          - {id: metric-definitions, name: Metric definitions and consistency}
+          - {id: metric-definitions, name: Metric definitions and consistency, mstr: "Metrics"}
           - {id: headless-bi, name: Headless BI and metric APIs}
-          - {id: hierarchy-design, name: Dimension and hierarchy design}
-          - {id: governed-drill-paths, name: Governed drill paths}
+          - {id: hierarchy-design, name: Dimension and hierarchy design, mstr: "Hierarchies"}
+          - {id: governed-drill-paths, name: Governed drill paths, mstr: "Drill maps"}
+          - {id: level-aware-metrics, name: Level-aware and non-additive metrics, mstr: "Level metrics and dimensionality"}
+          - {id: time-comparisons, name: Time comparisons and period offsets, mstr: "Transformations (prior year, month to date)"}
+          - {id: filters-and-prompts, name: "Reusable filters, prompts and parameters", mstr: "Filters, prompts and custom groups"}
 
       - id: master-and-reference-data
         name: Master and reference data
@@ -372,6 +405,8 @@ layers:
   - id: intelligence
     name: Intelligence
     summary: Building, adapting, running and applying models.
+    mstr:
+      summary: "MicroStrategy was a BI platform, not a model-building one. Data Mining Services could evaluate predictive models trained elsewhere as metrics; training, LLMs and retrieval sit outside its boundary."
     sub_domains:
 
       - id: training-data
@@ -387,8 +422,9 @@ layers:
       - id: classical-ml
         name: Classical machine learning
         facets: {layer: intelligence, stage: build, role: scientist, maturity: stable}
+        mstr: {where: inside, name: "Data Mining Services", note: "Predictive models built in other tools could be imported (PMML) and evaluated as predictive metrics inside reports."}
         topics:
-          - {id: supervised-learning, name: Supervised learning}
+          - {id: supervised-learning, name: Supervised learning, mstr: "Predictive metrics (PMML import)"}
           - {id: unsupervised-learning, name: Unsupervised learning and clustering}
           - {id: gradient-boosted-trees, name: Gradient boosted trees}
           - {id: time-series-forecasting, name: Time series forecasting}
@@ -470,11 +506,14 @@ layers:
   - id: serving
     name: Serving and access
     summary: How data and model outputs are exposed to consumers.
+    mstr:
+      summary: "Intelligence Server was also the access layer: roles, ACLs and security filters governed objects and rows, and REST APIs and embedding exposed the same governed results to applications."
     sub_domains:
 
       - id: api-design
         name: API design
         facets: {layer: serving, stage: design, role: platform, maturity: stable}
+        mstr: {where: inside, name: "REST API", note: "REST APIs exposed reports, cubes and dossiers to applications under the same metadata and security."}
         topics:
           - {id: rest-apis, name: REST API design}
           - {id: grpc-and-streaming-apis, name: gRPC and streaming APIs}
@@ -494,18 +533,20 @@ layers:
       - id: data-and-feature-serving
         name: Data and feature serving
         facets: {layer: serving, stage: operate, role: data_engineer, maturity: stable}
+        mstr: {where: inside, name: "Embedded analytics", note: "Embedding placed dossiers and reports inside other applications; semantic APIs and SQL endpoints now carry that job across tools."}
         topics:
           - {id: low-latency-feature-serving, name: Low-latency feature serving}
           - {id: prediction-caching, name: Prediction and response caching}
           - {id: reverse-etl, name: Reverse ETL to operational systems}
-          - {id: analytics-apis, name: Embedded analytics APIs}
+          - {id: analytics-apis, name: Embedded analytics APIs, mstr: "REST API and embedding"}
 
       - id: access-control
         name: Access control at the edge
         facets: {layer: serving, stage: operate, role: platform, concern: security, maturity: stable}
+        mstr: {where: inside, name: "Users, security roles, ACLs and security filters", note: "Roles and ACLs governed objects; security filters restricted the rows each user could see — inside MicroStrategy's own boundary. Moving policy closer to the data broadens coverage to more consumers, but definitions, access rules and deployment must then agree across tools."}
         topics:
-          - {id: authentication, name: Authentication mechanisms}
-          - {id: authorization-models, name: "RBAC, ABAC and policy engines"}
+          - {id: authentication, name: Authentication mechanisms, mstr: "Authentication modes"}
+          - {id: authorization-models, name: "RBAC, ABAC and policy engines", mstr: "Security roles and ACLs"}
           - {id: rate-limiting, name: Rate limiting and quotas}
           - {id: tenant-isolation, name: Multi-tenant isolation}
 
@@ -533,20 +574,24 @@ layers:
   - id: consumption
     name: Consumption and experience
     summary: Where people actually meet the data and the models.
+    mstr:
+      summary: "Reports, documents, dossiers and mobile apps were the primary destination for the semantic model, and Distribution Services delivered them on schedule. The same definitions now also need to reach APIs, alerts and AI interfaces."
     sub_domains:
 
       - id: business-intelligence
         name: Business intelligence
         facets: {layer: consumption, stage: build, role: analyst, maturity: stable}
+        mstr: {where: inside, name: "Reports, documents and dossiers", note: "Reports and documents carried the semantic model to people, and self-service users built dossiers from governed attributes and metrics."}
         topics:
-          - {id: dashboard-design, name: Dashboard design}
-          - {id: self-service-analytics, name: Self-service analytics}
-          - {id: report-distribution, name: Report distribution and subscriptions}
-          - {id: bi-semantic-integration, name: BI and semantic layer integration}
+          - {id: dashboard-design, name: Dashboard design, mstr: "Documents and dossiers"}
+          - {id: self-service-analytics, name: Self-service analytics, mstr: "Dossier authoring"}
+          - {id: report-distribution, name: Report distribution and subscriptions, mstr: "Distribution Services subscriptions and bursting"}
+          - {id: bi-semantic-integration, name: BI and semantic layer integration, mstr: "Every report reads one metadata"}
 
       - id: visualization
         name: Visualization
         facets: {layer: consumption, stage: design, role: analyst, maturity: stable}
+        mstr: {where: inside, name: "Grids, graphs and dossier visualizations", note: "Grids, graphs and visualizations rendered results from the same metadata objects."}
         topics:
           - {id: chart-selection, name: Chart selection}
           - {id: visual-encoding, name: Visual encoding principles}
@@ -575,8 +620,9 @@ layers:
       - id: conversational-interfaces
         name: Conversational interfaces
         facets: {layer: consumption, stage: build, role: analytics_engineer, maturity: emerging}
+        mstr: {where: inside, name: "Natural-language query", note: "NLQ and contextual experiences needed what AI assistants still need: governed metrics, clear context and explainable queries."}
         topics:
-          - {id: natural-language-to-sql, name: Natural language to SQL}
+          - {id: natural-language-to-sql, name: Natural language to SQL, mstr: "NLQ"}
           - {id: conversational-analytics, name: Conversational analytics patterns}
           - {id: answer-grounding, name: Answer grounding and trust signals}
           - {id: ambiguity-handling, name: Ambiguity and clarification handling}
@@ -584,9 +630,10 @@ layers:
       - id: decision-support
         name: Decision support
         facets: {layer: consumption, stage: operate, role: analyst, maturity: stable}
+        mstr: {where: inside, name: "Alerts, subscriptions and mobile", note: "Threshold alerts, scheduled delivery and mobile apps pushed results into people's working day."}
         topics:
           - {id: data-storytelling, name: Narrative and data storytelling}
-          - {id: alerting-and-anomalies, name: Alerting and anomaly surfacing}
+          - {id: alerting-and-anomalies, name: Alerting and anomaly surfacing, mstr: "Alerts and thresholds"}
           - {id: decision-workflows, name: Decision workflows and thresholds}
           - {id: operational-embedding, name: Embedding insight into operations}
 
@@ -598,35 +645,39 @@ concerns:
 
   - id: orchestration
     name: Orchestration
+    mstr: {where: inside, name: "Schedules and Command Manager", note: "Time- and event-based schedules refreshed caches, cubes and subscriptions, and Command Manager scripted administration. Data pipelines themselves were orchestrated outside, in the ETL tools."}
     topics:
       - {id: workflow-orchestration, name: Workflow orchestration models}
       - {id: dag-design, name: DAG design and dependency management}
-      - {id: scheduling-and-triggers, name: "Scheduling, triggers and sensors"}
+      - {id: scheduling-and-triggers, name: "Scheduling, triggers and sensors", mstr: "Time- and event-based schedules"}
       - {id: retries-and-idempotency, name: "Retries, idempotency and recovery"}
       - {id: backfills, name: Backfills and reprocessing}
       - {id: cross-layer-pipeline-design, name: Cross-layer pipeline design}
 
   - id: metadata
     name: Metadata and lineage
+    mstr: {where: inside, name: "One metadata repository", note: "One repository made a large analytics estate feel like one connected object system: report-to-metric-to-attribute dependencies were inspectable. Modern stacks split physical metadata, business definitions, deployment history and lineage across several systems — can you still trace a changed column to every report, API and decision it affects?"}
     topics:
-      - {id: data-catalogs, name: Data catalogs and metastores}
+      - {id: data-catalogs, name: Data catalogs and metastores, mstr: "Warehouse Catalog and metadata repository"}
       - {id: metadata-types, name: "Technical, business and operational metadata"}
-      - {id: column-level-lineage, name: Column-level lineage}
+      - {id: column-level-lineage, name: Column-level lineage, mstr: "Object dependency graph"}
       - {id: model-provenance, name: "Dataset, model and prompt provenance"}
       - {id: discovery-and-search, name: Discovery and search experience}
 
   - id: governance
     name: Governance
+    mstr: {where: inside, name: "Object ACLs and security filters", note: "Policies lived on BI objects and results, within the server's boundary. Moving them closer to the data lets more consumers share the same rules."}
     topics:
       - {id: data-classification, name: Data classification and sensitivity}
       - {id: retention-and-deletion, name: Retention and deletion policy}
       - {id: privacy-regulation, name: Privacy regulation and consent}
       - {id: ai-regulation, name: AI regulation and model documentation}
-      - {id: policy-management, name: Access policy definition and enforcement}
+      - {id: policy-management, name: Access policy definition and enforcement, mstr: "Security filters"}
       - {id: stewardship-model, name: Ownership and stewardship}
 
   - id: security
     name: Security and privacy
+    mstr: {where: inside, name: "Users, groups and authentication", note: "Users, groups and authentication modes were administered inside the platform, often synchronized from LDAP or a single sign-on provider."}
     topics:
       - {id: identity-and-access-management, name: Identity and access management}
       - {id: encryption, name: Encryption at rest and in transit}
@@ -637,13 +688,15 @@ concerns:
 
   - id: quality
     name: Quality and observability
+    mstr: {where: inside, name: "Integrity Manager and Platform Analytics", note: "Report comparison caught changes in output between versions or environments, and platform analytics exposed adoption and performance. Data tests, data diffs, semantic validation and dashboard checks now cover different parts of that risk."}
     topics:
       - {id: data-quality-dimensions, name: Data quality dimensions}
       - {id: assertions-and-tests, name: "Assertions, tests and contracts"}
+      - {id: report-regression-testing, name: Report and dashboard regression testing, mstr: "Integrity Manager report comparison"}
       - {id: model-evaluation, name: Model evaluation methodology}
       - {id: llm-evaluation, name: LLM and agent evaluation}
       - {id: drift-detection, name: Drift and degradation detection}
-      - {id: pipeline-monitoring, name: Pipeline and inference monitoring}
+      - {id: pipeline-monitoring, name: Pipeline and inference monitoring, mstr: "Platform Analytics"}
       - {id: incident-response, name: Incident response and postmortems}
 
   - id: cost
@@ -657,19 +710,21 @@ concerns:
 
   - id: reliability
     name: Reliability and resilience
+    mstr: {where: inside, name: "Clustering and governing settings", note: "Clustered Intelligence Servers and governing settings controlled analytics demand and failover; compute platforms and query engines now manage concurrency, resource groups and cost."}
     topics:
       - {id: slos-and-error-budgets, name: SLOs and error budgets}
       - {id: disaster-recovery, name: Backup and disaster recovery}
-      - {id: capacity-and-scaling, name: Capacity planning and scaling policy}
+      - {id: capacity-and-scaling, name: Capacity planning and scaling policy, mstr: "Intelligence Server clustering"}
       - {id: fault-tolerance, name: Fault tolerance and graceful degradation}
       - {id: failure-domains, name: Availability targets and failure domains}
 
   - id: engineering-practice
     name: Engineering practice
+    mstr: {where: inside, name: "Object Manager promotion", note: "Object Manager moved selected objects and their dependencies between environments; Git, pull requests, CI and deployment pipelines now promote code and configuration."}
     topics:
       - {id: version-control-and-cicd, name: Version control and CI/CD}
       - {id: infrastructure-as-code, name: Infrastructure as code}
-      - {id: environments-and-promotion, name: Environments and promotion}
+      - {id: environments-and-promotion, name: Environments and promotion, mstr: "Object Manager"}
       - {id: testing-strategy, name: Testing strategy for data and models}
       - {id: documentation-practice, name: Documentation practice}
 
@@ -729,3 +784,12 @@ edges:
   - {from: drift-detection, type: part_of, to: pipeline-monitoring}
   - {from: unit-economics, type: requires, to: cost-attribution}
   - {from: token-streaming, type: part_of, to: online-inference-endpoints}
+
+  - {from: in-memory-cubes, type: alternative_to, to: materialized-views}
+  - {from: in-memory-cubes, type: requires, to: cache-invalidation}
+  - {from: semantic-sql-generation, type: requires, to: metric-definitions}
+  - {from: semantic-sql-generation, type: enables, to: query-planning}
+  - {from: level-aware-metrics, type: requires, to: grain-and-key-design}
+  - {from: level-aware-metrics, type: enables, to: semantic-sql-generation}
+  - {from: filters-and-prompts, type: governed_by, to: policy-management}
+  - {from: report-regression-testing, type: part_of, to: assertions-and-tests}

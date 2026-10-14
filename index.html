@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#f2f0e8">
-  <meta name="description" content="A playful, explorable field atlas for the systems, ideas, and practices behind data and AI.">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#060a14">
+  <meta name="description" content="An explorable 3D field atlas for the systems, ideas, and practices behind data and AI — with a MicroStrategy lens.">
   <link rel="canonical" href="https://lily-feng.github.io/Calm.Data.and.AI/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Calm Data & AI">
   <meta property="og:title" content="The Data & AI Field Atlas">
-  <meta property="og:description" content="Trace the terrain from silicon to story through 274 connected topics.">
+  <meta property="og:description" content="Trace the terrain from silicon to story through 281 connected topics.">
   <meta property="og:url" content="https://lily-feng.github.io/Calm.Data.and.AI/">
   <meta property="og:image" content="https://lily-feng.github.io/Calm.Data.and.AI/public/knowledge-atlas-og.png">
   <meta property="og:image:width" content="1200">
@@ -20,154 +20,139 @@
   <meta name="twitter:description" content="Trace the terrain from silicon to story.">
   <meta name="twitter:image" content="https://lily-feng.github.io/Calm.Data.and.AI/public/knowledge-atlas-og.png">
   <title>The Data & AI Field Atlas</title>
-  <link rel="stylesheet" href="css/knowledge-atlas.css?v=20260826-1">
+  <link rel="stylesheet" href="css/knowledge-atlas.css?v=20261013-1">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./vendor/three/build/three.module.js",
+      "three/addons/": "./vendor/three/examples/jsm/"
+    }
+  }
+  </script>
 </head>
-<body>
-  <a class="skip-link" href="#atlas">Skip to the atlas</a>
-  <div class="reading-progress" id="reading-progress" aria-hidden="true"></div>
+<body data-lens="modern">
+  <a class="skip-link" href="#inspector-body">Skip to details</a>
 
-  <header class="site-nav">
+  <div id="stage" class="stage">
+    <div id="stage-3d" class="stage-3d"></div>
+    <div id="stage-fallback" class="stage-fallback" hidden></div>
+  </div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <header id="brand" class="brand-block">
     <a class="brand" href="index.html" aria-label="Data and AI Field Atlas home">
       <span class="brand-mark" aria-hidden="true">D·AI</span>
-      <span class="brand-copy"><b>Field Atlas</b><small>Calm Data & AI</small></span>
+      <span class="brand-copy"><b>Field Atlas</b><small>Calm Data &amp; AI</small></span>
     </a>
-    <nav aria-label="Primary navigation">
-      <a class="is-current" href="#atlas">Atlas</a>
+    <nav class="site-links" aria-label="Primary navigation">
       <a href="field-notes.html">Field notes</a>
       <a href="timeline.html">Timelines</a>
-      <button class="nav-about" id="open-about" type="button">About the map</button>
+      <button id="open-about" type="button">About</button>
     </nav>
   </header>
 
-  <main>
-    <section class="hero" aria-labelledby="hero-title">
-      <div class="hero-contours" aria-hidden="true"></div>
-      <div class="hero-copy">
-        <p class="kicker"><span></span> A living map of the field</p>
-        <h1 id="hero-title">Data has layers.<br>AI has <em>weather.</em></h1>
-        <p class="hero-lede">Trace the terrain from silicon to story. Follow one idea across the stack, switch professional lenses, or wander until two concepts unexpectedly connect.</p>
-        <div class="hero-actions">
-          <a class="button button--primary" href="#atlas">Enter the atlas <span aria-hidden="true">↘</span></a>
-          <button class="button button--ghost" id="surprise-hero" type="button">Surprise me <span aria-hidden="true">✦</span></button>
-        </div>
-        <dl class="hero-stats" aria-label="Atlas statistics">
-          <div><dt id="stat-layers">7</dt><dd>layers</dd></div>
-          <div><dt id="stat-topics">—</dt><dd>topics</dd></div>
-          <div><dt id="stat-links">—</dt><dd>cross-links</dd></div>
-          <div><dt id="stat-concerns">—</dt><dd>compass points</dd></div>
-        </dl>
-      </div>
+  <nav id="rail" class="panel rail" aria-label="Layers and compass">
+    <div class="panel-head">
+      <span class="eyebrow">Layers</span>
+      <span class="head-actions">
+        <button type="button" class="ghost-btn" data-act="reset" title="Reset view (0)">Reset</button>
+        <button type="button" class="panel-toggle" data-toggle="rail" aria-expanded="true" aria-controls="rail-body" title="Hide layers ([)"><span aria-hidden="true">‹</span><span class="sr">Toggle layers</span></button>
+      </span>
+    </div>
+    <div id="rail-body" class="rail-body">
+      <ol id="layer-list" class="layer-list"></ol>
+      <p class="eyebrow rail-sub">Cross-cutting compass</p>
+      <ul id="concern-list" class="concern-list"></ul>
+    </div>
+    <ol id="rail-mini" class="rail-mini" aria-label="Layers"></ol>
+  </nav>
 
-      <div class="hero-map-wrap">
-        <div class="map-caption"><span>System elevation</span><b>Experience ↑</b></div>
-        <div class="hero-map" id="hero-map" aria-label="Seven interactive layers of the atlas">
-          <div class="map-loading">Charting the terrain…</div>
-        </div>
-        <p class="map-note"><span aria-hidden="true">↳</span> Select a layer to land there</p>
-      </div>
-    </section>
+  <aside id="inspector" class="panel inspector" aria-label="Details">
+    <div class="panel-head">
+      <span class="head-actions">
+        <button type="button" id="inspector-back" class="ghost-btn" data-act="back" hidden aria-label="Back">←</button>
+        <span class="eyebrow" id="inspector-kicker">Overview</span>
+      </span>
+      <button type="button" class="panel-toggle" data-toggle="inspector" aria-expanded="true" aria-controls="inspector-body" title="Hide details (])"><span aria-hidden="true">›</span><span class="sr">Toggle details</span></button>
+    </div>
+    <div id="inspector-body" class="inspector-body" aria-live="polite" tabindex="-1"></div>
+  </aside>
+  <button type="button" id="inspector-tab" class="panel-tab inspector-tab" hidden aria-label="Show details"><span aria-hidden="true">‹</span><span id="inspector-tab-label">Details</span></button>
 
-    <section class="trail-lab" aria-labelledby="trail-title">
-      <div class="section-intro section-intro--light">
-        <div>
-          <p class="eyebrow">Choose your trail</p>
-          <h2 id="trail-title">Same terrain.<br>Different questions.</h2>
-        </div>
-        <p>Roles do not own topics; they change the route through them. Pick a lens for a seven-stop introduction, from foundations to outcomes.</p>
-      </div>
-      <div class="role-picker" id="role-picker" aria-label="Choose a professional lens"></div>
-      <ol class="trail-route" id="trail-route" aria-live="polite"></ol>
-    </section>
+  <div id="caption" class="panel caption" hidden role="region" aria-label="Trail">
+    <div class="cap-head"><span class="eyebrow" id="cap-title"></span><div class="cap-dots" id="cap-dots"></div></div>
+    <h3 id="cap-step"></h3>
+    <p id="cap-text"></p>
+    <div class="cap-ctrl">
+      <button id="cap-prev" type="button" aria-label="Previous step">←</button>
+      <button id="cap-play" type="button">Pause</button>
+      <button id="cap-next" type="button" aria-label="Next step">→</button>
+      <span class="sp"></span>
+      <button id="cap-close" type="button">Close</button>
+    </div>
+  </div>
 
-    <section class="atlas-section" id="atlas" aria-labelledby="atlas-title">
-      <div class="atlas-heading">
-        <div>
-          <p class="eyebrow">The whole terrain</p>
-          <h2 id="atlas-title">Explore by layer</h2>
-        </div>
-        <p>The vertical spine shows where ideas primarily live. The compass below holds concerns that recur everywhere.</p>
+  <footer id="dock" class="panel dock">
+    <div class="dock-main">
+      <div class="seg" id="lens-seg" data-v="modern" role="group" aria-label="Lens">
+        <span class="seg-thumb" aria-hidden="true"></span>
+        <button type="button" data-lens="modern" aria-pressed="true">Modern field</button>
+        <button type="button" data-lens="mstr" aria-pressed="false">MicroStrategy lens</button>
       </div>
-
-      <div class="atlas-tools" id="atlas-tools">
+      <div class="dock-tools">
+        <button type="button" class="tool" id="trail-btn" aria-haspopup="true" aria-expanded="false" aria-controls="trail-menu"><span aria-hidden="true">⤳</span><span id="trail-btn-label">Trails</span></button>
         <label class="search-box" for="topic-search">
           <span aria-hidden="true">⌕</span>
-          <input id="topic-search" type="search" placeholder="Search topics…" autocomplete="off">
-          <kbd>⌘ K</kbd>
+          <input id="topic-search" type="search" placeholder="Search topics…" autocomplete="off" aria-label="Search topics">
+          <kbd>/</kbd>
         </label>
-        <div class="tool-actions">
-          <details class="lens-menu" id="lens-menu">
-            <summary>Adjust lens <span id="active-filter-count">0</span></summary>
-            <div class="lens-panel">
-              <label>Primary role<select id="role-filter"><option value="">All roles</option></select></label>
-              <label>Lifecycle stage<select id="stage-filter"><option value="">All stages</option></select></label>
-              <label>Maturity<select id="maturity-filter"><option value="">All maturity levels</option></select></label>
-              <button id="clear-filters" type="button">Clear all filters</button>
-            </div>
-          </details>
-          <button class="surprise-button" id="surprise-atlas" type="button"><span aria-hidden="true">✦</span> Random topic</button>
-        </div>
-        <p class="result-count" id="result-count" role="status" aria-live="polite">Loading the map…</p>
+        <button type="button" class="tool" id="filter-btn" aria-haspopup="true" aria-expanded="false" aria-controls="filter-menu"><span aria-hidden="true">⚲</span><span class="tool-label">Filters</span><span class="badge" id="filter-count">0</span></button>
+        <button type="button" class="tool" id="timeline-btn" aria-pressed="false" title="Modern-stack timeline (T)"><span aria-hidden="true">◷</span><span class="tool-label">Timeline</span></button>
+        <button type="button" class="tool icon" id="random-btn" title="Random topic" aria-label="Random topic">✦</button>
       </div>
-
-      <section class="compass" aria-labelledby="compass-title">
-        <div class="compass-heading">
-          <span class="compass-rose" aria-hidden="true">✣</span>
-          <div><p class="eyebrow">Cross-cutting compass</p><h3 id="compass-title">Concerns with no single home</h3></div>
-          <p>These shape every layer. Select one to inspect its topics.</p>
-        </div>
-        <div class="concern-rail" id="concern-rail"></div>
-      </section>
-
-      <div class="layer-key" aria-hidden="true"><span>Infrastructure ↓</span><i></i><span>Human experience ↑</span></div>
-      <div class="layer-stack" id="layer-stack">
-        <div class="atlas-loading"><span></span><p>Unfolding the field atlas…</p></div>
-      </div>
-      <div class="empty-results hidden" id="empty-results">
-        <span aria-hidden="true">∅</span>
-        <h3>No trail starts there yet.</h3>
-        <p>Try a broader phrase or clear one of the active lenses.</p>
-        <button type="button" id="empty-clear">Reset the map</button>
-      </div>
-    </section>
-
-    <section class="closing-note">
-      <p class="eyebrow">A map, not the territory</p>
-      <blockquote>“The useful question is not where a topic belongs. It is what the topic touches.”</blockquote>
-      <div>
-        <p>This atlas favors durable concepts over products. Boundaries are intentionally porous, and the cross-links are an editorial seed set—not a claim that the field has only 36 relationships.</p>
-        <button class="text-button" id="open-about-bottom" type="button">Read the cartographer’s notes <span aria-hidden="true">→</span></button>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div><b>Calm Data & AI</b><p>A calm place for complicated systems.</p></div>
-    <p>Designed as a field guide · Reviewed August 2026</p>
-    <a href="#hero-title">Back to top ↑</a>
-  </footer>
-
-  <dialog class="topic-dialog" id="topic-dialog">
-    <div class="dialog-topline">
-      <p id="dialog-path">Atlas topic</p>
-      <button class="dialog-close" id="close-topic" type="button" aria-label="Close topic">×</button>
+      <button type="button" class="panel-toggle" data-toggle="dock" aria-expanded="true" title="Hide controls"><span aria-hidden="true">⌄</span><span class="sr">Toggle controls</span></button>
     </div>
-    <div class="dialog-body" id="dialog-body"></div>
-  </dialog>
+
+    <div id="trail-menu" class="popover trail-menu" hidden></div>
+    <div id="filter-menu" class="popover filter-menu" hidden>
+      <label>Primary role<select id="role-filter"><option value="">All roles</option></select></label>
+      <label>Lifecycle stage<select id="stage-filter"><option value="">All stages</option></select></label>
+      <label>Maturity<select id="maturity-filter"><option value="">All maturity levels</option></select></label>
+      <button type="button" class="pill" data-act="clear">Clear search and filters</button>
+    </div>
+
+    <div class="timeline" id="timeline" hidden>
+      <button id="year-play" type="button" aria-label="Play the timeline">▶</button>
+      <div class="tl-track">
+        <div class="tl-ticks" id="ticks"></div>
+        <input id="year" type="range" min="2004" max="2023" step="1" value="2023" aria-label="Show the modern stack as of year">
+      </div>
+      <div class="tl-cap" id="year-cap"></div>
+    </div>
+  </footer>
+  <button type="button" id="dock-tab" class="panel-tab dock-tab" hidden aria-label="Show controls"><span aria-hidden="true">⌃</span> Controls</button>
+
+  <div id="tooltip" class="tooltip" role="tooltip"></div>
 
   <dialog class="about-dialog" id="about-dialog">
-    <button class="dialog-close about-close" id="close-about" type="button" aria-label="Close about dialog">×</button>
+    <button class="dialog-close" id="close-about" type="button" aria-label="Close about dialog">×</button>
     <p class="eyebrow">Cartographer’s notes</p>
     <h2>How to read this map</h2>
     <div class="about-grid">
       <article><span>01</span><h3>The spine is singular</h3><p>Every topic gets one primary home so the map stays navigable. Other relationships belong in cross-links, not duplicate branches.</p></article>
       <article><span>02</span><h3>Facets are lenses</h3><p>Role, lifecycle stage, and maturity describe the primary learning context. They are useful filters, not ownership boundaries.</p></article>
-      <article><span>03</span><h3>Concerns travel</h3><p>Security, quality, reliability, governance, and operating practices recur from hardware through the human experience.</p></article>
-      <article><span>04</span><h3>The edges will grow</h3><p>The current cross-links are a reviewed seed set. The map becomes more valuable as prerequisites, alternatives, and enabling relationships are added.</p></article>
+      <article><span>03</span><h3>Concerns travel</h3><p>Security, quality, reliability, governance, and operating practices recur from hardware through the human experience — the pillars behind the stack.</p></article>
+      <article><span>04</span><h3>The MicroStrategy lens</h3><p>Ten years inside one enterprise BI platform show what an analytics system must do. The lens marks what sat inside its server, what the customer stack beside it carried, and what has no counterpart — responsibilities, not feature-for-feature replacements.</p></article>
     </div>
+    <blockquote>“The useful question is not where a topic belongs. It is what the topic touches.”</blockquote>
     <div class="review-stamp"><b>Structural review passed</b><span id="review-stamp-copy">Loading audit results…</span></div>
   </dialog>
 
-  <script src="js/data-ai-knowledge-graph.js?v=20260826-2"></script>
-  <script src="js/knowledge-atlas.js?v=20260826-2" defer></script>
+  <noscript><p class="noscript">The Field Atlas needs JavaScript. The taxonomy is also available as <a href="data-ai-knowledge-graph.yaml">YAML</a>.</p></noscript>
+
+  <script src="js/data-ai-knowledge-graph.js?v=20261013-1"></script>
+  <script src="js/knowledge-atlas-content.js?v=20261013-1"></script>
+  <script src="js/knowledge-atlas.js?v=20261013-1" defer></script>
+  <script type="module" src="js/atlas-scene.js?v=20261013-1"></script>
 </body>
 </html>
