@@ -1,6 +1,6 @@
-import "./components/site-header.js";
-import "./components/side-navigation.js";
-import "./components/search-view.js";
+import "./components/site-header.js?v=20261014-4";
+import "./components/side-navigation.js?v=20261014-4";
+import "./components/search-view.js?v=20261014-4";
 
 /**
  * Calm Data and AI knowledge atlas.
@@ -12,11 +12,11 @@ const atlas = window.PATTERNBOOK_ATLAS;
 
 const elements = {
     body: document.body,
-    overviewView: document.getElementById("overview-view"),
-    domainView: document.getElementById("domain-view"),
-    sideNavigation: document.querySelector('side-navigation[variant="atlas"]'),
-    searchView: document.querySelector("search-view"),
-    homeSearch: document.querySelector("search-view")?.input,
+    get overviewView() { return document.getElementById("overview-view"); },
+    get domainView() { return document.getElementById("domain-view"); },
+    get sideNavigation() { return document.querySelector('side-navigation[variant="atlas"]'); },
+    get searchView() { return document.querySelector("search-view"); },
+    get homeSearch() { return document.querySelector("search-view")?.input || document.getElementById("home-search"); },
     domainHeader: document.getElementById("domain-header"),
     principleStrip: document.getElementById("principle-strip"),
     domainGraph: document.getElementById("domain-graph"),
@@ -146,11 +146,13 @@ function setView(view, options = {}) {
         activeDomain = options.domain || activeDomain;
         activeGraphNode = options.concept || "root";
         renderDomain();
+        document.querySelector('site-header[variant="topbar"]')?.setHeading(getTrack(activeDomain)?.name || "Field notes");
         if (!options.fromHash) {
             const hash = new URLSearchParams({ domain: activeDomain, concept: activeGraphNode });
             history.replaceState(null, "", `#${hash.toString()}`);
         }
     } else {
+        document.querySelector('site-header[variant="topbar"]')?.setHeading("Field notes");
         elements.searchView.clear();
         renderHomeSearch();
         if (!options.fromHash && location.hash) history.replaceState(null, "", `${location.pathname}${location.search}`);
@@ -555,6 +557,7 @@ function initFromHash() {
 }
 
 function init() {
+    elements.searchView?.renderHub?.();
     renderNavigation();
     renderHomeSearch();
     setupEvents();

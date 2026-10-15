@@ -7,9 +7,9 @@
  */
 import { escapeHtml } from "./timeline/dom.js";
 import { createTimeline } from "./timeline/index.js";
-import "./components/site-header.js";
-import "./components/side-navigation.js";
-import "./components/timeline-view.js?v=20260829-1";
+import "./components/site-header.js?v=20261014-4";
+import "./components/side-navigation.js?v=20261014-4";
+import "./components/timeline-view.js?v=20261014-4";
 
 const SERIES_URL = "data/timelines/series.json";
 const PUBLIC_URL = "https://lily-feng.github.io/Calm.Data.and.AI/timeline.html";
@@ -105,7 +105,7 @@ async function init() {
 
     if (!selectedId) {
         updatePageMetadata(null);
-        view.showHome();
+        view.showHome(entries);
         return;
     }
 

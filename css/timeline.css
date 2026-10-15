@@ -321,12 +321,163 @@
 
 a.nav-item { text-decoration: none; }
 .topbar-title { margin: 0; font: 500 17px var(--serif); letter-spacing: -.02em; }
-.timeline-page-view { min-height: calc(100vh - 72px); }
-.timeline-home { display: grid; min-height: calc(100vh - 225px); place-items: center; }
-.timeline-landing-image { width: min(720px, 100%); overflow: hidden; margin: 0; border: 1px solid var(--line); border-radius: 20px; background: var(--card); box-shadow: var(--shadow); }
-.timeline-landing-image img { display: block; width: 100%; height: auto; max-height: 320px; object-fit: contain; }
-.timeline-landing-image figcaption { padding: 19px 23px 20px; border-top: 1px solid var(--line); }
-.timeline-landing-image strong { font: 500 clamp(20px, 2.4vw, 28px)/1 var(--serif); }
+.timeline-page-view { min-height: calc(100vh - 68px); width: min(1080px, calc(100% - 48px)); margin: 0 auto; padding: 36px 0 90px; }
+
+/* ── Timeline Hub ─────────────────────────────────────────────────────────── */
+.timeline-home { display: block; width: 100%; }
+.timeline-hub {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+    width: 100%;
+}
+.timeline-hub-hero {
+    display: grid;
+    grid-template-columns: minmax(240px, 320px) 1fr;
+    gap: 32px;
+    align-items: center;
+    padding: 28px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: var(--card);
+    box-shadow: var(--shadow);
+}
+.timeline-landing-image {
+    width: 100%;
+    overflow: hidden;
+    margin: 0;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--paper-deep);
+}
+.timeline-landing-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 220px;
+    object-fit: cover;
+}
+.timeline-hub-copy .eyebrow {
+    margin-bottom: 8px;
+}
+.timeline-hub-copy h1 {
+    margin: 0 0 12px;
+    font: 500 clamp(26px, 3vw, 36px)/1.1 var(--serif);
+    letter-spacing: -.03em;
+    color: var(--white);
+}
+.timeline-hub-copy p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 13px;
+    line-height: 1.65;
+    max-width: 64ch;
+}
+.timeline-hub-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+}
+.timeline-hub-head h2 {
+    margin: 0;
+    font: 500 clamp(20px, 2.4vw, 28px)/1.1 var(--serif);
+    letter-spacing: -.02em;
+    color: var(--white);
+}
+.timeline-hub-head > p {
+    margin: 0;
+    color: var(--faint);
+    font-size: 11px;
+    text-align: right;
+    max-width: 44ch;
+}
+.timeline-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+    gap: 18px;
+}
+.timeline-hub-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--card);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .28);
+    color: var(--ink);
+    text-decoration: none !important;
+    transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+.timeline-hub-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--card-accent, var(--acid));
+    box-shadow: 0 14px 34px rgba(0, 0, 0, .45), 0 0 24px rgba(216, 244, 106, .15);
+}
+.timeline-hub-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+.timeline-hub-card__symbol {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    color: var(--card-accent, var(--acid));
+    background: rgba(255, 255, 255, .04);
+    font: 800 13px/1 var(--mono);
+}
+.timeline-hub-card__eyebrow {
+    font: 600 9.5px/1 var(--mono);
+    color: var(--faint);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+.timeline-hub-card h3 {
+    margin: 0 0 10px;
+    font: 500 20px/1.18 var(--serif);
+    letter-spacing: -.02em;
+    color: var(--white);
+}
+.timeline-hub-card p {
+    margin: 0 0 18px;
+    color: var(--ink-soft);
+    font-size: 12px;
+    line-height: 1.55;
+}
+.timeline-hub-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    font: 700 10px/1 var(--mono);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+.timeline-hub-card__footer span {
+    color: var(--faint);
+}
+.timeline-hub-card__footer b {
+    color: var(--card-accent, var(--acid));
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: transform .15s ease;
+}
+.timeline-hub-card:hover .timeline-hub-card__footer b {
+    transform: translateX(3px);
+}
+
 .timeline-series__heading { margin-bottom: 30px; }
 .timeline-series__heading .eyebrow { margin-bottom: 10px; }
 .timeline-series__heading h1 { width: 100%; margin: 0; font: 500 clamp(38px, 5vw, 60px)/1.02 var(--serif); letter-spacing: -.045em; }
@@ -337,11 +488,12 @@ a.nav-item { text-decoration: none; }
 .tl-fallback code { padding: 2px 5px; border-radius: 4px; background: var(--paper-deep); font-size: 10px; }
 
 @media (max-width: 760px) {
-    .timeline-page-view { min-height: calc(100vh - 58px); }
-    .timeline-home { min-height: calc(100vh - 181px); }
-    .timeline-landing-image { border-radius: 15px; }
-    .timeline-landing-image img { max-height: none; }
-    .timeline-landing-image figcaption { padding: 16px 17px; }
+    .timeline-page-view { min-height: calc(100vh - 58px); width: min(100% - 24px, 650px); padding: 24px 0 65px; }
+    .timeline-hub-hero { grid-template-columns: 1fr; padding: 20px; gap: 18px; border-radius: 16px; }
+    .timeline-hub-head { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .timeline-hub-head > p { text-align: left; }
+    .timeline-landing-image { border-radius: 12px; }
+    .timeline-landing-image img { max-height: 200px; }
     .timeline-series__heading { margin-bottom: 24px; }
     .timeline-series__heading h1 { font-size: clamp(36px, 11vw, 50px); }
     .timeline-series__note { margin-top: 13px; }

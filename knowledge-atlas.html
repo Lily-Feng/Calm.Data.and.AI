@@ -22,7 +22,7 @@
   <title>The Data & AI Field Atlas</title>
   <link rel="icon" type="image/png" sizes="32x32" href="public/favicon-32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="public/apple-touch-icon.png">
-  <link rel="stylesheet" href="css/knowledge-atlas.css?v=20261014-2">
+  <link rel="stylesheet" href="css/knowledge-atlas.css?v=20261014-4">
   <script type="importmap">
   {
     "imports": {
@@ -41,17 +41,7 @@
   </div>
   <div class="vignette" aria-hidden="true"></div>
 
-  <header id="brand" class="brand-block">
-    <a class="brand" href="knowledge-atlas.html" aria-label="Calm Data and AI home">
-      <img class="brand-mark" src="public/apple-touch-icon.png" alt="" width="38" height="38">
-      <span class="brand-copy"><b>Calm Data and AI</b><small>Learning made easy with notes and AI</small></span>
-    </a>
-    <nav class="site-links" aria-label="Primary navigation">
-      <a href="field-notes.html">Field notes</a>
-      <a href="timeline.html">Timelines</a>
-      <button id="open-about" type="button">About</button>
-    </nav>
-  </header>
+  <site-header variant="atlas" current-page="atlas"></site-header>
 
   <nav id="rail" class="panel rail" aria-label="Layers and compass">
     <div class="panel-head">
@@ -152,9 +142,10 @@
 
   <noscript><p class="noscript">The Field Atlas needs JavaScript. The taxonomy is also available as <a href="data-ai-knowledge-graph.yaml">YAML</a>.</p></noscript>
 
-  <script src="js/data-ai-knowledge-graph.js?v=20261013-1"></script>
-  <script src="js/knowledge-atlas-content.js?v=20261013-1"></script>
-  <script src="js/knowledge-atlas.js?v=20261013-1" defer></script>
-  <script type="module" src="js/atlas-scene.js?v=20261013-1"></script>
+  <script type="module" src="js/components/site-header.js?v=20261014-4"></script>
+  <script src="js/data-ai-knowledge-graph.js?v=20261014-4"></script>
+  <script src="js/knowledge-atlas-content.js?v=20261014-4"></script>
+  <script src="js/knowledge-atlas.js?v=20261014-4" defer></script>
+  <script type="module" src="js/atlas-scene.js?v=20261014-4"></script>
 </body>
 </html>

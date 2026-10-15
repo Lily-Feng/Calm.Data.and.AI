@@ -540,7 +540,7 @@
     const trails = Object.entries(CONTENT.trails).map(([key, t]) => `<button type="button" class="pill" data-trail="${key}">${esc(t.label)}</button>`).join("");
     return {
       kicker: "A living map of the field",
-      html: `<h2 class="hero">Data has layers.<br>AI has <em>weather.</em></h2>
+      html: `<h2 class="hero">Data has layers.<br>AI has <em>depth.</em></h2>
       <p>Trace the terrain from silicon to story. Follow one idea across the stack, switch lenses, or wander until two concepts unexpectedly connect.</p>
       <dl class="stats"><div><dt>${state.layers.length}</dt><dd>layers</dd></div><div><dt>${groups}</dt><dd>groups</dd></div><div><dt>${topics}</dt><dd>topics</dd></div><div><dt>${GRAPH.edges.length}</dt><dd>cross-links</dd></div></dl>
       <div class="lens-card mstr${mstrOn() ? " on" : ""}"><div class="eyebrow">MicroStrategy lens</div><span>Flip the lens below to see which responsibilities sat inside one BI server and metadata repository, which lived in the customer stack beside it, and which have no counterpart. A map of capabilities and decisions — not a claim that each feature has a direct replacement.</span></div>
@@ -935,8 +935,8 @@
     });
 
     const about = $("#about-dialog");
-    $("#open-about").addEventListener("click", () => about.showModal());
-    $("#close-about").addEventListener("click", () => about.close());
+    $("#open-about")?.addEventListener("click", () => about.showModal());
+    $("#close-about")?.addEventListener("click", () => about.close());
     about.addEventListener("click", e => { if (e.target === about) about.close(); });
 
     document.addEventListener("keydown", e => {

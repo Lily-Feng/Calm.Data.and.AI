@@ -97,7 +97,7 @@ class SideNavigation extends HTMLElement {
             <nav class="primary-nav" aria-label="Knowledge domains">
                 <a class="nav-item nav-feature-link" href="index.html">
                     <span class="nav-symbol">✣</span>
-                    <span>Data &amp; AI Field Atlas</span>
+                    <span>Field Atlas</span>
                 </a>
                 <p class="nav-label">Domain maps</p>
                 ${primaryTracks.map((track) => this.trackLink(track)).join("")}
@@ -132,15 +132,19 @@ class SideNavigation extends HTMLElement {
         }).join("");
         this.innerHTML = `
             <nav class="primary-nav" aria-label="Sections">
-                <a class="nav-item" href="index.html">
-                    <span class="nav-symbol">◎</span>
-                    <span>Calm Data and AI</span>
+                <a class="nav-item nav-feature-link" href="index.html">
+                    <span class="nav-symbol">✣</span>
+                    <span>Field Atlas</span>
                 </a>
+                <a class="nav-item nav-feature-link" href="field-notes.html">
+                    <span class="nav-symbol">✎</span>
+                    <span>Field Notes</span>
+                </a>
+                <p class="nav-label">Timelines</p>
                 <a class="nav-item${homeActive ? " active" : ""}" href="timeline.html" ${homeActive ? 'aria-current="page"' : ""}>
                     <span class="nav-symbol">⟜</span>
                     <span>Taste of the Past</span>
                 </a>
-                <p class="nav-label">Timelines</p>
                 <div data-series-navigation>${seriesLinks}</div>
             </nav>`;
     }

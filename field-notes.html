@@ -22,7 +22,7 @@
     <title>Calm Data and AI</title>
     <link rel="icon" type="image/png" sizes="32x32" href="public/favicon-32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="public/apple-touch-icon.png">
-    <link rel="stylesheet" href="css/styles.css?v=20261014-2">
+    <link rel="stylesheet" href="css/styles.css?v=20261014-4">
 </head>
 <body data-view="overview">
     <a class="skip-link" href="#main-content">Skip to content</a>
@@ -34,7 +34,7 @@
         </aside>
 
         <div class="page-shell">
-            <site-header variant="topbar"></site-header>
+            <site-header variant="topbar" current-page="field-notes" heading="Field notes"></site-header>
 
             <main id="main-content">
                 <search-view></search-view>
@@ -94,10 +94,23 @@
         </div>
     </dialog>
 
+    <dialog class="about-dialog" id="about-dialog">
+        <button class="dialog-close" id="close-about" type="button" aria-label="Close about dialog" onclick="document.getElementById('about-dialog').close()">×</button>
+        <p class="eyebrow">Cartographer’s notes</p>
+        <h2>How to read this map</h2>
+        <div class="about-grid">
+            <article><span>01</span><h3>The spine is singular</h3><p>Every topic gets one primary home so the map stays navigable. Other relationships belong in cross-links, not duplicate branches.</p></article>
+            <article><span>02</span><h3>Facets are lenses</h3><p>Role, lifecycle stage, and maturity describe the primary learning context. They are useful filters, not ownership boundaries.</p></article>
+            <article><span>03</span><h3>Concerns travel</h3><p>Security, quality, reliability, governance, and operating practices recur from hardware through the human experience — the pillars behind the stack.</p></article>
+            <article><span>04</span><h3>The MicroStrategy lens</h3><p>Ten years inside one enterprise BI platform show what an analytics system must do. The lens marks what sat inside its server, what the customer stack beside it carried, and what has no counterpart — responsibilities, not feature-for-feature replacements.</p></article>
+        </div>
+        <blockquote>“The useful question is not where a topic belongs. It is what the topic touches.”</blockquote>
+    </dialog>
+
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="js/manifest.js?v=20260826-4"></script>
-    <script src="js/atlas.js?v=20260826-4"></script>
-    <script type="module" src="js/app.js?v=20260826-4"></script>
+    <script src="js/manifest.js?v=20261014-4"></script>
+    <script src="js/atlas.js?v=20261014-4"></script>
+    <script type="module" src="js/app.js?v=20261014-4"></script>
 </body>
 </html>

@@ -26,11 +26,54 @@ class TimelineView extends HTMLElement {
             </section>`;
     }
 
-    showHome() {
+    showHome(entries = []) {
         this.querySelector("[data-timeline-home]")?.classList.remove("hidden");
         this.querySelector("[data-timeline-detail]")?.classList.add("hidden");
         const sections = this.querySelector("[data-timeline-sections]");
         if (sections) sections.innerHTML = "";
+        const home = this.querySelector("[data-timeline-home]");
+        if (!home) return;
+
+        const cardsMarkup = (entries && entries.length ? entries : []).map((entry) => `
+            <a class="timeline-hub-card" href="timeline.html?series=${encodeURIComponent(entry.id)}" style="--card-accent: var(--acid);">
+                <div class="timeline-hub-card__top">
+                    <span class="timeline-hub-card__symbol">${escapeHtml(entry.symbol || "◷")}</span>
+                    <span class="timeline-hub-card__eyebrow">${escapeHtml(entry.eyebrow || "")}</span>
+                </div>
+                <h3>${escapeHtml(entry.heading)}</h3>
+                <p>${escapeHtml(entry.note || "")}</p>
+                <div class="timeline-hub-card__footer">
+                    <span>${escapeHtml(entry.label)}</span>
+                    <b>Explore timeline →</b>
+                </div>
+            </a>
+        `).join("");
+
+        home.innerHTML = `
+            <div class="timeline-hub">
+                <div class="timeline-hub-hero">
+                    <figure class="timeline-landing-image">
+                        <img src="public/taste-of-the-past.webp?v=20261014" alt="Taste of the Past">
+                    </figure>
+                    <div class="timeline-hub-copy">
+                        <p class="eyebrow">Taste of the Past · 7 Computing Eras</p>
+                        <h1 id="timeline-home-title">The Computing History Hub</h1>
+                        <p>Illustrated, weighted timelines of the foundational ideas, papers, architectures, and breakthroughs computing and modern data systems were built on. Select any timeline below to follow its chronological arc.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-hub-head">
+                    <div>
+                        <p class="eyebrow">Chronological Series</p>
+                        <h2>7 Historic Rails</h2>
+                    </div>
+                    <p>Each rail features chronological event markers, key milestones, and deep-dive technical notes.</p>
+                </div>
+
+                <div class="timeline-cards-grid">
+                    ${cardsMarkup}
+                </div>
+            </div>`;
     }
 
     showTimeline(entry) {
