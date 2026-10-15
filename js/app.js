@@ -1,6 +1,6 @@
-import "./components/site-header.js?v=20261014-4";
-import "./components/side-navigation.js?v=20261014-4";
-import "./components/search-view.js?v=20261014-4";
+import "./components/site-header.js?v=20261015-2";
+import "./components/side-navigation.js?v=20261015-2";
+import "./components/search-view.js?v=20261015-2";
 
 /**
  * Calm Data and AI knowledge atlas.
@@ -146,13 +146,11 @@ function setView(view, options = {}) {
         activeDomain = options.domain || activeDomain;
         activeGraphNode = options.concept || "root";
         renderDomain();
-        document.querySelector('site-header[variant="topbar"]')?.setHeading(getTrack(activeDomain)?.name || "Field notes");
         if (!options.fromHash) {
             const hash = new URLSearchParams({ domain: activeDomain, concept: activeGraphNode });
             history.replaceState(null, "", `#${hash.toString()}`);
         }
     } else {
-        document.querySelector('site-header[variant="topbar"]')?.setHeading("Field notes");
         elements.searchView.clear();
         renderHomeSearch();
         if (!options.fromHash && location.hash) history.replaceState(null, "", `${location.pathname}${location.search}`);

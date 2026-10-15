@@ -7,9 +7,9 @@
  */
 import { escapeHtml } from "./timeline/dom.js";
 import { createTimeline } from "./timeline/index.js";
-import "./components/site-header.js?v=20261014-4";
-import "./components/side-navigation.js?v=20261014-4";
-import "./components/timeline-view.js?v=20261014-4";
+import "./components/site-header.js?v=20261015-2";
+import "./components/side-navigation.js?v=20261015-2";
+import "./components/timeline-view.js?v=20261015-2";
 
 const SERIES_URL = "data/timelines/series.json";
 const PUBLIC_URL = "https://lily-feng.github.io/Calm.Data.and.AI/timeline.html";
@@ -66,7 +66,6 @@ function updatePageMetadata(entry) {
     const url = entry ? `${PUBLIC_URL}?series=${encodeURIComponent(entry.id)}` : PUBLIC_URL;
 
     document.title = title;
-    document.querySelector('site-header[variant="topbar"]')?.setHeading(entry?.label || "Taste of the Past");
     document.querySelector('link[rel="canonical"]')?.setAttribute("href", url);
     document.querySelector('meta[property="og:title"]')?.setAttribute("content", title);
     document.querySelector('meta[property="og:description"]')?.setAttribute("content", description);

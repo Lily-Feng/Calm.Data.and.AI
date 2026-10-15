@@ -320,7 +320,6 @@
 /* ── Page chrome for timeline.html ──────────────────────────────────────── */
 
 a.nav-item { text-decoration: none; }
-.topbar-title { margin: 0; font: 500 17px var(--serif); letter-spacing: -.02em; }
 .timeline-page-view { min-height: calc(100vh - 68px); width: min(1080px, calc(100% - 48px)); margin: 0 auto; padding: 36px 0 90px; }
 
 /* ── Timeline Hub ─────────────────────────────────────────────────────────── */

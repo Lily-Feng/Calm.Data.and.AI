@@ -405,9 +405,9 @@
     const dock = rect(b.contains("dock-collapsed") ? "#dock-tab" : "#dock");
     const root = document.documentElement.style;
     root.setProperty("--dock-h", `${Math.round(dock.height)}px`);
-    let l = 0, r = 0, t = 0, bottom = H - dock.top;
+    let l = 0, r = 0, t = rect(".site-topbar").bottom, bottom = H - dock.top;
     if (compact) {
-      t = b.contains("rail-collapsed") ? rect("#rail").bottom : rect("#brand").bottom;
+      t = b.contains("rail-collapsed") ? rect("#rail").bottom : t;
       bottom = b.contains("inspector-collapsed") ? H - rect("#inspector-tab").top : H - dock.top + 44;
     } else {
       l = rect("#rail").right;
@@ -935,7 +935,6 @@
     });
 
     const about = $("#about-dialog");
-    $("#open-about")?.addEventListener("click", () => about.showModal());
     $("#close-about")?.addEventListener("click", () => about.close());
     about.addEventListener("click", e => { if (e.target === about) about.close(); });
 
